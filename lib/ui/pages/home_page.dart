@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:toma_scan/ui/pages/widgets/bottom_nav_widget.dart';
+import 'package:toma_scan/ui/widgets/bottom_nav_widget.dart';
 
 class HomePage extends StatefulWidget {
   @override
