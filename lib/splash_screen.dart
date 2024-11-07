@@ -1,6 +1,5 @@
 import 'dart:async'; // For Future.delayed
 import 'package:flutter/material.dart';
-import 'ui/pages/home_page.dart'; // Import halaman utama
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -19,13 +18,13 @@ class SplashScreenState extends State<SplashScreen> {
     super.initState();
     _startAnimation(); // Start animation when splash screen loads
 
-    // Navigate to the HomePage after 3 seconds
+    // Navigate to the HomePage after 3 seconds, checking if widget is mounted
     Future.delayed(const Duration(seconds: 3), () {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-            builder: (context) => HomePage()), // Redirect to HomePage
-      );
+      if (mounted) {
+        // Check if widget is still in the widget tree
+        Navigator.pushNamedAndRemoveUntil(
+            context, '/onboarding_page', (route) => false);
+      }
     });
   }
 

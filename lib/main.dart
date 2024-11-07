@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:toma_scan/ui/pages/home_page.dart';
+import 'package:toma_scan/ui/pages/onboarding_page.dart';
 import 'splash_screen.dart';
 
 void main() {
@@ -20,8 +21,9 @@ class MyApp extends StatelessWidget {
       ),
       initialRoute: '/',
       routes: {
-        '/': (context) => SplashScreen(),
+        '/': (context) => const SplashScreen(),
         '/home': (context) => const HomePage(),
+        '/onboarding_page': (context) => const OnboardingPage(),
       },
     );
   }
