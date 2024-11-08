@@ -1,166 +1,230 @@
 import 'package:flutter/material.dart';
 
 class InformativePage extends StatelessWidget {
+  const InformativePage({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: ListView(
-        padding: EdgeInsets.all(16),
-        children: [
-          SectionHeader(title: 'Popular Article', onViewAll: () {}),
-          SizedBox(height: 8),
-          Row(
+      backgroundColor: Colors.white,
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Expanded(
-                child: ArticleCard(
-                  imageUrl:
-                      'https://th.bing.com/th/id/OIP.HiwZb7pY_PaooR59RRIHBgHaGK?w=239&h=198&c=7&r=0&o=5&dpr=1.9&pid=1.7',
-                  title: "Croatia doubles tomato production with Podravka's...",
-                ),
-              ),
-              SizedBox(width: 8),
-              Expanded(
-                child: ArticleCard(
-                  imageUrl:
-                      'https://th.bing.com/th/id/OIP.HiwZb7pY_PaooR59RRIHBgHaGK?w=239&h=198&c=7&r=0&o=5&dpr=1.9&pid=1.7',
-                  title: "Croatia doubles tomato production with Podravka's...",
-                ),
-              ),
+              _buildSectionHeader('Popular Article', 'View all'),
+              const SizedBox(height: 16),
+              _buildPopularArticles(),
+              const SizedBox(height: 24),
+              _buildSectionHeader('Care Education', 'View all'),
+              const SizedBox(height: 16),
+              _buildCareEducationGrid(),
+              const SizedBox(height: 24),
+              _buildSectionHeader('Pests & diseases', 'View all'),
+              const SizedBox(height: 16),
+              _buildPestsAndDiseases(),
             ],
           ),
-          SizedBox(height: 16),
-          SectionHeader(title: 'Care Education', onViewAll: () {}),
-          SizedBox(height: 8),
-          Wrap(
-            spacing: 8,
-            runSpacing: 8,
-            children: [
-              EducationCard(icon: Icons.local_florist, title: 'Planting'),
-              EducationCard(icon: Icons.nature, title: 'Planting Training'),
-              EducationCard(icon: Icons.location_on, title: 'Site Selection'),
-              EducationCard(
-                  icon: Icons.agriculture, title: 'Field Preparation'),
-              EducationCard(icon: Icons.grass, title: 'Weeding'),
-              EducationCard(icon: Icons.water, title: 'Irrigation'),
-            ],
-          ),
-          SizedBox(height: 16),
-          SectionHeader(title: 'Pests & Diseases', onViewAll: () {}),
-          SizedBox(height: 8),
-          GridView.builder(
-            physics: NeverScrollableScrollPhysics(),
-            shrinkWrap: true,
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              mainAxisSpacing: 8,
-              crossAxisSpacing: 8,
-              childAspectRatio: 2,
-            ),
-            itemCount: 4,
-            itemBuilder: (context, index) => ArticleCard(
-              imageUrl:
-                  'https://th.bing.com/th/id/OIP.HiwZb7pY_PaooR59RRIHBgHaGK?w=239&h=198&c=7&r=0&o=5&dpr=1.9&pid=1.7',
-              title: "Croatia doubles tomato production with Podravka's...",
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }
-}
 
-class SectionHeader extends StatelessWidget {
-  final String title;
-  final VoidCallback onViewAll;
-
-  const SectionHeader({required this.title, required this.onViewAll});
-
-  @override
-  Widget build(BuildContext context) {
+  Widget _buildSectionHeader(String title, String action) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Text(
           title,
-          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          style: const TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+          ),
         ),
-        GestureDetector(
-          onTap: onViewAll,
+        TextButton(
+          onPressed: () {},
           child: Text(
-            'View all',
-            style: TextStyle(fontSize: 14, color: Colors.green),
+            action,
+            style: const TextStyle(
+              color: Color(0xFF00BF63),
+              fontWeight: FontWeight.w500,
+            ),
           ),
         ),
       ],
     );
   }
-}
 
-class ArticleCard extends StatelessWidget {
-  final String imageUrl;
-  final String title;
-
-  const ArticleCard({required this.imageUrl, required this.title});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      height: 100,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(8),
-        image: DecorationImage(
-          image: NetworkImage(imageUrl),
-          fit: BoxFit.cover,
-        ),
-      ),
-      child: Align(
-        alignment: Alignment.bottomCenter,
-        child: Container(
-          width: double.infinity,
-          padding: EdgeInsets.all(4),
-          decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.75),
-            borderRadius: BorderRadius.only(
-              bottomLeft: Radius.circular(8),
-              bottomRight: Radius.circular(8),
-            ),
-          ),
-          child: Text(
-            title,
-            style: TextStyle(fontSize: 12),
-            overflow: TextOverflow.ellipsis,
-          ),
-        ),
+  Widget _buildPopularArticles() {
+    return SizedBox(
+      height: 200,
+      child: ListView(
+        scrollDirection: Axis.horizontal,
+        children: [
+          _buildArticleCard(),
+          const SizedBox(width: 16),
+          _buildArticleCard(),
+        ],
       ),
     );
   }
-}
 
-class EducationCard extends StatelessWidget {
-  final IconData icon;
-  final String title;
-
-  const EducationCard({required this.icon, required this.title});
-
-  @override
-  Widget build(BuildContext context) {
+  Widget _buildArticleCard() {
     return Container(
-      padding: EdgeInsets.all(8),
+      width: 300,
       decoration: BoxDecoration(
-        color: Colors.green[100],
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(icon, color: Colors.green),
-          SizedBox(width: 4),
-          Text(
-            title,
-            style: TextStyle(color: Colors.green),
+        borderRadius: BorderRadius.circular(16),
+        color: Colors.white,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
           ),
         ],
       ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          ClipRRect(
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
+            child: Image.asset(
+              'assets/tomato_production.jpg',
+              height: 150,
+              width: double.infinity,
+              fit: BoxFit.cover,
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(12),
+            child: Row(
+              children: [
+                const Expanded(
+                  child: Text(
+                    'Croatia doubles tomato production with Podravka\'s...',
+                    style: TextStyle(
+                      fontWeight: FontWeight.w500,
+                      fontSize: 16,
+                    ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+                IconButton(
+                  icon: const Icon(Icons.more_vert),
+                  onPressed: () {},
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildCareEducationGrid() {
+    final List<Map<String, dynamic>> careItems = [
+      {'icon': Icons.local_florist, 'title': 'Planting'},
+      {'icon': Icons.school, 'title': 'Planting Training'},
+      {'icon': Icons.location_on, 'title': 'Site Selection'},
+      {'icon': Icons.landscape, 'title': 'Field Preparation'},
+      {'icon': Icons.grass, 'title': 'Weeding'},
+      {'icon': Icons.water_drop, 'title': 'Irrigation'},
+    ];
+
+    return GridView.builder(
+      shrinkWrap: true,
+      primary: false,
+      physics: const NeverScrollableScrollPhysics(),
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        childAspectRatio: 3,
+        crossAxisSpacing: 16,
+        mainAxisSpacing: 16,
+      ),
+      itemCount: careItems.length,
+      itemBuilder: (context, index) {
+        return Container(
+          decoration: BoxDecoration(
+            color: const Color(0xFFE8F5E9),
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                careItems[index]['icon'],
+                color: const Color(0xFF00BF63),
+              ),
+              const SizedBox(width: 8),
+              Text(
+                careItems[index]['title'],
+                style: const TextStyle(
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildPestsAndDiseases() {
+    return GridView.builder(
+      shrinkWrap: true,
+      primary: false,
+      physics: const NeverScrollableScrollPhysics(),
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        childAspectRatio: 0.8,
+        crossAxisSpacing: 16,
+        mainAxisSpacing: 16,
+      ),
+      itemCount: 4,
+      itemBuilder: (context, index) {
+        return Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(16),
+            color: Colors.white,
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.1),
+                blurRadius: 8,
+                offset: const Offset(0, 2),
+              ),
+            ],
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              ClipRRect(
+                borderRadius:
+                    const BorderRadius.vertical(top: Radius.circular(16)),
+                child: Image.asset(
+                  'assets/tomato_production.jpg',
+                  height: 150,
+                  width: double.infinity,
+                  fit: BoxFit.cover,
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(12),
+                child: Text(
+                  'Croatia doubles tomato production with Podravka\'s...',
+                  style: const TextStyle(
+                    fontWeight: FontWeight.w500,
+                    fontSize: 14,
+                  ),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 }
