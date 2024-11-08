@@ -12,6 +12,8 @@ class OnboardingPage extends StatefulWidget {
 
 class _OnboardingPageState extends State<OnboardingPage> {
   int currentIndex = 0;
+  final CarouselSliderController _carouselController =
+      CarouselSliderController();
 
   List<String> titles = [
     'Identify the Green World Around You',
@@ -35,6 +37,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
     setState(() {
       if (currentIndex < titles.length - 1) {
         currentIndex++;
+        _carouselController.nextPage(); // Move to next slide
       }
     });
   }
@@ -66,6 +69,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                                     const EdgeInsets.symmetric(horizontal: 20),
                                 child: Image.asset(
                                   image,
+                                  fit: BoxFit.fill,
                                 ),
                               ))
                           .toList(),
@@ -79,6 +83,8 @@ class _OnboardingPageState extends State<OnboardingPage> {
                           });
                         },
                       ),
+                      carouselController:
+                          _carouselController, // Attach the controller
                     ),
                   ),
                   OnboardingOverlay(
@@ -184,7 +190,14 @@ class OnboardingOverlay extends StatelessWidget {
                 const SizedBox(width: 10),
                 Expanded(
                   child: ElevatedButton(
-                    onPressed: onContinue,
+                    onPressed: () {
+                      if (currentIndex == 2) {
+                        Navigator.pushNamedAndRemoveUntil(
+                            context, '/home', (route) => false);
+                      } else {
+                        onContinue();
+                      }
+                    },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xff19AD77),
                     ),

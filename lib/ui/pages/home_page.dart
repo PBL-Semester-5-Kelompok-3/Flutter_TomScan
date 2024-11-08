@@ -3,8 +3,11 @@ import 'history_page.dart';
 import 'identify_leaf_page.dart';
 import 'profile_page.dart';
 import 'informative_page.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class HomePage extends StatefulWidget {
+  const HomePage({super.key});
+
   @override
   _HomePageState createState() => _HomePageState();
 }
@@ -34,7 +37,7 @@ class _HomePageState extends State<HomePage> {
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
-        title: Row(
+        title: const Row(
           children: [
             Icon(Icons.eco, color: Colors.green),
             SizedBox(width: 8),
@@ -46,49 +49,146 @@ class _HomePageState extends State<HomePage> {
         ),
         actions: [
           IconButton(
-            icon: Icon(Icons.notifications, color: Colors.grey),
+            icon: const Icon(Icons.notifications, color: Colors.grey),
             onPressed: () {},
           ),
         ],
       ),
       body: _pages[_selectedIndex],
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _selectedIndex,
-        onTap: _onItemTapped,
-        type: BottomNavigationBarType.fixed,
-        items: [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home,
-                color: _selectedIndex == 0 ? Colors.green : Colors.grey),
-            label: 'Home',
+      floatingActionButton: Container(
+        padding: const EdgeInsets.only(bottom: 0.1),
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          border: Border.all(
+            color: const Color(0xFF00E526), // Stroke color
+            width: 5.0, // Stroke width
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.info,
-                color: _selectedIndex == 1 ? Colors.green : Colors.grey),
-            label: 'Informative',
+        ),
+        child: FloatingActionButton(
+          onPressed: () => _onItemTapped(2),
+          shape: const CircleBorder(),
+          backgroundColor: const Color(0xff00A86B),
+          elevation: 2, // Adjust elevation as needed
+          // child: const Icon(Icons.camera_alt, color: Colors.white),
+          child: SvgPicture.asset(
+            'assets/Scan.svg',
+            semanticsLabel: 'My SVG Image',
+            // height: 100,
+            // width: 70,
           ),
-          BottomNavigationBarItem(
-            icon: Container(
-              padding: EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                color: _selectedIndex == 2 ? Colors.green : Colors.grey,
-                shape: BoxShape.circle,
+        ),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      bottomNavigationBar: BottomAppBar(
+        shape: const CircularNotchedRectangle(),
+        notchMargin: 8,
+        height: 70,
+        child: SizedBox(
+          // height: 60,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  MaterialButton(
+                    minWidth: 40,
+                    onPressed: () => _onItemTapped(0),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.home,
+                          color:
+                              _selectedIndex == 0 ? Colors.green : Colors.grey,
+                          size: 20,
+                        ),
+                        Text(
+                          'Home',
+                          style: TextStyle(
+                              color: _selectedIndex == 0
+                                  ? Colors.green
+                                  : Colors.grey),
+                        ),
+                      ],
+                    ),
+                  ),
+                  MaterialButton(
+                    minWidth: 40,
+                    onPressed: () => _onItemTapped(1),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.info,
+                          color:
+                              _selectedIndex == 1 ? Colors.green : Colors.grey,
+                          size: 20,
+                        ),
+                        Text(
+                          'Home',
+                          style: TextStyle(
+                              color: _selectedIndex == 1
+                                  ? Colors.green
+                                  : Colors.grey),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
               ),
-              child: Icon(Icons.camera_alt, color: Colors.white),
-            ),
-            label: 'Identify Leaf',
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  MaterialButton(
+                    minWidth: 40,
+                    onPressed: () => _onItemTapped(3),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.history,
+                          color:
+                              _selectedIndex == 3 ? Colors.green : Colors.grey,
+                          size: 20,
+                        ),
+                        Text(
+                          'Home',
+                          style: TextStyle(
+                              color: _selectedIndex == 3
+                                  ? Colors.green
+                                  : Colors.grey),
+                        ),
+                      ],
+                    ),
+                  ),
+                  MaterialButton(
+                    minWidth: 40,
+                    onPressed: () => _onItemTapped(4),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.person,
+                          color:
+                              _selectedIndex == 4 ? Colors.green : Colors.grey,
+                          size: 20,
+                        ),
+                        Text(
+                          'Profile',
+                          style: TextStyle(
+                              color: _selectedIndex == 4
+                                  ? Colors.green
+                                  : Colors.grey),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ],
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.history,
-                color: _selectedIndex == 3 ? Colors.green : Colors.grey),
-            label: 'History',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person,
-                color: _selectedIndex == 4 ? Colors.green : Colors.grey),
-            label: 'Profile',
-          ),
-        ],
+        ),
       ),
     );
   }
