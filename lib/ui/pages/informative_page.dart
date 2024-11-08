@@ -9,7 +9,11 @@ class InformativePage extends StatelessWidget {
       backgroundColor: Colors.white,
       body: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.all(16.0),
+          padding: const EdgeInsets.only(
+              left: 16,
+              right: 16,
+              top: 16,
+              bottom: 24), // Tambahkan padding bottom
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
