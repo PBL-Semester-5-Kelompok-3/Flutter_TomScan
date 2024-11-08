@@ -1,6 +1,32 @@
 import 'package:flutter/material.dart';
+import 'history_page.dart';
+import 'identify_leaf_page.dart';
+import 'profile_page.dart';
+import 'informative_page.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
+  @override
+  _HomePageState createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  int _selectedIndex = 0;
+
+  // Daftar halaman yang sudah dibuat
+  final List<Widget> _pages = [
+    HomeContent(), // Home content
+    InformativePage(), // Halaman Informative
+    IdentifyLeafPage(), // Halaman Identify Leaf
+    HistoryPage(), // Halaman History
+    ProfilePage(), // Halaman Profile
+  ];
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -25,50 +51,27 @@ class HomePage extends StatelessWidget {
           ),
         ],
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            Container(
-              margin: EdgeInsets.all(16),
-              padding: EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: Colors.green[50],
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  _buildStep(Icons.camera_alt, 'Take a picture'),
-                  Icon(Icons.arrow_forward, color: Colors.grey),
-                  _buildStep(Icons.mobile_friendly, 'See Diagnosis'),
-                  Icon(Icons.arrow_forward, color: Colors.grey),
-                  _buildStep(Icons.local_pharmacy, 'Get Medicine'),
-                ],
-              ),
-            ),
-            _buildSectionHeader('Popular Article', () {}),
-            _buildPopularArticles(),
-            _buildSectionHeader('Last Detection', () {}),
-            _buildLastDetections(),
-          ],
-        ),
-      ),
+      body: _pages[_selectedIndex],
       bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _selectedIndex,
+        onTap: _onItemTapped,
         type: BottomNavigationBarType.fixed,
         items: [
           BottomNavigationBarItem(
-            icon: Icon(Icons.home, color: Colors.green),
+            icon: Icon(Icons.home,
+                color: _selectedIndex == 0 ? Colors.green : Colors.grey),
             label: 'Home',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.info, color: Colors.grey),
+            icon: Icon(Icons.info,
+                color: _selectedIndex == 1 ? Colors.green : Colors.grey),
             label: 'Informative',
           ),
           BottomNavigationBarItem(
             icon: Container(
               padding: EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: Colors.green,
+                color: _selectedIndex == 2 ? Colors.green : Colors.grey,
                 shape: BoxShape.circle,
               ),
               child: Icon(Icons.camera_alt, color: Colors.white),
@@ -76,13 +79,50 @@ class HomePage extends StatelessWidget {
             label: 'Identify Leaf',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.history, color: Colors.grey),
+            icon: Icon(Icons.history,
+                color: _selectedIndex == 3 ? Colors.green : Colors.grey),
             label: 'History',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.person, color: Colors.grey),
+            icon: Icon(Icons.person,
+                color: _selectedIndex == 4 ? Colors.green : Colors.grey),
             label: 'Profile',
           ),
+        ],
+      ),
+    );
+  }
+}
+
+// Content for the Home tab as a placeholder
+class HomeContent extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          Container(
+            margin: EdgeInsets.all(16),
+            padding: EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: Colors.green[50],
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                _buildStep(Icons.camera_alt, 'Take a picture'),
+                Icon(Icons.arrow_forward, color: Colors.grey),
+                _buildStep(Icons.mobile_friendly, 'See Diagnosis'),
+                Icon(Icons.arrow_forward, color: Colors.grey),
+                _buildStep(Icons.local_pharmacy, 'Get Medicine'),
+              ],
+            ),
+          ),
+          _buildSectionHeader('Popular Article', () {}),
+          _buildPopularArticles(),
+          _buildSectionHeader('Last Detection', () {}),
+          _buildLastDetections(),
         ],
       ),
     );

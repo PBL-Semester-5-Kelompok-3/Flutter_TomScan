@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 
-class ProfilePage extends StatelessWidget {
+class IdentifyLeafPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Profile'),
+        title: Text('Identify Leaf'),
       ),
       body: Center(
         child: Text(
-          'This is the Profile Page',
+          'This is the Identify Leaf Page',
           style: TextStyle(fontSize: 20),
         ),
       ),
