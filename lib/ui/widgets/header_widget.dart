@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 class HeaderWidget extends StatelessWidget implements PreferredSizeWidget {
+  const HeaderWidget({super.key});
   @override
   Widget build(BuildContext context) {
     return AppBar(
@@ -15,8 +16,8 @@ class HeaderWidget extends StatelessWidget implements PreferredSizeWidget {
             width: 24,  // Tambahkan width jika perlu agar logo tampil proporsional
             fit: BoxFit.contain, // Menjaga rasio logo agar tidak terdistorsi
           ),
-          SizedBox(width: 8),
-          Text(
+          const SizedBox(width: 8),
+          const Text(
             'TomaScan',
             style: TextStyle(
               color: Colors.black,
@@ -29,7 +30,7 @@ class HeaderWidget extends StatelessWidget implements PreferredSizeWidget {
       actions: [
         // Ikon Notifikasi
         IconButton(
-          icon: Icon(Icons.notifications_none, color: Colors.black),
+          icon: const Icon(Icons.notifications_none, color: Colors.black),
           onPressed: () {
             // Tambahkan aksi untuk notifikasi
           },

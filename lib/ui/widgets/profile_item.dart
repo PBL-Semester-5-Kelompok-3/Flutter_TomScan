@@ -4,26 +4,21 @@ class ProfileItem extends StatelessWidget {
   final IconData icon;
   final String label;
   final String value;
-  final VoidCallback onEdit;
+  final VoidCallback? onEdit; // Buat opsional agar bisa dihilangkan
 
-  ProfileItem({
+  const ProfileItem({super.key, 
     required this.icon,
     required this.label,
     required this.value,
-    required this.onEdit,
+    this.onEdit, // Ubah ke opsional
   });
 
-  // Menambahkan build method sebagai widget utama yang menampilkan ProfileItem
   @override
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         _buildProfileField(label, value, icon),
-        GestureDetector(
-          onTap: onEdit,
-          child: _buildSettingsItem("Edit Profile", Icons.edit),
-        ),
       ],
     );
   }
@@ -57,32 +52,13 @@ class ProfileItem extends StatelessWidget {
                   style: const TextStyle(fontSize: 16),
                 ),
               ),
-              Icon(Icons.edit, color: Colors.grey[400], size: 20),
+              if (onEdit != null) // Tampilkan ikon edit hanya jika ada onEdit
+                Icon(Icons.edit, color: Colors.grey[400], size: 20),
             ],
           ),
         ),
         const SizedBox(height: 16),
       ],
-    );
-  }
-
-  // Method untuk menampilkan item pengaturan
-  Widget _buildSettingsItem(String title, IconData icon) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8),
-      child: Row(
-        children: [
-          Icon(icon, color: Colors.black54),
-          const SizedBox(width: 16),
-          Expanded(
-            child: Text(
-              title,
-              style: const TextStyle(fontSize: 16),
-            ),
-          ),
-          const Icon(Icons.chevron_right, color: Colors.black54),
-        ],
-      ),
     );
   }
 }

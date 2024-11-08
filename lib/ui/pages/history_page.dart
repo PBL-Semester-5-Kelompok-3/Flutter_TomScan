@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 
 class HistoryPage extends StatelessWidget {
+  const HistoryPage({super.key});
+
   @override
   Widget build(BuildContext context) {
     return ListView(
-      padding: EdgeInsets.all(16),
+      padding: const EdgeInsets.all(16),
       children: [
         _buildHistoryItem(
           date: 'Today, Dec 23, 2024',
@@ -48,9 +50,9 @@ class HistoryPage extends StatelessWidget {
       children: [
         Text(
           date,
-          style: TextStyle(color: Colors.grey, fontSize: 12),
+          style: const TextStyle(color: Colors.grey, fontSize: 12),
         ),
-        SizedBox(height: 8),
+        const SizedBox(height: 8),
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -60,7 +62,7 @@ class HistoryPage extends StatelessWidget {
               height: 64,
               fit: BoxFit.cover,
             ),
-            SizedBox(width: 8),
+            const SizedBox(width: 8),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -69,27 +71,27 @@ class HistoryPage extends StatelessWidget {
                     children: [
                       Text(
                         title,
-                        style: TextStyle(
+                        style: const TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      SizedBox(width: 8),
+                      const SizedBox(width: 8),
                       ...tags.map((tag) => _buildTag(tag)).toList(),
                     ],
                   ),
-                  SizedBox(height: 4),
+                  const SizedBox(height: 4),
                   Text(
                     description,
-                    style: TextStyle(color: Colors.grey, fontSize: 12),
+                    style: const TextStyle(color: Colors.grey, fontSize: 12),
                   ),
                 ],
               ),
             ),
-            Icon(Icons.chevron_right, color: Colors.grey),
+            const Icon(Icons.chevron_right, color: Colors.grey),
           ],
         ),
-        Divider(height: 32),
+        const Divider(height: 32),
       ],
     );
   }
@@ -117,8 +119,8 @@ class HistoryPage extends StatelessWidget {
     }
 
     return Container(
-      margin: EdgeInsets.only(left: 4),
-      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      margin: const EdgeInsets.only(left: 4),
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
         color: bgColor,
         borderRadius: BorderRadius.circular(12),

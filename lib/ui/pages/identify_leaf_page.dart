@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class IdentifyLeafPage extends StatelessWidget {
-  const IdentifyLeafPage({Key? key}) : super(key: key);
+  const IdentifyLeafPage({super.key});
 
   @override
   Widget build(BuildContext context) {

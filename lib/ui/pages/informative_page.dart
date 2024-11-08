@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
 
 class InformativePage extends StatelessWidget {
+  const InformativePage({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: ListView(
-        padding: EdgeInsets.all(16),
+        padding: const EdgeInsets.all(16),
         children: [
           SectionHeader(title: 'Popular Article', onViewAll: () {}),
-          SizedBox(height: 8),
-          Row(
+          const SizedBox(height: 8),
+          const Row(
             children: [
               Expanded(
                 child: ArticleCard(
@@ -28,10 +30,10 @@ class InformativePage extends StatelessWidget {
               ),
             ],
           ),
-          SizedBox(height: 16),
+          const SizedBox(height: 16),
           SectionHeader(title: 'Care Education', onViewAll: () {}),
-          SizedBox(height: 8),
-          Wrap(
+          const SizedBox(height: 8),
+          const Wrap(
             spacing: 8,
             runSpacing: 8,
             children: [
@@ -44,20 +46,20 @@ class InformativePage extends StatelessWidget {
               EducationCard(icon: Icons.water, title: 'Irrigation'),
             ],
           ),
-          SizedBox(height: 16),
+          const SizedBox(height: 16),
           SectionHeader(title: 'Pests & Diseases', onViewAll: () {}),
-          SizedBox(height: 8),
+          const SizedBox(height: 8),
           GridView.builder(
-            physics: NeverScrollableScrollPhysics(),
+            physics: const NeverScrollableScrollPhysics(),
             shrinkWrap: true,
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 2,
               mainAxisSpacing: 8,
               crossAxisSpacing: 8,
               childAspectRatio: 2,
             ),
             itemCount: 4,
-            itemBuilder: (context, index) => ArticleCard(
+            itemBuilder: (context, index) => const ArticleCard(
               imageUrl:
                   'https://th.bing.com/th/id/OIP.HiwZb7pY_PaooR59RRIHBgHaGK?w=239&h=198&c=7&r=0&o=5&dpr=1.9&pid=1.7',
               title: "Croatia doubles tomato production with Podravka's...",
@@ -73,7 +75,7 @@ class SectionHeader extends StatelessWidget {
   final String title;
   final VoidCallback onViewAll;
 
-  const SectionHeader({required this.title, required this.onViewAll});
+  const SectionHeader({super.key, required this.title, required this.onViewAll});
 
   @override
   Widget build(BuildContext context) {
@@ -82,11 +84,11 @@ class SectionHeader extends StatelessWidget {
       children: [
         Text(
           title,
-          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
         ),
         GestureDetector(
           onTap: onViewAll,
-          child: Text(
+          child: const Text(
             'View all',
             style: TextStyle(fontSize: 14, color: Colors.green),
           ),
@@ -100,7 +102,7 @@ class ArticleCard extends StatelessWidget {
   final String imageUrl;
   final String title;
 
-  const ArticleCard({required this.imageUrl, required this.title});
+  const ArticleCard({super.key, required this.imageUrl, required this.title});
 
   @override
   Widget build(BuildContext context) {
@@ -117,17 +119,17 @@ class ArticleCard extends StatelessWidget {
         alignment: Alignment.bottomCenter,
         child: Container(
           width: double.infinity,
-          padding: EdgeInsets.all(4),
+          padding: const EdgeInsets.all(4),
           decoration: BoxDecoration(
             color: Colors.white.withOpacity(0.75),
-            borderRadius: BorderRadius.only(
+            borderRadius: const BorderRadius.only(
               bottomLeft: Radius.circular(8),
               bottomRight: Radius.circular(8),
             ),
           ),
           child: Text(
             title,
-            style: TextStyle(fontSize: 12),
+            style: const TextStyle(fontSize: 12),
             overflow: TextOverflow.ellipsis,
           ),
         ),
@@ -140,12 +142,12 @@ class EducationCard extends StatelessWidget {
   final IconData icon;
   final String title;
 
-  const EducationCard({required this.icon, required this.title});
+  const EducationCard({super.key, required this.icon, required this.title});
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.all(8),
+      padding: const EdgeInsets.all(8),
       decoration: BoxDecoration(
         color: Colors.green[100],
         borderRadius: BorderRadius.circular(8),
@@ -154,10 +156,10 @@ class EducationCard extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           Icon(icon, color: Colors.green),
-          SizedBox(width: 4),
+          const SizedBox(width: 4),
           Text(
             title,
-            style: TextStyle(color: Colors.green),
+            style: const TextStyle(color: Colors.green),
           ),
         ],
       ),

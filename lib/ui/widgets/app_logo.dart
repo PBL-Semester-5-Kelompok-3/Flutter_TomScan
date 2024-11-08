@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 class AppLogo extends StatelessWidget {
+  const AppLogo({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Row(
@@ -11,8 +13,8 @@ class AppLogo extends StatelessWidget {
           width: 24,
           height: 24,
         ),
-        SizedBox(width: 8),
-        Text(
+        const SizedBox(width: 8),
+        const Text(
           "TomaScan",
           style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
         ),

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:toma_scan/ui/widgets/profile_item.dart';
 
 class ProfilePage extends StatelessWidget {
-  const ProfilePage({Key? key}) : super(key: key);
+  const ProfilePage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -84,27 +84,36 @@ class ProfilePage extends StatelessWidget {
                 value: '************',
                 onEdit: () {},
               ),
-              const SizedBox(height: 20),
-              SizedBox(
-                width: double.infinity,
+             Center(
+              child: SizedBox(
+                width: 400,
+                height: 40, 
                 child: ElevatedButton(
                   onPressed: () {},
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFF00BF63),
-                    padding: const EdgeInsets.symmetric(vertical: 15),
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
+                      borderRadius: BorderRadius.circular(20), 
                     ),
                   ),
-                  child: const Text('Save'),
+                  child: const Center( 
+                    child: Text(
+                      'Save',
+                      style: TextStyle(color: Colors.white, fontSize: 16),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
                 ),
               ),
+            ),
               const SizedBox(height: 20),
               Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
                   color: Colors.green.shade50,
                   borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: Colors.green.shade200),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -117,25 +126,25 @@ class ProfilePage extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 16),
-                    ProfileItem(
-                      icon: Icons.description_outlined,
-                      label: 'Syarat dan Ketentuan',
-                      value: '',
-                      onEdit: () {},
+                    ListTile(
+                      leading: Icon(Icons.description_outlined, color: Colors.black54),
+                      title: const Text('Syarat dan Ketentuan'),
+                      trailing: const Icon(Icons.chevron_right, color: Colors.black54),
+                      onTap: () {},
                     ),
                     const Divider(),
-                    ProfileItem(
-                      icon: Icons.shield_outlined,
-                      label: 'Kebijakan Privasi',
-                      value: '',
-                      onEdit: () {},
+                    ListTile(
+                      leading: Icon(Icons.shield_outlined, color: Colors.black54),
+                      title: const Text('Kebijakan Privasi'),
+                      trailing: const Icon(Icons.chevron_right, color: Colors.black54),
+                      onTap: () {},
                     ),
                     const Divider(),
-                    ProfileItem(
-                      icon: Icons.help_outline,
-                      label: 'Pusat Bantuan',
-                      value: '',
-                      onEdit: () {},
+                    ListTile(
+                      leading: Icon(Icons.help_outline, color: Colors.black54),
+                      title: const Text('Pusat Bantuan'),
+                      trailing: const Icon(Icons.chevron_right, color: Colors.black54),
+                      onTap: () {},
                     ),
                     const SizedBox(height: 16),
                     Center(
@@ -150,7 +159,7 @@ class ProfilePage extends StatelessWidget {
                         ),
                       ),
                     ),
-                     const SizedBox(height: 16),
+                    const SizedBox(height: 16),
                     Center(
                       child: TextButton(
                         onPressed: () {},
