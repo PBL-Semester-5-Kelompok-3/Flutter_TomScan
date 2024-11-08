@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:toma_scan/shared/themes.dart';
+import 'home_page.dart'; // Pastikan untuk mengimpor halaman home
 
 class OnboardingPage extends StatefulWidget {
   const OnboardingPage({super.key});
@@ -39,6 +40,15 @@ class _OnboardingPageState extends State<OnboardingPage> {
         _carouselController.nextPage(); // Move to next slide
       }
     });
+  }
+
+  void _onSkip() {
+    // Navigasi ke halaman home
+    Navigator.of(context).pushReplacement(
+      MaterialPageRoute(
+          builder: (context) =>
+              HomePage()), // Ganti dengan nama kelas HomePage yang sesuai
+    );
   }
 
   @override
@@ -82,6 +92,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                     title: titles[currentIndex],
                     subtitle: subtitles[currentIndex],
                     onContinue: _onContinue,
+                    onSkip: _onSkip, // Tambahkan parameter untuk onSkip
                   ),
                 ],
               ),
@@ -98,6 +109,7 @@ class OnboardingOverlay extends StatelessWidget {
   final String title;
   final String subtitle;
   final VoidCallback onContinue;
+  final VoidCallback onSkip; // Tambahkan parameter untuk onSkip
 
   const OnboardingOverlay({
     super.key,
@@ -105,6 +117,7 @@ class OnboardingOverlay extends StatelessWidget {
     required this.title,
     required this.subtitle,
     required this.onContinue,
+    required this.onSkip, // Tambahkan parameter ini
   });
 
   @override
@@ -162,7 +175,7 @@ class OnboardingOverlay extends StatelessWidget {
               children: [
                 Expanded(
                   child: ElevatedButton(
-                    onPressed: () {},
+                    onPressed: onSkip, // Panggil fungsi onSkip
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xffEBF8F3),
                     ),
