@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'history_page.dart';
-import 'identify_leaf_page.dart';
+// import 'identify_leaf_page.dart';
 import 'profile_page.dart';
 import 'informative_page.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -17,17 +17,22 @@ class _HomePageState extends State<HomePage> {
 
   // Daftar halaman yang sudah dibuat
   final List<Widget> _pages = [
-    HomeContent(), // Home content
+    const HomeContent(), // Home content
     InformativePage(), // Halaman Informative
-    IdentifyLeafPage(), // Halaman Identify Leaf
     HistoryPage(), // Halaman History
-    ProfilePage(), // Halaman Profile
+    const ProfilePage(), // Halaman Profile
   ];
 
   void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
+    if (index == 2) {
+      // Navigasi ke halaman kamera dengan layar penuh
+      Navigator.pushNamed(context, '/camera');
+    } else {
+      // Mengubah indeks yang dipilih jika bukan tombol kamera
+      setState(() {
+        _selectedIndex = index;
+      });
+    }
   }
 
   @override
@@ -89,7 +94,7 @@ class _HomePageState extends State<HomePage> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   MaterialButton(
                     minWidth: 40,
@@ -126,7 +131,7 @@ class _HomePageState extends State<HomePage> {
                           size: 20,
                         ),
                         Text(
-                          'Home',
+                          'Informatif',
                           style: TextStyle(
                               color: _selectedIndex == 1
                                   ? Colors.green
@@ -138,7 +143,7 @@ class _HomePageState extends State<HomePage> {
                 ],
               ),
               Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   MaterialButton(
                     minWidth: 40,
@@ -153,7 +158,7 @@ class _HomePageState extends State<HomePage> {
                           size: 20,
                         ),
                         Text(
-                          'Home',
+                          'History',
                           style: TextStyle(
                               color: _selectedIndex == 3
                                   ? Colors.green
@@ -196,14 +201,16 @@ class _HomePageState extends State<HomePage> {
 
 // Content for the Home tab as a placeholder
 class HomeContent extends StatelessWidget {
+  const HomeContent({super.key});
+
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
       child: Column(
         children: [
           Container(
-            margin: EdgeInsets.all(16),
-            padding: EdgeInsets.all(16),
+            margin: const EdgeInsets.all(16),
+            padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
               color: Colors.green[50],
               borderRadius: BorderRadius.circular(12),
@@ -212,9 +219,9 @@ class HomeContent extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 _buildStep(Icons.camera_alt, 'Take a picture'),
-                Icon(Icons.arrow_forward, color: Colors.grey),
+                const Icon(Icons.arrow_forward, color: Colors.grey),
                 _buildStep(Icons.mobile_friendly, 'See Diagnosis'),
-                Icon(Icons.arrow_forward, color: Colors.grey),
+                const Icon(Icons.arrow_forward, color: Colors.grey),
                 _buildStep(Icons.local_pharmacy, 'Get Medicine'),
               ],
             ),
@@ -232,10 +239,10 @@ class HomeContent extends StatelessWidget {
     return Column(
       children: [
         Icon(icon, color: Colors.green, size: 32),
-        SizedBox(height: 8),
+        const SizedBox(height: 8),
         Text(
           label,
-          style: TextStyle(color: Colors.green, fontSize: 12),
+          style: const TextStyle(color: Colors.green, fontSize: 12),
         ),
       ],
     );
@@ -249,11 +256,11 @@ class HomeContent extends StatelessWidget {
         children: [
           Text(
             title,
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
           GestureDetector(
             onTap: onViewAll,
-            child: Text(
+            child: const Text(
               'View all',
               style: TextStyle(color: Colors.green, fontSize: 14),
             ),
@@ -269,7 +276,7 @@ class HomeContent extends StatelessWidget {
       child: Row(
         children: [
           _buildArticleCard(),
-          SizedBox(width: 16),
+          const SizedBox(width: 16),
           _buildArticleCard(),
         ],
       ),
@@ -289,8 +296,8 @@ class HomeContent extends StatelessWidget {
               fit: BoxFit.cover,
             ),
           ),
-          SizedBox(height: 8),
-          Text(
+          const SizedBox(height: 8),
+          const Text(
             'Croatia doubles tomato production with Podravka\'s...',
             style: TextStyle(fontSize: 14),
           ),
@@ -306,8 +313,8 @@ class HomeContent extends StatelessWidget {
   }
 
   Widget _buildDetectionItem() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+    return const Padding(
+      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: Row(
         children: [
           CircleAvatar(
