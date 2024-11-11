@@ -1,13 +1,14 @@
 import 'dart:async'; // For Future.delayed
 import 'package:flutter/material.dart';
-import 'ui/pages/home_page.dart'; // Import halaman utama
 
 class SplashScreen extends StatefulWidget {
+  const SplashScreen({super.key});
+
   @override
-  _SplashScreenState createState() => _SplashScreenState();
+  SplashScreenState createState() => SplashScreenState();
 }
 
-class _SplashScreenState extends State<SplashScreen> {
+class SplashScreenState extends State<SplashScreen> {
   // Control for opacity and size animation
   double _logoSize = 100;
   double _logoOpacity = 0.0;
@@ -17,19 +18,19 @@ class _SplashScreenState extends State<SplashScreen> {
     super.initState();
     _startAnimation(); // Start animation when splash screen loads
 
-    // Navigate to the HomePage after 3 seconds
-    Future.delayed(Duration(seconds: 3), () {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-            builder: (context) => HomePage()), // Redirect to HomePage
-      );
+    // Navigate to the HomePage after 3 seconds, checking if widget is mounted
+    Future.delayed(const Duration(seconds: 3), () {
+      if (mounted) {
+        // Check if widget is still in the widget tree
+        Navigator.pushNamedAndRemoveUntil(
+            context, '/onboarding_page', (route) => false);
+      }
     });
   }
 
   // Start animation by setting new size and opacity values
   void _startAnimation() {
-    Future.delayed(Duration(milliseconds: 500), () {
+    Future.delayed(const Duration(milliseconds: 500), () {
       setState(() {
         _logoSize = 200; // Grow the logo size
         _logoOpacity = 1.0; // Fade in the logo
@@ -46,21 +47,23 @@ class _SplashScreenState extends State<SplashScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             AnimatedContainer(
-              duration: Duration(seconds: 2), // Animation duration
+              duration: const Duration(seconds: 2), // Animation duration
               curve: Curves.easeInOut, // Smooth animation curve
               height: _logoSize,
               width: _logoSize,
               child: AnimatedOpacity(
-                duration: Duration(seconds: 2), // Animation duration for opacity
+                duration: const Duration(
+                    seconds: 2), // Animation duration for opacity
                 opacity: _logoOpacity,
-                child: Image.asset('assets/icon.png'), // Replace with your app logo
+                child: Image.asset(
+                    'assets/icon.png'), // Replace with your app logo
               ),
             ),
-            SizedBox(height: 20), // Space between logo and text
+            const SizedBox(height: 20), // Space between logo and text
             AnimatedOpacity(
-              duration: Duration(seconds: 2),
+              duration: const Duration(seconds: 2),
               opacity: _logoOpacity,
-              child: Text(
+              child: const Text(
                 'TomaScan',
                 style: TextStyle(
                   fontSize: 30, // Font size for the text

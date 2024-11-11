@@ -12,6 +12,7 @@ Color purpleColor = const Color(0xff5142E6);
 Color greenColor = const Color(0xff22B07D);
 Color numberBackgroundColor = const Color(0xff1A1D2E);
 Color redColor = const Color(0xffFF2566);
+Color primaryColor = const Color(0xff00A86B);
 
 TextStyle blackTextStyle = GoogleFonts.dmSans(
   color: blackColor,
