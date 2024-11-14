@@ -1,6 +1,7 @@
+import 'dart:io';
+
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
-import 'package:toma_scan/ui/pages/identify_leaf_page.dart';
 
 late List<CameraDescription> _cameras;
 
@@ -60,6 +61,7 @@ class _IdentifyLeafPageState extends State<IdentifyLeafPage> {
       return Container();
     }
 
+    bool _showDialog = false;
     return Scaffold(
       backgroundColor: const Color(0xFFE5E2D3),
       body: SafeArea(
@@ -72,24 +74,23 @@ class _IdentifyLeafPageState extends State<IdentifyLeafPage> {
                 children: [
                   // Back button
                   Container(
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(50),
-                        boxShadow: const [
-                          BoxShadow(
-                            color: Colors.black12,
-                            blurRadius: 6,
-                            offset: Offset(0, 2),
-                          ),
-                        ],
-                      ),
-                      child: IconButton(
-                        icon: const Icon(Icons.arrow_back),
-                        onPressed: () {
-                          Navigator.pushReplacementNamed(
-                              context, '/home'); // Use '/home' route
-                        },
-                      )),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(50),
+                      boxShadow: const [
+                        BoxShadow(
+                          color: Colors.black12,
+                          blurRadius: 6,
+                          offset: Offset(0, 2),
+                        ),
+                      ],
+                    ),
+                    child: IconButton(
+                      icon: const Icon(Icons.arrow_back, color: Colors.black),
+                      onPressed: () =>
+                          Navigator.pushReplacementNamed(context, '/home'),
+                    ),
+                  ),
                   const Expanded(
                     child: Column(
                       children: [
@@ -179,15 +180,75 @@ class _IdentifyLeafPageState extends State<IdentifyLeafPage> {
                     child: const Icon(Icons.photo_library_outlined),
                   ),
                   // Capture button
-                  Container(
-                    height: 72,
-                    width: 72,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      shape: BoxShape.circle,
-                      border: Border.all(
-                        color: Colors.black12,
-                        width: 4,
+                  GestureDetector(
+                    onTap: () async {
+                      try {
+                        // Capture an image
+                        final pickedFile = await _controller.takePicture();
+
+                        // Show the label prompt and set the _showDialog state
+                        setState(() {
+                          _showDialog = true;
+                        });
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            String labelText = '';
+                            return AlertDialog(
+                              title: const Text('Name the label?'),
+                              content: TextField(
+                                onChanged: (value) {
+                                  labelText = value;
+                                },
+                                decoration: const InputDecoration(
+                                  hintText: 'Type the label name...',
+                                ),
+                              ),
+                              actions: [
+                                TextButton(
+                                  child: const Text('Cancel'),
+                                  onPressed: () {
+                                    // Close the dialog, reset the _showDialog state, and resume the camera
+                                    setState(() {
+                                      _showDialog = false;
+                                    });
+                                    Navigator.of(context).pop();
+                                    _controller.resumePreview();
+                                  },
+                                ),
+                                TextButton(
+                                  child: const Text('Accept'),
+                                  onPressed: () {
+                                    // Accept the label text, close the dialog, and reset the _showDialog state
+                                    setState(() {
+                                      _showDialog = false;
+                                    });
+                                    Navigator.of(context).pop();
+                                    // Do something with the label text, e.g. save it
+                                    print('Label text: $labelText');
+                                  },
+                                ),
+                              ],
+                            );
+                          },
+                        );
+
+                        // Pause the camera preview while the dialog is open
+                        _controller.pausePreview();
+                      } catch (e) {
+                        print('Error capturing image: $e');
+                      }
+                    },
+                    child: Container(
+                      height: 72,
+                      width: 72,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        shape: BoxShape.circle,
+                        border: Border.all(
+                          color: Colors.black12,
+                          width: 4,
+                        ),
                       ),
                     ),
                   ),
