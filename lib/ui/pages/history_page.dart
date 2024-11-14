@@ -77,7 +77,7 @@ class HistoryPage extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(width: 8),
-                      ...tags.map((tag) => _buildTag(tag)).toList(),
+                      ...tags.map((tag) => _buildTag(tag)),
                     ],
                   ),
                   const SizedBox(height: 4),

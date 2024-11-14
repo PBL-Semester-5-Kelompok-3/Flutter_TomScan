@@ -47,7 +47,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
     Navigator.of(context).pushReplacement(
       MaterialPageRoute(
           builder: (context) =>
-              HomePage()), // Ganti dengan nama kelas HomePage yang sesuai
+              const HomePage()), // Ganti dengan nama kelas HomePage yang sesuai
     );
   }
 
