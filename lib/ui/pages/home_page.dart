@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:toma_scan/ui/pages/camera.dart';
 import 'history_page.dart';
 // import 'identify_leaf_page.dart';
 import 'profile_page.dart';
@@ -19,6 +20,7 @@ class _HomePageState extends State<HomePage> {
   final List<Widget> _pages = [
     const HomeContent(), // Home content
     const InformativePage(), // Halaman Informative
+    const HistoryPage(), // Halaman History
     const HistoryPage(), // Halaman History
     const ProfilePage(), // Halaman Profile
   ];
