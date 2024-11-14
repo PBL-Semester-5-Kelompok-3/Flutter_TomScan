@@ -1,5 +1,6 @@
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
+import 'package:toma_scan/ui/pages/identify_leaf_page.dart';
 
 late List<CameraDescription> _cameras;
 
@@ -71,23 +72,24 @@ class _IdentifyLeafPageState extends State<IdentifyLeafPage> {
                 children: [
                   // Back button
                   Container(
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(50),
-                      boxShadow: const [
-                        BoxShadow(
-                          color: Colors.black12,
-                          blurRadius: 6,
-                          offset: Offset(0, 2),
-                        ),
-                      ],
-                    ),
-                    child: IconButton(
-                      icon: const Icon(Icons.arrow_back, color: Colors.black),
-                      onPressed: () =>
-                          Navigator.pushReplacementNamed(context, '/home'),
-                    ),
-                  ),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(50),
+                        boxShadow: const [
+                          BoxShadow(
+                            color: Colors.black12,
+                            blurRadius: 6,
+                            offset: Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                      child: IconButton(
+                        icon: const Icon(Icons.arrow_back),
+                        onPressed: () {
+                          Navigator.pushReplacementNamed(
+                              context, '/home'); // Use '/home' route
+                        },
+                      )),
                   const Expanded(
                     child: Column(
                       children: [
