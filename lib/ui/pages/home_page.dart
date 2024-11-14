@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'history_page.dart';
-import 'identify_leaf_page.dart';
+// import 'identify_leaf_page.dart';
 import 'profile_page.dart';
 import 'informative_page.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -17,17 +17,22 @@ class _HomePageState extends State<HomePage> {
 
   // Daftar halaman yang sudah dibuat
   final List<Widget> _pages = [
-    HomeContent(), // Home content
+    const HomeContent(), // Home content
     const InformativePage(), // Halaman Informative
-    const IdentifyLeafPage(), // Halaman Identify Leaf
     const HistoryPage(), // Halaman History
     const ProfilePage(), // Halaman Profile
   ];
 
   void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
+    if (index == 2) {
+      // Navigasi ke halaman kamera dengan layar penuh
+      Navigator.pushNamed(context, '/camera');
+    } else {
+      // Mengubah indeks yang dipilih jika bukan tombol kamera
+      setState(() {
+        _selectedIndex = index;
+      });
+    }
   }
 
   @override
@@ -89,7 +94,7 @@ class _HomePageState extends State<HomePage> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   MaterialButton(
                     minWidth: 40,
@@ -126,7 +131,7 @@ class _HomePageState extends State<HomePage> {
                           size: 20,
                         ),
                         Text(
-                          'Home',
+                          'Informatif',
                           style: TextStyle(
                               color: _selectedIndex == 1
                                   ? Colors.green
@@ -138,7 +143,7 @@ class _HomePageState extends State<HomePage> {
                 ],
               ),
               Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   MaterialButton(
                     minWidth: 40,
@@ -153,7 +158,7 @@ class _HomePageState extends State<HomePage> {
                           size: 20,
                         ),
                         Text(
-                          'Home',
+                          'History',
                           style: TextStyle(
                               color: _selectedIndex == 3
                                   ? Colors.green
