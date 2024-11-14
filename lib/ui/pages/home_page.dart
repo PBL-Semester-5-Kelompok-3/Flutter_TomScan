@@ -126,7 +126,7 @@ class _HomePageState extends State<HomePage> {
                           size: 20,
                         ),
                         Text(
-                          'Home',
+                          'Informatif',
                           style: TextStyle(
                               color: _selectedIndex == 1
                                   ? Colors.green
@@ -153,7 +153,7 @@ class _HomePageState extends State<HomePage> {
                           size: 20,
                         ),
                         Text(
-                          'Home',
+                          'History',
                           style: TextStyle(
                               color: _selectedIndex == 3
                                   ? Colors.green
@@ -306,8 +306,8 @@ class HomeContent extends StatelessWidget {
   }
 
   Widget _buildDetectionItem() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+    return const Padding(
+      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: Row(
         children: [
           CircleAvatar(

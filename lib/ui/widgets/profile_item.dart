@@ -1,64 +1,67 @@
+// profile_item.dart
 import 'package:flutter/material.dart';
 
 class ProfileItem extends StatelessWidget {
   final IconData icon;
   final String label;
   final String value;
-  final VoidCallback? onEdit; // Buat opsional agar bisa dihilangkan
+  final VoidCallback onEdit;
 
-  const ProfileItem({super.key, 
+  const ProfileItem({
+    super.key,
     required this.icon,
     required this.label,
     required this.value,
-    this.onEdit, // Ubah ke opsional
+    required this.onEdit,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        _buildProfileField(label, value, icon),
-      ],
-    );
-  }
-
-  // Method untuk menampilkan informasi profil
-  Widget _buildProfileField(String label, String value, IconData icon) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          label,
-          style: TextStyle(
-            fontSize: 14,
-            color: Colors.green[400],
-          ),
-        ),
-        const SizedBox(height: 8),
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-          decoration: BoxDecoration(
-            color: Colors.grey[100],
-            borderRadius: BorderRadius.circular(8),
-          ),
-          child: Row(
-            children: [
-              Icon(icon, color: Colors.grey),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Text(
-                  value,
-                  style: const TextStyle(fontSize: 16),
-                ),
+    return Container(
+      margin: const EdgeInsets.only(bottom: 16),
+      child: InkWell( // Tambahkan InkWell di sini
+        onTap: onEdit, // Seluruh area bisa diklik
+        child: Row(
+          children: [
+            Icon(
+              icon,
+              color: Colors.black54,
+              size: 24,
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    label,
+                    style: const TextStyle(
+                      fontSize: 14,
+                      color: Colors.black54,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    value.isEmpty ? '••••••••' : value,
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ],
               ),
-              if (onEdit != null) // Tampilkan ikon edit hanya jika ada onEdit
-                Icon(Icons.edit, color: Colors.grey[400], size: 20),
-            ],
-          ),
+            ),
+            IconButton(
+              icon: const Icon(
+                Icons.edit,
+                color: Color(0xFF00BF63),
+                size: 20,
+              ),
+              onPressed: onEdit,
+            ),
+          ],
         ),
-        const SizedBox(height: 16),
-      ],
+      ),
     );
   }
 }
