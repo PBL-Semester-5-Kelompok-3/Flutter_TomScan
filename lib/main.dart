@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:toma_scan/ui/pages/home_page.dart';
 import 'package:toma_scan/ui/pages/onboarding_page.dart';
 import 'package:toma_scan/ui/pages/camera.dart';
+import 'package:toma_scan/ui/pages/notification_page.dart';
 import 'splash_screen.dart';
 
 late List<CameraDescription> cameras;
