@@ -84,7 +84,7 @@ class DetailAnalysisPage extends StatelessWidget {
                       ),
                     ),
                     child: const Text(
-                      'Got it',
+                      'Save to My Garden',
                       style: TextStyle(color: Colors.white),
                     ),
                   ),
@@ -311,7 +311,7 @@ class DetailAnalysisPage extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Image.asset('assets/leaf_icon.png', width: 24, height: 24),
+          Image.asset('assets/leaf_icon.png', width: 100, height: 100),
           const SizedBox(width: 12),
           Expanded(
             child: Column(

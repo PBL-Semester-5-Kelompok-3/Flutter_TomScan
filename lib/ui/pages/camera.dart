@@ -187,10 +187,13 @@ class _IdentifyLeafPageState extends State<IdentifyLeafPage> {
                         // Capture an image
                         final pickedFile = await _controller.takePicture();
 
-                        // Show the label prompt and set the _showDialog state
+                        // Pause the camera preview while the dialog is open
+                        _controller.pausePreview();
+
                         setState(() {
                           _showDialog = true;
                         });
+
                         showDialog(
                           context: context,
                           builder: (BuildContext context) {
@@ -214,13 +217,19 @@ class _IdentifyLeafPageState extends State<IdentifyLeafPage> {
                                       _showDialog = false;
                                     });
                                     Navigator.of(context).pop();
-                                    _controller.resumePreview();
+                                    _controller
+                                        .resumePreview(); // Resume preview on Cancel
                                   },
                                 ),
                                 TextButton(
                                   child: const Text('Accept'),
                                   onPressed: () {
+                                    setState(() {
+                                      _showDialog = false;
+                                    });
                                     Navigator.of(context).pop();
+                                    _controller
+                                        .resumePreview(); // Resume preview on Accept
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute(
@@ -236,17 +245,12 @@ class _IdentifyLeafPageState extends State<IdentifyLeafPage> {
                                         ),
                                       ),
                                     );
-                                    setState(() {
-                                      _showDialog = false;
-                                    });
                                   },
                                 ),
                               ],
                             );
                           },
                         );
-                        // Pause the camera preview while the dialog is open
-                        _controller.pausePreview();
                       } catch (e) {
                         print('Error capturing image: $e');
                       }
@@ -264,7 +268,6 @@ class _IdentifyLeafPageState extends State<IdentifyLeafPage> {
                       ),
                     ),
                   ),
-                  // Flash button
                   Container(
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
