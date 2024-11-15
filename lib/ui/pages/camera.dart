@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
+import 'package:toma_scan/ui/pages/analysis_page.dart';
 
 late List<CameraDescription> _cameras;
 
@@ -219,20 +220,31 @@ class _IdentifyLeafPageState extends State<IdentifyLeafPage> {
                                 TextButton(
                                   child: const Text('Accept'),
                                   onPressed: () {
-                                    // Accept the label text, close the dialog, and reset the _showDialog state
+                                    Navigator.of(context).pop();
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                            DetailAnalysisPage(
+                                          title: labelText,
+                                          tags: [
+                                            'Nutrisi',
+                                            'Penyiraman',
+                                            'Penyakit'
+                                          ],
+                                          imageUrl: pickedFile.path,
+                                        ),
+                                      ),
+                                    );
                                     setState(() {
                                       _showDialog = false;
                                     });
-                                    Navigator.of(context).pop();
-                                    // Do something with the label text, e.g. save it
-                                    print('Label text: $labelText');
                                   },
                                 ),
                               ],
                             );
                           },
                         );
-
                         // Pause the camera preview while the dialog is open
                         _controller.pausePreview();
                       } catch (e) {
