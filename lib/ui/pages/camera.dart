@@ -88,8 +88,7 @@ class _IdentifyLeafPageState extends State<IdentifyLeafPage> {
                     ),
                     child: IconButton(
                       icon: const Icon(Icons.arrow_back, color: Colors.black),
-                      onPressed: () =>
-                          Navigator.pushReplacementNamed(context, '/home'),
+                      onPressed: () => Navigator.pushNamed(context, '/home'),
                     ),
                   ),
                   const Expanded(

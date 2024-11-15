@@ -97,7 +97,7 @@ class DetailAnalysisPage extends StatelessWidget {
     final result = await _showSaveConfirmation(context);
 
     if (result == true) {
-      Navigator.pushNamed(context, '/camera');
+      Navigator.pushNamed(context, '/home');
     }
   }
 
