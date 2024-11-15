@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:toma_scan/shared/themes.dart';
+import 'package:toma_scan/ui/pages/get_started.dart';
 import 'home_page.dart'; // Pastikan untuk mengimpor halaman home
 
 class OnboardingPage extends StatefulWidget {
@@ -46,8 +47,8 @@ class _OnboardingPageState extends State<OnboardingPage> {
     // Navigasi ke halaman home
     Navigator.of(context).pushReplacement(
       MaterialPageRoute(
-          builder: (context) =>
-              const HomePage()), // Ganti dengan nama kelas HomePage yang sesuai
+        builder: (context) => const LoginScreen(),
+      ), // Ganti dengan nama kelas HomePage yang sesuai
     );
   }
 
