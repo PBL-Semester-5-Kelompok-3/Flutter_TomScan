@@ -1,5 +1,6 @@
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 
 late List<CameraDescription> _cameras;
 
@@ -20,8 +21,8 @@ class CameraApp extends StatefulWidget {
 
 class _CameraAppState extends State<CameraApp> {
   late CameraController _controller;
-  final GlobalKey _cameraPreviewKey =
-      GlobalKey(); // GlobalKey to access container
+  final GlobalKey _cameraPreviewKey = GlobalKey();
+  bool _isFlashOn = false; // To track flash status
 
   @override
   void initState() {
@@ -39,6 +40,28 @@ class _CameraAppState extends State<CameraApp> {
     super.dispose();
   }
 
+  // Toggle flash mode
+  void _toggleFlash() async {
+    if (_controller.value.isInitialized) {
+      setState(() {
+        _isFlashOn = !_isFlashOn;
+      });
+      await _controller.setFlashMode(
+        _isFlashOn ? FlashMode.torch : FlashMode.off,
+      );
+    }
+  }
+
+  // Open gallery to select image
+  Future<void> _openGallery() async {
+    final picker = ImagePicker();
+    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+    if (pickedFile != null) {
+      // Handle the picked image (e.g., display it or process it)
+      debugPrint('Selected image path: ${pickedFile.path}');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     if (!_controller.value.isInitialized) {
@@ -52,12 +75,10 @@ class _CameraAppState extends State<CameraApp> {
         body: SafeArea(
           child: Column(
             children: [
-              // Header with back button and title
               Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: Row(
                   children: [
-                    // Back button
                     Container(
                       decoration: BoxDecoration(
                         color: Colors.white,
@@ -103,18 +124,16 @@ class _CameraAppState extends State<CameraApp> {
               const SizedBox(
                 height: 100,
               ),
-              // Camera preview area with rounded frame and padding
               Expanded(
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 24.0),
                   child: Stack(
                     alignment: Alignment.center,
                     children: [
-                      // Camera preview with padding inside the border
                       Padding(
-                        padding: const EdgeInsets.all(20.0), // Adding padding
+                        padding: const EdgeInsets.all(20.0),
                         child: ClipRRect(
-                          key: _cameraPreviewKey, // Use the GlobalKey here
+                          key: _cameraPreviewKey,
                           borderRadius: BorderRadius.circular(24),
                           child: AspectRatio(
                             aspectRatio: 3 / 4,
@@ -122,7 +141,6 @@ class _CameraAppState extends State<CameraApp> {
                           ),
                         ),
                       ),
-                      // Border overlay with only rounded corners
                       Positioned.fill(
                         child: LayoutBuilder(
                           builder: (context, constraints) {
@@ -139,7 +157,6 @@ class _CameraAppState extends State<CameraApp> {
                   ),
                 ),
               ),
-              // Bottom controls
               const SizedBox(
                 height: 100,
               ),
@@ -150,22 +167,24 @@ class _CameraAppState extends State<CameraApp> {
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
                     // Gallery button
-                    Container(
-                      padding: const EdgeInsets.all(12),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(50),
-                        boxShadow: const [
-                          BoxShadow(
-                            color: Colors.black12,
-                            blurRadius: 6,
-                            offset: Offset(0, 2),
-                          ),
-                        ],
+                    GestureDetector(
+                      onTap: _openGallery, // Open gallery on tap
+                      child: Container(
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(50),
+                          boxShadow: const [
+                            BoxShadow(
+                              color: Colors.black12,
+                              blurRadius: 6,
+                              offset: Offset(0, 2),
+                            ),
+                          ],
+                        ),
+                        child: const Icon(Icons.photo_library_outlined),
                       ),
-                      child: const Icon(Icons.photo_library_outlined),
                     ),
-                    // Capture button
                     Container(
                       height: 72,
                       width: 72,
@@ -179,20 +198,24 @@ class _CameraAppState extends State<CameraApp> {
                       ),
                     ),
                     // Flash button
-                    Container(
-                      padding: const EdgeInsets.all(12),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(50),
-                        boxShadow: const [
-                          BoxShadow(
-                            color: Colors.black12,
-                            blurRadius: 6,
-                            offset: Offset(0, 2),
-                          ),
-                        ],
+                    GestureDetector(
+                      onTap: _toggleFlash, // Toggle flash on tap
+                      child: Container(
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(50),
+                          boxShadow: const [
+                            BoxShadow(
+                              color: Colors.black12,
+                              blurRadius: 6,
+                              offset: Offset(0, 2),
+                            ),
+                          ],
+                        ),
+                        child:
+                            Icon(_isFlashOn ? Icons.flash_on : Icons.flash_off),
                       ),
-                      child: const Icon(Icons.flash_off),
                     ),
                   ],
                 ),
@@ -221,21 +244,17 @@ class BorderPainter extends CustomPainter {
     const radius = 24.0;
     const length = 40.0;
 
-    // Draw top-left corner
     canvas.drawLine(const Offset(0, radius), const Offset(0, length), paint);
     canvas.drawLine(const Offset(radius, 0), const Offset(length, 0), paint);
 
-    // Draw top-right corner
     canvas.drawLine(
         Offset(width - length, 0), Offset(width - radius, 0), paint);
     canvas.drawLine(Offset(width, radius), Offset(width, length), paint);
 
-    // Draw bottom-left corner
     canvas.drawLine(
         Offset(0, height - length), Offset(0, height - radius), paint);
     canvas.drawLine(Offset(radius, height), Offset(length, height), paint);
 
-    // Draw bottom-right corner
     canvas.drawLine(
         Offset(width - length, height), Offset(width - radius, height), paint);
     canvas.drawLine(
