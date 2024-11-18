@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:toma_scan/shared/themes.dart';
-import 'package:toma_scan/ui/pages/get_started.dart';
 
 class OnboardingPage extends StatefulWidget {
   const OnboardingPage({super.key});
@@ -28,9 +27,9 @@ class _OnboardingPageState extends State<OnboardingPage> {
   ];
 
   List<String> images = [
-    'assets/iPhone_gray.png',
-    'assets/iPhone_gray.png',
-    'assets/iPhone_gray.png',
+    'assets/images/onboarding1.png',
+    'assets/images/onboarding2.png',
+    'assets/images/onboarding3.png',
   ];
 
   void _onContinue() {
@@ -44,11 +43,8 @@ class _OnboardingPageState extends State<OnboardingPage> {
 
   void _onSkip() {
     // Navigasi ke halaman home
-    Navigator.of(context).pushReplacement(
-      MaterialPageRoute(
-        builder: (context) => const LoginScreen(),
-      ), // Ganti dengan nama kelas HomePage yang sesuai
-    );
+    Navigator.pushNamedAndRemoveUntil(
+        context, '/get-started', (route) => false);
   }
 
   @override
@@ -193,7 +189,7 @@ class OnboardingOverlay extends StatelessWidget {
                     onPressed: () {
                       if (currentIndex == 2) {
                         Navigator.pushNamedAndRemoveUntil(
-                            context, '/home', (route) => false);
+                            context, '/get-started', (route) => false);
                       } else {
                         onContinue();
                       }

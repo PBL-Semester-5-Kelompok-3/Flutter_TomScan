@@ -41,12 +41,15 @@ class SocialLoginButton extends StatelessWidget {
               height: 24,
               width: 24,
             ),
-            const SizedBox(width: 12),
-            Text(
-              text,
-              style: const TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w500,
+            Expanded(
+              child: Center(
+                child: Text(
+                  text,
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
               ),
             ),
           ],
@@ -100,90 +103,96 @@ class CustomButton extends StatelessWidget {
 }
 
 // lib/screens/login_screen.dart
-class LoginScreen extends StatelessWidget {
-  const LoginScreen({super.key});
+class GetStarted extends StatelessWidget {
+  const GetStarted({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(24.0),
-          child: Column(
-            children: [
-              const SizedBox(height: 40),
-              Image.asset(
-                'assets/images/logo.png',
-                height: 50,
-                width: 50,
-              ),
-              const SizedBox(height: 24),
-              const Text(
-                "Let's Get Started!",
-                style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
+        child: Expanded(
+          child: Padding(
+            padding: const EdgeInsets.all(24.0),
+            child: Column(
+              children: [
+                const SizedBox(height: 40),
+                Image.asset(
+                  'assets/images/logo.png',
+                  height: 80,
+                  width: 80,
                 ),
-              ),
-              const SizedBox(height: 8),
-              Text(
-                "Let's dive in into your account",
-                style: TextStyle(
-                  fontSize: 16,
-                  color: Colors.grey[600],
+                const SizedBox(height: 60),
+                const Text(
+                  "Let's Get Started!",
+                  style: TextStyle(
+                    fontSize: 29,
+                    fontWeight: FontWeight.w700,
+                  ),
                 ),
-              ),
-              const SizedBox(height: 32),
-              SocialLoginButton(
-                text: 'Continue with Google',
-                iconPath: 'assets/icons/google.png',
-                onPressed: () {},
-              ),
-              SocialLoginButton(
-                text: 'Continue with Apple',
-                iconPath: 'assets/icons/apple.png',
-                onPressed: () {},
-              ),
-              SocialLoginButton(
-                text: 'Continue with Facebook',
-                iconPath: 'assets/icons/facebook.png',
-                onPressed: () {},
-              ),
-              SocialLoginButton(
-                text: 'Continue with Twitter',
-                iconPath: 'assets/icons/twitter.png',
-                onPressed: () {},
-              ),
-              const SizedBox(height: 24),
-              CustomButton(
-                backgroundColor: const Color(0xff00A86B),
-                textColor: const Color(0xffFFFFFF),
-                text: 'Sign up',
-                onPressed: () {},
-              ),
-              const SizedBox(height: 16),
-              CustomButton(
-                text: 'Log in',
-                backgroundColor: const Color(0xffEAF7F2),
-                textColor: const Color(0xFF00A86B),
-                onPressed: () {},
-              ),
-              const Spacer(),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  TextButton(
-                    onPressed: () {},
-                    child: const Text('Privacy Policy'),
+                const SizedBox(height: 25),
+                Text(
+                  "Let's dive in into your account",
+                  style: TextStyle(
+                    fontSize: 17,
+                    color: Colors.grey[600],
                   ),
-                  const Text('•'),
-                  TextButton(
-                    onPressed: () {},
-                    child: const Text('Terms of Service'),
-                  ),
-                ],
-              ),
-            ],
+                ),
+                const SizedBox(height: 52),
+                SocialLoginButton(
+                  text: 'Continue with Google',
+                  iconPath: 'assets/icons/google.png',
+                  onPressed: () {},
+                ),
+                SocialLoginButton(
+                  text: 'Continue with Apple',
+                  iconPath: 'assets/icons/apple.png',
+                  onPressed: () {},
+                ),
+                SocialLoginButton(
+                  text: 'Continue with Facebook',
+                  iconPath: 'assets/icons/facebook.png',
+                  onPressed: () {},
+                ),
+                SocialLoginButton(
+                  text: 'Continue with Twitter',
+                  iconPath: 'assets/icons/twitter.png',
+                  onPressed: () {},
+                ),
+                const SizedBox(height: 24),
+                CustomButton(
+                  backgroundColor: const Color(0xff00A86B),
+                  textColor: const Color(0xffFFFFFF),
+                  text: 'Sign up',
+                  onPressed: () {
+                    Navigator.pushNamed(context, '/sign-up');
+                  },
+                ),
+                const SizedBox(height: 16),
+                CustomButton(
+                  text: 'Log in',
+                  backgroundColor: const Color(0xffEAF7F2),
+                  textColor: const Color(0xFF00A86B),
+                  onPressed: () {
+                    Navigator.pushNamed(context, '/sign-in');
+                  },
+                ),
+                const Spacer(),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    TextButton(
+                      onPressed: () {},
+                      child: const Text('Privacy Policy'),
+                    ),
+                    const Text('•'),
+                    TextButton(
+                      onPressed: () {},
+                      child: const Text('Terms of Service'),
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
         ),
       ),
