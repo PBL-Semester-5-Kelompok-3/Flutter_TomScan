@@ -20,7 +20,7 @@ class SocialLoginButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      padding: const EdgeInsets.symmetric(vertical: 5.0),
       child: ElevatedButton(
         onPressed: onPressed,
         style: ElevatedButton.styleFrom(
@@ -31,7 +31,7 @@ class SocialLoginButton extends StatelessWidget {
             borderRadius: BorderRadius.circular(50),
             side: BorderSide(color: Colors.grey.shade300),
           ),
-          minimumSize: const Size(double.infinity, 60),
+          minimumSize: const Size(double.infinity, 50),
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         ),
         child: Row(
@@ -115,13 +115,13 @@ class GetStarted extends StatelessWidget {
             padding: const EdgeInsets.all(24.0),
             child: Column(
               children: [
-                const SizedBox(height: 40),
+                const Spacer(),
                 Image.asset(
                   'assets/images/logo.png',
                   height: 80,
                   width: 80,
                 ),
-                const SizedBox(height: 60),
+                const SizedBox(height: 40),
                 const Text(
                   "Let's Get Started!",
                   style: TextStyle(
@@ -129,7 +129,7 @@ class GetStarted extends StatelessWidget {
                     fontWeight: FontWeight.w700,
                   ),
                 ),
-                const SizedBox(height: 25),
+                const SizedBox(height: 10),
                 Text(
                   "Let's dive in into your account",
                   style: TextStyle(
@@ -137,7 +137,7 @@ class GetStarted extends StatelessWidget {
                     color: Colors.grey[600],
                   ),
                 ),
-                const SizedBox(height: 52),
+                const Spacer(),
                 SocialLoginButton(
                   text: 'Continue with Google',
                   iconPath: 'assets/icons/google.png',
@@ -153,12 +153,7 @@ class GetStarted extends StatelessWidget {
                   iconPath: 'assets/icons/facebook.png',
                   onPressed: () {},
                 ),
-                SocialLoginButton(
-                  text: 'Continue with Twitter',
-                  iconPath: 'assets/icons/twitter.png',
-                  onPressed: () {},
-                ),
-                const SizedBox(height: 24),
+                const Spacer(),
                 CustomButton(
                   backgroundColor: const Color(0xff00A86B),
                   textColor: const Color(0xffFFFFFF),
