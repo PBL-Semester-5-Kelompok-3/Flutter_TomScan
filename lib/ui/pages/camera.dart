@@ -19,10 +19,14 @@ class CameraApp extends StatefulWidget {
   State<CameraApp> createState() => _CameraAppState();
 }
 
-class _CameraAppState extends State<CameraApp> {
+class _CameraAppState extends State<CameraApp>
+    with SingleTickerProviderStateMixin {
   late CameraController _controller;
   final GlobalKey _cameraPreviewKey = GlobalKey();
-  bool _isFlashOn = false; // To track flash status
+  bool _isFlashOn = false;
+
+  late AnimationController _animationController;
+  late Animation<double> _animation;
 
   @override
   void initState() {
@@ -32,15 +36,26 @@ class _CameraAppState extends State<CameraApp> {
       if (!mounted) return;
       setState(() {});
     });
+
+    // Initialize animation controller for scanning effect
+    _animationController = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 2),
+    )..repeat(reverse: true);
+
+    _animation = Tween<double>(begin: 0.0, end: 1.0).animate(CurvedAnimation(
+      parent: _animationController,
+      curve: Curves.easeInOut,
+    ));
   }
 
   @override
   void dispose() {
     _controller.dispose();
+    _animationController.dispose();
     super.dispose();
   }
 
-  // Toggle flash mode
   void _toggleFlash() async {
     if (_controller.value.isInitialized) {
       setState(() {
@@ -52,12 +67,10 @@ class _CameraAppState extends State<CameraApp> {
     }
   }
 
-  // Open gallery to select image
   Future<void> _openGallery() async {
     final picker = ImagePicker();
     final pickedFile = await picker.pickImage(source: ImageSource.gallery);
     if (pickedFile != null) {
-      // Handle the picked image (e.g., display it or process it)
       debugPrint('Selected image path: ${pickedFile.path}');
     }
   }
@@ -121,9 +134,7 @@ class _CameraAppState extends State<CameraApp> {
                   ],
                 ),
               ),
-              const SizedBox(
-                height: 100,
-              ),
+              const SizedBox(height: 100),
               Expanded(
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 24.0),
@@ -141,6 +152,25 @@ class _CameraAppState extends State<CameraApp> {
                           ),
                         ),
                       ),
+                      AnimatedBuilder(
+                        animation: _animationController,
+                        builder: (context, child) {
+                          final animationValue = _animation.value *
+                              MediaQuery.of(context).size.height *
+                              0.5;
+                          return Positioned(
+                            top: animationValue,
+                            left: 0,
+                            right: 0,
+                            child: Container(
+                              height: 4,
+                              margin:
+                                  const EdgeInsets.symmetric(horizontal: 24),
+                              color: Colors.greenAccent.withOpacity(0.8),
+                            ),
+                          );
+                        },
+                      ),
                       Positioned.fill(
                         child: LayoutBuilder(
                           builder: (context, constraints) {
@@ -157,18 +187,15 @@ class _CameraAppState extends State<CameraApp> {
                   ),
                 ),
               ),
-              const SizedBox(
-                height: 100,
-              ),
+              const SizedBox(height: 100),
               Container(
                 color: const Color(0xffF3F2ED),
                 padding: const EdgeInsets.all(24.0),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
-                    // Gallery button
                     GestureDetector(
-                      onTap: _openGallery, // Open gallery on tap
+                      onTap: _openGallery,
                       child: Container(
                         padding: const EdgeInsets.all(12),
                         decoration: BoxDecoration(
@@ -197,9 +224,8 @@ class _CameraAppState extends State<CameraApp> {
                         ),
                       ),
                     ),
-                    // Flash button
                     GestureDetector(
-                      onTap: _toggleFlash, // Toggle flash on tap
+                      onTap: _toggleFlash,
                       child: Container(
                         padding: const EdgeInsets.all(12),
                         decoration: BoxDecoration(
