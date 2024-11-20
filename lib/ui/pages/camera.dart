@@ -1,6 +1,7 @@
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:toma_scan/ui/pages/analysis_page.dart';
 
 late List<CameraDescription> _cameras;
 
@@ -24,6 +25,7 @@ class _CameraAppState extends State<CameraApp>
   late CameraController _controller;
   final GlobalKey _cameraPreviewKey = GlobalKey();
   bool _isFlashOn = false;
+  bool _showDialog = false; // Added state variable for dialog
 
   late AnimationController _animationController;
   late Animation<double> _animation;
@@ -37,7 +39,6 @@ class _CameraAppState extends State<CameraApp>
       setState(() {});
     });
 
-    // Initialize animation controller for scanning effect
     _animationController = AnimationController(
       vsync: this,
       duration: const Duration(seconds: 2),
@@ -212,15 +213,90 @@ class _CameraAppState extends State<CameraApp>
                         child: const Icon(Icons.photo_library_outlined),
                       ),
                     ),
-                    Container(
-                      height: 72,
-                      width: 72,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        shape: BoxShape.circle,
-                        border: Border.all(
-                          color: Colors.black12,
-                          width: 4,
+                    GestureDetector(
+                      onTap: () async {
+                        try {
+                          // Capture an image
+                          final pickedFile = await _controller.takePicture();
+
+                          // Pause the camera preview while the dialog is open
+                          _controller.pausePreview();
+                          setState(() {
+                            _showDialog = true;
+                          });
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              String labelText = '';
+                              return AlertDialog(
+                                title: const Text('Name the label?'),
+                                content: TextField(
+                                  onChanged: (value) {
+                                    labelText = value;
+                                  },
+                                  decoration: const InputDecoration(
+                                    hintText: 'Type the label name...',
+                                  ),
+                                ),
+                                actions: [
+                                  TextButton(
+                                    child: const Text('Cancel'),
+                                    onPressed: () {
+                                      // Close the dialog, reset the _showDialog state, and resume the camera
+                                      setState(() {
+                                        _showDialog = false;
+                                      });
+                                      Navigator.of(context).pop();
+                                      _controller.resumePreview();
+                                    },
+                                  ),
+                                  TextButton(
+                                    child: const Text('Accept'),
+                                    onPressed: () {
+                                      setState(() {
+                                        _showDialog = false;
+                                      });
+                                      Navigator.of(context).pop();
+                                      _controller
+                                          .resumePreview(); // Resume preview on Accept
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              DetailAnalysisPage(
+                                            title: labelText,
+                                            tags: [
+                                              'Nutrisi',
+                                              'Penyiraman',
+                                              'Penyakit'
+                                            ],
+                                            imageUrl: pickedFile.path,
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                ],
+                              );
+                            },
+                          );
+
+                          // Pause the camera preview while the dialog is open
+                          _controller.pausePreview();
+                        } catch (e) {
+                          print('Error capturing image: $e');
+                        }
+                      },
+                      child: Container(
+                        height: 72,
+                        width: 72,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          shape: BoxShape.circle,
+                          border: Border.all(
+                            color: Colors.black12,
+                            width: 4,
+                          ),
                         ),
                       ),
                     ),
