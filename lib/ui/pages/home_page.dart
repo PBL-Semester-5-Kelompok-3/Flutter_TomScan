@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:toma_scan/ui/pages/popular_article_page.dart';
 import 'history_page.dart';
 // import 'identify_leaf_page.dart';
 import 'profile_page.dart';
@@ -234,9 +235,23 @@ class HomeContent extends StatelessWidget {
               ],
             ),
           ),
-          _buildSectionHeader('Popular Article', () {}),
+          _buildSectionHeader('Popular Article', () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const PopularArticlePage(),
+              ),
+            );
+          }),
           _buildPopularArticles(),
-          _buildSectionHeader('Last Detection', () {}),
+          _buildSectionHeader('Last Detection', () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const HistoryPage(),
+              ),
+            );
+          }),
           _buildLastDetections(),
         ],
       ),
