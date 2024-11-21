@@ -176,12 +176,16 @@ class GetStarted extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     TextButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        Navigator.pushNamed(context, '/PrivacyPolicyPage');
+                      },
                       child: const Text('Privacy Policy'),
                     ),
                     const Text('•'),
                     TextButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        Navigator.pushNamed(context, '/TermsPage');
+                      },
                       child: const Text('Terms of Service'),
                     ),
                   ],

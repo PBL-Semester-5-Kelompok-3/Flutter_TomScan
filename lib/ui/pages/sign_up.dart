@@ -184,7 +184,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
     // Simulasi proses sign up
     Future.delayed(const Duration(seconds: 3), () {
       // ignore: use_build_context_synchronously
-      Navigator.of(context).pop(); // Tutup modal setelah proses selesai
+      Navigator.pushNamed(
+          // ignore: use_build_context_synchronously
+          context,
+          '/sign-in'); // Tutup modal setelah proses selesai
       // Di sini Anda bisa menambahkan logic untuk handle hasil sign up
       // Misalnya navigasi ke halaman berikutnya atau menampilkan pesan sukses/error
     });

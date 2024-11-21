@@ -5,9 +5,11 @@ import 'package:toma_scan/ui/pages/get_started.dart';
 import 'package:toma_scan/ui/pages/home_page.dart';
 import 'package:toma_scan/ui/pages/onboarding_page.dart';
 import 'package:toma_scan/ui/pages/camera.dart';
+import 'package:toma_scan/ui/pages/privacy_policy_page.dart';
 import 'package:toma_scan/ui/pages/sign_in.dart';
 import 'package:toma_scan/ui/pages/sign_up.dart';
 import 'package:toma_scan/ui/pages/success_screen.dart';
+import 'package:toma_scan/ui/pages/terms_page.dart';
 import 'splash_screen.dart';
 
 late List<CameraDescription> cameras;
@@ -40,6 +42,8 @@ class MyApp extends StatelessWidget {
         '/sign-in': (context) => const LoginScreen(),
         '/forgot-password': (context) => const ForgotPasswordScreen(),
         '/success-screen': (context) => const SuccessScreenHome(),
+        '/PrivacyPolicyPage': (context) => const PrivacyPolicyPage(),
+        '/TermsPage': (context) => const TermsPage(),
       },
     );
   }
