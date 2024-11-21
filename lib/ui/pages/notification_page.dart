@@ -32,13 +32,15 @@ class NotificationPage extends StatelessWidget {
     ),
   ];
 
+  NotificationPage({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Notification"),
+        title: const Text("Notification"),
         leading: IconButton(
-          icon: Icon(Icons.arrow_back),
+          icon: const Icon(Icons.arrow_back),
           onPressed: () => Navigator.pop(context),
         ),
       ),
@@ -54,22 +56,22 @@ class NotificationPage extends StatelessWidget {
                   padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
                   child: Text(
                     notification.date,
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.grey),
+                    style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.grey),
                   ),
                 ),
               ListTile(
                 leading: Icon(notification.icon, color: Colors.grey),
-                title: Text(notification.title, style: TextStyle(fontWeight: FontWeight.bold)),
+                title: Text(notification.title, style: const TextStyle(fontWeight: FontWeight.bold)),
                 subtitle: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(notification.message),
-                    SizedBox(height: 4),
-                    Text(notification.time, style: TextStyle(fontSize: 12, color: Colors.grey)),
+                    const SizedBox(height: 4),
+                    Text(notification.time, style: const TextStyle(fontSize: 12, color: Colors.grey)),
                   ],
                 ),
               ),
-              Divider(),
+              const Divider(),
             ],
           );
         },

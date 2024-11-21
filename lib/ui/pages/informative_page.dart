@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:toma_scan/ui/pages/care_education_page.dart';
+import 'package:toma_scan/ui/pages/pests_desease_page.dart';
+import 'package:toma_scan/ui/pages/popular_article_page.dart';
 
 class InformativePage extends StatelessWidget {
   const InformativePage({super.key});
@@ -9,7 +12,12 @@ class InformativePage extends StatelessWidget {
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
-          SectionHeader(title: 'Popular Article', onViewAll: () {}),
+          SectionHeader(title: 'Popular Article', onViewAll: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const PopularArticlePage()),
+            );
+          }),
           const SizedBox(height: 8),
           const Row(
             children: [
@@ -31,7 +39,12 @@ class InformativePage extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 16),
-          SectionHeader(title: 'Care Education', onViewAll: () {}),
+          SectionHeader(title: 'Care Education', onViewAll: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const CareEducationPage()),
+            );
+          }),
           const SizedBox(height: 8),
           const Wrap(
             spacing: 8,
@@ -47,7 +60,12 @@ class InformativePage extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 16),
-          SectionHeader(title: 'Pests & Diseases', onViewAll: () {}),
+          SectionHeader(title: 'Pests & Diseases', onViewAll: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const PestsDeseasePage()),
+            );
+          }),
           const SizedBox(height: 8),
           GridView.builder(
             physics: const NeverScrollableScrollPhysics(),

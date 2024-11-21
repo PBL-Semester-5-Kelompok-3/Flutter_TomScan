@@ -207,8 +207,8 @@ class DetailHistoryPage extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
-          children: const [
+        const Row(
+          children: [
             Icon(Icons.bug_report, color: Colors.green),
             SizedBox(width: 8),
             Text(

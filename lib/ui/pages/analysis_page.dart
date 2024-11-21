@@ -71,8 +71,8 @@ class DetailAnalysisPage extends StatelessWidget {
   void _showSuccessNotification(BuildContext context) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Row(
-          children: const [
+        content: const Row(
+          children: [
             Icon(Icons.check_circle, color: Colors.white),
             SizedBox(width: 8),
             Text('Analysis have been saved'),
@@ -296,8 +296,8 @@ class DetailAnalysisPage extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
-          children: const [
+        const Row(
+          children: [
             Icon(Icons.bug_report, color: Colors.green),
             SizedBox(width: 8),
             Text(

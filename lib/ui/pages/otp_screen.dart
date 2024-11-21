@@ -174,10 +174,10 @@ class OtpDigitField extends StatelessWidget {
   final Function(String) onChanged;
 
   const OtpDigitField({
-    Key? key,
+    super.key,
     required this.controller,
     required this.onChanged,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
