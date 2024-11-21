@@ -1,12 +1,61 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:toma_scan/ui/pages/field_edit_page.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:toma_scan/ui/pages/help_center_page.dart';
 import 'package:toma_scan/ui/pages/privacy_policy_page.dart';
 import 'package:toma_scan/ui/pages/terms_page.dart';
-import 'package:toma_scan/ui/widgets/profile_item.dart';
 
-class ProfilePage extends StatelessWidget {
+class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
+
+  @override
+  _ProfilePageState createState() => _ProfilePageState();
+}
+
+class _ProfilePageState extends State<ProfilePage> {
+  String username = "Astrid Risa";
+  String email = "astridrisa@gmail.com";
+  String phone = "089529167474";
+  String password = "************";
+  bool isEditingUsername = false;
+  bool isEditingEmail = false;
+  bool isEditingPhone = false;
+  bool isEditingPassword = false;
+  String? profileImagePath;
+
+  final ImagePicker _picker = ImagePicker();
+
+  late TextEditingController _usernameController;
+  late TextEditingController _emailController;
+  late TextEditingController _phoneController;
+  late TextEditingController _passwordController;
+
+  @override
+  void initState() {
+    super.initState();
+    _usernameController = TextEditingController(text: username);
+    _emailController = TextEditingController(text: email);
+    _phoneController = TextEditingController(text: phone);
+    _passwordController = TextEditingController(text: password);
+  }
+
+  @override
+  void dispose() {
+    _usernameController.dispose();
+    _emailController.dispose();
+    _phoneController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _pickImage() async {
+    final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
+    if (pickedFile != null) {
+      setState(() {
+        profileImagePath = pickedFile.path;
+      });
+    }
+  }
 
   // Fungsi untuk konfirmasi logout
   void _showLogoutDialog(BuildContext context) {
@@ -88,6 +137,52 @@ class ProfilePage extends StatelessWidget {
     );
   }
 
+  Widget _buildEditableItem({
+    required String label,
+    required TextEditingController controller,
+    required bool isEditing,
+    required VoidCallback onEditToggle,
+    required VoidCallback onSave,
+    required IconData icon,
+    bool isPassword = false,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 20),
+      child: Row(
+        children: [
+          Icon(icon, color: Colors.black54),
+          const SizedBox(width: 20),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(label, style: const TextStyle(fontWeight: FontWeight.bold)),
+                isEditing
+                    ? TextField(
+                        controller: controller,
+                        obscureText: isPassword,
+                        decoration: InputDecoration(
+                          hintText: isPassword ? "Enter new password" : null,
+                          border: const OutlineInputBorder(),
+                        ),
+                      )
+                    : Text(
+                        isPassword ? '************' : controller.text,
+                        style: const TextStyle(color: Colors.black54),
+                      ),
+              ],
+            ),
+          ),
+          IconButton(
+            onPressed: isEditing ? onSave : onEditToggle,
+            icon: Icon(isEditing ? Icons.check : Icons.edit,
+                color: const Color(0xFF00BF63)),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -100,10 +195,7 @@ class ProfilePage extends StatelessWidget {
             children: [
               const Text(
                 'My Account',
-                style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                ),
+                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 20),
               Center(
@@ -118,25 +210,40 @@ class ProfilePage extends StatelessWidget {
                           color: const Color(0xFF00BF63),
                           width: 2,
                         ),
+                        image: profileImagePath != null
+                            ? DecorationImage(
+                                image: FileImage(File(profileImagePath!)),
+                                fit: BoxFit.cover,
+                              )
+                            : null,
                       ),
-                      child: const CircleAvatar(
-                        backgroundColor: Color(0xFF00BF63),
-                        child: Icon(Icons.person, size: 50, color: Colors.white),
-                      ),
+                      child: profileImagePath == null
+                          ? const CircleAvatar(
+                              backgroundColor: Color(0xFF00BF63),
+                              child: Icon(
+                                Icons.person,
+                                size: 50,
+                                color: Colors.white,
+                              ),
+                            )
+                          : null,
                     ),
                     Positioned(
                       right: 0,
                       bottom: 0,
-                      child: Container(
-                        padding: const EdgeInsets.all(4),
-                        decoration: const BoxDecoration(
-                          color: Color(0xFF00BF63),
-                          shape: BoxShape.circle,
-                        ),
-                        child: const Icon(
-                          Icons.edit,
-                          size: 20,
-                          color: Colors.white,
+                      child: InkWell(
+                        onTap: _pickImage,
+                        child: Container(
+                          padding: const EdgeInsets.all(4),
+                          decoration: const BoxDecoration(
+                            color: Color(0xFF00BF63),
+                            shape: BoxShape.circle,
+                          ),
+                          child: const Icon(
+                            Icons.edit,
+                            size: 20,
+                            color: Colors.white,
+                          ),
                         ),
                       ),
                     ),
@@ -144,72 +251,76 @@ class ProfilePage extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 30),
-              ProfileItem(
+              _buildEditableItem(
                 icon: Icons.person_outline,
-                label: 'Username',
-                value: 'Astrid Risa',
-                onEdit: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const EditFieldPage(
-                        label: 'Username',
-                        initialValue: 'Astrid Risa',
-                      ),
-                    ),
-                  );
+                label: "Username",
+                controller: _usernameController,
+                isEditing: isEditingUsername,
+                onEditToggle: () {
+                  setState(() {
+                    isEditingUsername = !isEditingUsername;
+                  });
+                },
+                onSave: () {
+                  setState(() {
+                    username = _usernameController.text;
+                    isEditingUsername = false;
+                  });
                 },
               ),
-              ProfileItem(
+              _buildEditableItem(
                 icon: Icons.email_outlined,
-                label: 'E-mail',
-                value: 'astridrisa@gmail.com',
-                onEdit: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const EditFieldPage(
-                        label: 'E-mail',
-                        initialValue: 'astridrisa@gmail.com',
-                      ),
-                    ),
-                  );
+                label: "E-mail",
+                controller: _emailController,
+                isEditing: isEditingEmail,
+                onEditToggle: () {
+                  setState(() {
+                    isEditingEmail = !isEditingEmail;
+                  });
+                },
+                onSave: () {
+                  setState(() {
+                    email = _emailController.text;
+                    isEditingEmail = false;
+                  });
                 },
               ),
-              ProfileItem(
+              _buildEditableItem(
                 icon: Icons.phone_outlined,
-                label: 'Phone',
-                value: '089529167474',
-                onEdit: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const EditFieldPage(
-                        label: 'Phone',
-                        initialValue: '089529167474',
-                      ),
-                    ),
-                  );
+                label: "Phone",
+                controller: _phoneController,
+                isEditing: isEditingPhone,
+                onEditToggle: () {
+                  setState(() {
+                    isEditingPhone = !isEditingPhone;
+                  });
+                },
+                onSave: () {
+                  setState(() {
+                    phone = _phoneController.text;
+                    isEditingPhone = false;
+                  });
                 },
               ),
-              ProfileItem(
+              _buildEditableItem(
                 icon: Icons.lock_outline,
-                label: 'Password',
-                value: '',
-                onEdit: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const EditFieldPage(
-                        label: 'Password',
-                        initialValue: '',
-                        isPassword: true,
-                      ),
-                    ),
-                  );
+                label: "Password",
+                controller: _passwordController,
+                isEditing: isEditingPassword,
+                isPassword: true,
+                onEditToggle: () {
+                  setState(() {
+                    isEditingPassword = !isEditingPassword;
+                  });
+                },
+                onSave: () {
+                  setState(() {
+                    password = _passwordController.text;
+                    isEditingPassword = false;
+                  });
                 },
               ),
-              Center(
+               Center(
                 child: SizedBox(
                   width: 400,
                   height: 40,
@@ -234,7 +345,7 @@ class ProfilePage extends StatelessWidget {
                   ),
                 ),
               ),
-              const SizedBox(height: 20),
+            const SizedBox(height: 20),
               Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
@@ -294,11 +405,13 @@ class ProfilePage extends StatelessWidget {
                         );
                       },
                     ),
-                    const SizedBox(height: 16),
-                    Center(
-                      child: TextButton(
-                        onPressed: () => _showLogoutDialog(context),
-                        child: const Text(
+              const SizedBox(height: 16),
+              Center(
+              child: TextButton(
+                onPressed: () {
+                  _showLogoutDialog(context);
+                },
+                child: const Text(
                           'Logout',
                           style: TextStyle(
                             color: Colors.red,
@@ -307,11 +420,13 @@ class ProfilePage extends StatelessWidget {
                         ),
                       ),
                     ),
-                    const SizedBox(height: 16),
-                    Center(
-                      child: TextButton(
-                        onPressed: () => _showDeleteDialog(context),
-                        child: const Text(
+              const SizedBox(height: 16),
+              Center(
+                  child: TextButton(
+                onPressed: () {
+                  _showDeleteDialog(context);
+                },
+                child: const Text(
                           'Delete Account',
                           style: TextStyle(
                             color: Colors.red,
@@ -320,11 +435,11 @@ class ProfilePage extends StatelessWidget {
                         ),
                       ),
                     ),
-                  ],
-                ),
-              ),
             ],
           ),
+        ),
+       ],
+      ),
         ),
       ),
     );
