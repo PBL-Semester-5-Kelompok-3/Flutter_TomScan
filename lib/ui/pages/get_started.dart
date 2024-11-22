@@ -31,7 +31,7 @@ class SocialLoginButton extends StatelessWidget {
             borderRadius: BorderRadius.circular(50),
             side: BorderSide(color: Colors.grey.shade300),
           ),
-          minimumSize: const Size(double.infinity, 50),
+          minimumSize: const Size(double.infinity, 60),
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         ),
         child: Row(

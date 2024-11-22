@@ -4,6 +4,7 @@ import 'package:toma_scan/ui/pages/forgot_password.dart';
 import 'package:toma_scan/ui/pages/get_started.dart';
 import 'package:toma_scan/ui/pages/home_page.dart';
 import 'package:toma_scan/ui/pages/informative_page.dart';
+import 'package:toma_scan/ui/pages/notification_page.dart';
 import 'package:toma_scan/ui/pages/onboarding_page.dart';
 import 'package:toma_scan/ui/pages/camera.dart';
 import 'package:toma_scan/ui/pages/privacy_policy_page.dart';
@@ -46,6 +47,7 @@ class MyApp extends StatelessWidget {
         '/PrivacyPolicyPage': (context) => const PrivacyPolicyPage(),
         '/TermsPage': (context) => const TermsPage(),
         '/informative_page': (context) => const InformativePage(),
+        '/notification': (context) => NotificationPage(),
       },
     );
   }
