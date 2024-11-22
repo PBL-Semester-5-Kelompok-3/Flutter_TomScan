@@ -77,6 +77,19 @@ class _CreateArticleFormState extends State<CreateArticleForm> {
                     width: double.infinity,
                     color: const Color(0xFF4CAF50),
                   ),
+                  // Worker image
+                  Positioned(
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    child: Image.asset(
+                      'assets/images/worker.png',
+                      width: double.infinity,
+                      height: 300,
+                      fit: BoxFit.cover,
+                    ),
+                  ),
                   // Back button
                   Positioned(
                     top: 20,
@@ -90,22 +103,6 @@ class _CreateArticleFormState extends State<CreateArticleForm> {
                         icon: const Icon(Icons.arrow_back, color: Colors.white),
                         onPressed: () => Navigator.pop(context),
                       ),
-                    ),
-                  ),
-                  // Worker image
-                  Positioned(
-                    top:
-                        0, // Ubah posisi top menjadi 0 agar sejajar dengan latar belakang hijau
-                    left: 0,
-                    right: 0,
-                    bottom:
-                        0, // Tambahkan bottom agar gambar menutupi penuh tinggi container
-                    child: Image.asset(
-                      'assets/images/worker.png',
-                      width: double.infinity, // Sesuaikan dengan lebar layar
-                      height: 300, // Samakan dengan tinggi latar belakang hijau
-                      fit: BoxFit
-                          .cover, // Pastikan gambar memenuhi area dengan proporsi
                     ),
                   ),
                 ],
