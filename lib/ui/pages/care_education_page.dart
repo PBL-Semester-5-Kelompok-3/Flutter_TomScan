@@ -1,6 +1,7 @@
 // ignore_for_file: use_super_parameters
 
 import 'package:flutter/material.dart';
+import 'package:toma_scan/ui/pages/create_care_form.dart';
 
 class CareEducationPage extends StatelessWidget {
   const CareEducationPage({Key? key}) : super(key: key);
@@ -9,7 +10,8 @@ class CareEducationPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Care Education', style: TextStyle(color: Colors.black)),
+        title:
+            const Text('Care Education', style: TextStyle(color: Colors.black)),
         backgroundColor: Colors.white,
         elevation: 0,
         iconTheme: const IconThemeData(color: Colors.black),
@@ -78,13 +80,20 @@ class CareEducationPage extends StatelessWidget {
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.grey[800],
-                        padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 12),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 40, vertical: 12),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8),
                         ),
                       ),
                       onPressed: () {
                         // TODO: Add new care education logic
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const CreateEducationForm(),
+                          ),
+                        );
                       },
                       child: const Icon(Icons.add, color: Colors.white),
                     ),

@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:toma_scan/ui/pages/informative_page.dart';
+import 'package:toma_scan/ui/pages/view_pests.dart'; // Tambahkan import
 
 class PestsDeseasePage extends StatelessWidget {
   const PestsDeseasePage({super.key});
@@ -60,12 +61,67 @@ class PestsDeseasePage extends StatelessWidget {
                   return ArticleCard(
                     imageUrl:
                         'https://th.bing.com/th/id/OIP.HiwZb7pY_PaooR59RRIHBgHaGK?w=239&h=198&c=7&r=0&o=5&dpr=1.9&pid=1.7',
-                    title: "Croatia doubles tomato production with Podravka's...",
+                    title:
+                        "Croatia doubles tomato production with Podravka's...",
+                    onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const ViewPests()),
+                    ),
                   );
                 },
               ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+// Buat class ArticleCard baru di file ini untuk menghindari konflik
+class ArticleCard extends StatelessWidget {
+  final String imageUrl;
+  final String title;
+  final VoidCallback onTap;
+
+  const ArticleCard({
+    super.key,
+    required this.imageUrl,
+    required this.title,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(8),
+          image: DecorationImage(
+            image: NetworkImage(imageUrl),
+            fit: BoxFit.cover,
+          ),
+        ),
+        child: Align(
+          alignment: Alignment.bottomCenter,
+          child: Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(4),
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.75),
+              borderRadius: const BorderRadius.only(
+                bottomLeft: Radius.circular(8),
+                bottomRight: Radius.circular(8),
+              ),
+            ),
+            child: Text(
+              title,
+              style: const TextStyle(fontSize: 12),
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
         ),
       ),
     );
