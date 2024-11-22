@@ -59,7 +59,9 @@ class HomePageState extends State<HomePage> {
           actions: [
             IconButton(
               icon: const Icon(Icons.notifications, color: Colors.grey),
-              onPressed: () {},
+              onPressed: () {
+                Navigator.pushNamed(context, '/notification');
+              },
             ),
           ],
         ),
@@ -150,6 +152,7 @@ class HomePageState extends State<HomePage> {
                 ),
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     MaterialButton(
                       minWidth: 40,

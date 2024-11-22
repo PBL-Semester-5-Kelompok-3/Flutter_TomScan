@@ -25,7 +25,7 @@ class _CameraAppState extends State<CameraApp>
   late CameraController _controller;
   final GlobalKey _cameraPreviewKey = GlobalKey();
   bool _isFlashOn = false;
-  bool _showDialog = false; // Added state variable for dialog
+// Added state variable for dialog
 
   late AnimationController _animationController;
   late Animation<double> _animation;
@@ -221,10 +221,9 @@ class _CameraAppState extends State<CameraApp>
 
                           // Pause the camera preview while the dialog is open
                           _controller.pausePreview();
-                          setState(() {
-                            _showDialog = true;
-                          });
+                          setState(() {});
                           showDialog(
+                            // ignore: use_build_context_synchronously
                             context: context,
                             builder: (BuildContext context) {
                               String labelText = '';
@@ -243,9 +242,7 @@ class _CameraAppState extends State<CameraApp>
                                     child: const Text('Cancel'),
                                     onPressed: () {
                                       // Close the dialog, reset the _showDialog state, and resume the camera
-                                      setState(() {
-                                        _showDialog = false;
-                                      });
+                                      setState(() {});
                                       Navigator.of(context).pop();
                                       _controller.resumePreview();
                                     },
@@ -253,9 +250,7 @@ class _CameraAppState extends State<CameraApp>
                                   TextButton(
                                     child: const Text('Accept'),
                                     onPressed: () {
-                                      setState(() {
-                                        _showDialog = false;
-                                      });
+                                      setState(() {});
                                       Navigator.of(context).pop();
                                       _controller
                                           .resumePreview(); // Resume preview on Accept

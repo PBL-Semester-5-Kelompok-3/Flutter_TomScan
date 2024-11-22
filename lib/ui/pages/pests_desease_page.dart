@@ -1,7 +1,6 @@
 // ignore_for_file: prefer_const_constructors
 
 import 'package:flutter/material.dart';
-import 'package:toma_scan/ui/pages/informative_page.dart';
 import 'package:toma_scan/ui/pages/view_pests.dart'; // Tambahkan import
 
 class PestsDeseasePage extends StatelessWidget {
