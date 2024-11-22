@@ -1,7 +1,6 @@
-// ignore_for_file: prefer_const_constructors
-
 import 'package:flutter/material.dart';
-import 'package:toma_scan/ui/pages/informative_page.dart';
+import 'package:toma_scan/ui/pages/create_article_form.dart'; // Tambahkan import
+import 'package:toma_scan/ui/pages/view_article.dart';
 
 class PopularArticlePage extends StatelessWidget {
   const PopularArticlePage({super.key});
@@ -43,7 +42,13 @@ class PopularArticlePage extends StatelessWidget {
                   if (index == 4) {
                     return GestureDetector(
                       onTap: () {
-                        // Handle "Add New Article" button
+                        // Navigasi ke halaman CreateArticleForm
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const CreateArticleForm(),
+                          ),
+                        );
                       },
                       child: Container(
                         decoration: BoxDecoration(
@@ -60,12 +65,67 @@ class PopularArticlePage extends StatelessWidget {
                   return ArticleCard(
                     imageUrl:
                         'https://th.bing.com/th/id/OIP.HiwZb7pY_PaooR59RRIHBgHaGK?w=239&h=198&c=7&r=0&o=5&dpr=1.9&pid=1.7',
-                    title: "Croatia doubles tomato production with Podravka's...",
+                    title:
+                        "Croatia doubles tomato production with Podravka's...",
+                    onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const ViewArticle()),
+                    ),
                   );
                 },
               ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+// Buat class ArticleCard baru di file ini untuk menghindari konflik
+class ArticleCard extends StatelessWidget {
+  final String imageUrl;
+  final String title;
+  final VoidCallback onTap;
+
+  const ArticleCard({
+    super.key,
+    required this.imageUrl,
+    required this.title,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(8),
+          image: DecorationImage(
+            image: NetworkImage(imageUrl),
+            fit: BoxFit.cover,
+          ),
+        ),
+        child: Align(
+          alignment: Alignment.bottomCenter,
+          child: Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(4),
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.75),
+              borderRadius: const BorderRadius.only(
+                bottomLeft: Radius.circular(8),
+                bottomRight: Radius.circular(8),
+              ),
+            ),
+            child: Text(
+              title,
+              style: const TextStyle(fontSize: 12),
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
         ),
       ),
     );
