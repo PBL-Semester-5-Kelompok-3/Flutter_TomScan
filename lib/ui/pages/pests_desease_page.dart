@@ -38,25 +38,8 @@ class PestsDeseasePage extends StatelessWidget {
                   mainAxisSpacing: 8,
                   childAspectRatio: 0.75,
                 ),
-                itemCount: 5, // Replace with your dynamic item count
+                itemCount: 4, // Replace with your dynamic item count
                 itemBuilder: (context, index) {
-                  if (index == 4) {
-                    return GestureDetector(
-                      onTap: () {
-                        // Handle "Add New Article" button
-                      },
-                      child: Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(8),
-                          color: Colors.grey[300],
-                        ),
-                        child: const Center(
-                          child: Icon(Icons.add, size: 40, color: Colors.black),
-                        ),
-                      ),
-                    );
-                  }
-
                   return ArticleCard(
                     imageUrl:
                         'https://th.bing.com/th/id/OIP.HiwZb7pY_PaooR59RRIHBgHaGK?w=239&h=198&c=7&r=0&o=5&dpr=1.9&pid=1.7',

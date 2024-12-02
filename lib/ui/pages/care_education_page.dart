@@ -74,30 +74,6 @@ class CareEducationPage extends StatelessWidget {
                     title: 'Irrigation',
                     color: Colors.green[100]!,
                   ),
-                  const SizedBox(height: 16),
-                  // Add New Button
-                  Center(
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.grey[800],
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 40, vertical: 12),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                      ),
-                      onPressed: () {
-                        // TODO: Add new care education logic
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const CreateEducationForm(),
-                          ),
-                        );
-                      },
-                      child: const Icon(Icons.add, color: Colors.white),
-                    ),
-                  ),
                 ],
               ),
             ),
