@@ -1,6 +1,11 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:toma_scan/blocs/auth/auth_bloc.dart';
+import 'package:toma_scan/blocs/auth/auth_event.dart';
+import 'package:toma_scan/blocs/auth/auth_state.dart';
+import 'package:toma_scan/services/user_service.dart';
 import 'package:toma_scan/shared/themes.dart';
 
 // Reusable text field component
@@ -172,187 +177,198 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
 
-  void _showLoadingModal() {
-    showDialog(
-      context: context,
-      barrierDismissible: false, // Modal tidak bisa ditutup dengan tap di luar
-      builder: (BuildContext context) {
-        return const LoadingModal();
-      },
-    );
-
-    // Simulasi proses sign up
-    Future.delayed(const Duration(seconds: 3), () {
-      // ignore: use_build_context_synchronously
-      Navigator.pushNamed(
-          // ignore: use_build_context_synchronously
-          context,
-          '/sign-in'); // Tutup modal setelah proses selesai
-      // Di sini Anda bisa menambahkan logic untuk handle hasil sign up
-      // Misalnya navigasi ke halaman berikutnya atau menampilkan pesan sukses/error
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        leading: const BackButton(),
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-      ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(24),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Row(
-                children: [
-                  const Text(
-                    'Join TomaScan Today',
-                    style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const Spacer(),
-                  IconButton(
-                    icon: Image.asset(
-                      'assets/icons/user.png',
-                      width: 32,
-                    ),
-                    onPressed: () {},
-                  ),
-                ],
-              ),
-              const Text(
-                'Create Your Blooming Account',
-                style: TextStyle(
-                  color: Colors.grey,
-                  fontSize: 16,
-                ),
-              ),
-              const SizedBox(height: 32),
-              CustomTextField(
-                icon: 'assets/icons/email.png',
-                label: 'Email',
-                controller: _emailController,
-                validator: (value) {
-                  if (value?.isEmpty ?? true) {
-                    return 'Please enter your email';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 16),
-              CustomTextField(
-                icon: 'assets/icons/password.png',
-                label: 'Password',
-                isPassword: true,
-                controller: _passwordController,
-                validator: (value) {
-                  if (value?.isEmpty ?? true) {
-                    return 'Please enter your password';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 24),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Text(
-                    'Already have an account?',
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                  TextButton(
-                    onPressed: () {},
-                    child: const Text(
-                      'Log in',
-                      style: TextStyle(color: Color(0xff77CEAE)),
-                    ),
-                  ),
-                ],
-              ),
-              Row(
-                children: [
-                  Expanded(
-                    child: Divider(
-                      color: Colors.grey[300],
-                      thickness: 1,
-                    ),
-                  ),
-                  const Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 16.0),
-                    child: Text(
-                      'or',
-                      style: TextStyle(
-                        color: Colors.grey,
-                      ),
-                    ),
-                  ),
-                  Expanded(
-                    child: Divider(
-                      color: Colors.grey[300],
-                      thickness: 1,
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 14),
-              SocialLoginButton(
-                text: 'Continue with Google',
-                iconPath: 'assets/icons/google.png',
-                onPressed: () {},
-              ),
-              const SizedBox(height: 5),
-              SocialLoginButton(
-                text: 'Continue with Apple',
-                iconPath: 'assets/icons/apple.png',
-                onPressed: () {},
-              ),
-              const SizedBox(height: 5),
-              SocialLoginButton(
-                text: 'Continue with Facebook',
-                iconPath: 'assets/icons/facebook.png',
-                onPressed: () {},
-              ),
-              const SizedBox(height: 24),
-              ElevatedButton(
-                onPressed: () {
-                  if (_formKey.currentState?.validate() ?? false) {
-                    _showLoadingModal(); // Tampilkan loading modal
-                  }
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: primaryColor,
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(50),
-                  ),
-                ),
-                child: const Text(
-                  'Sign up',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
   @override
   void dispose() {
     _emailController.dispose();
     _passwordController.dispose();
     super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocProvider(
+      create: (context) => AuthBloc(
+          userService: UserService(apiUrl: 'https://your-api-url.com')),
+      child: Scaffold(
+        appBar: AppBar(
+          leading: const BackButton(),
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+        ),
+        body: SingleChildScrollView(
+          padding: const EdgeInsets.all(24),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Row(
+                  children: [
+                    const Text(
+                      'Join TomaScan Today',
+                      style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const Spacer(),
+                    IconButton(
+                      icon: Image.asset(
+                        'assets/icons/user.png',
+                        width: 32,
+                      ),
+                      onPressed: () {},
+                    ),
+                  ],
+                ),
+                const Text(
+                  'Create Your Blooming Account',
+                  style: TextStyle(
+                    color: Colors.grey,
+                    fontSize: 16,
+                  ),
+                ),
+                const SizedBox(height: 32),
+                CustomTextField(
+                  icon: 'assets/icons/email.png',
+                  label: 'Email',
+                  controller: _emailController,
+                  validator: (value) {
+                    if (value?.isEmpty ?? true) {
+                      return 'Please enter your email';
+                    }
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 16),
+                CustomTextField(
+                  icon: 'assets/icons/password.png',
+                  label: 'Password',
+                  isPassword: true,
+                  controller: _passwordController,
+                  validator: (value) {
+                    if (value?.isEmpty ?? true) {
+                      return 'Please enter your password';
+                    }
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 24),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Text(
+                      'Already have an account?',
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        Navigator.pushNamed(context, '/sign-in');
+                      },
+                      child: const Text(
+                        'Log in',
+                        style: TextStyle(color: Color(0xff77CEAE)),
+                      ),
+                    ),
+                  ],
+                ),
+                Row(
+                  children: [
+                    Expanded(
+                      child: Divider(
+                        color: Colors.grey[300],
+                        thickness: 1,
+                      ),
+                    ),
+                    const Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 16.0),
+                      child: Text(
+                        'or',
+                        style: TextStyle(
+                          color: Colors.grey,
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      child: Divider(
+                        color: Colors.grey[300],
+                        thickness: 1,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 14),
+                SocialLoginButton(
+                  text: 'Continue with Google',
+                  iconPath: 'assets/icons/google.png',
+                  onPressed: () {},
+                ),
+                const SizedBox(height: 5),
+                SocialLoginButton(
+                  text: 'Continue with Apple',
+                  iconPath: 'assets/icons/apple.png',
+                  onPressed: () {},
+                ),
+                const SizedBox(height: 5),
+                SocialLoginButton(
+                  text: 'Continue with Facebook',
+                  iconPath: 'assets/icons/facebook.png',
+                  onPressed: () {},
+                ),
+                const SizedBox(height: 24),
+                BlocListener<AuthBloc, AuthState>(
+                  listener: (context, state) {
+                    if (state is AuthLoading) {
+                      showDialog(
+                        context: context,
+                        barrierDismissible: false,
+                        builder: (context) {
+                          return const LoadingModal();
+                        },
+                      );
+                    } else if (state is AuthAuthenticated) {
+                      Navigator.pop(context); // Close loading modal
+                      Navigator.pushReplacementNamed(context, '/home');
+                    } else if (state is AuthFailure) {
+                      Navigator.pop(context); // Close loading modal
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text(state.error)),
+                      );
+                    }
+                  },
+                  child: ElevatedButton(
+                    onPressed: () {
+                      if (_formKey.currentState?.validate() ?? false) {
+                        context.read<AuthBloc>().add(
+                              AuthSignUpEvent(
+                                email: _emailController.text,
+                                password: _passwordController.text,
+                              ),
+                            );
+                      }
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: primaryColor,
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(50),
+                      ),
+                    ),
+                    child: const Text(
+                      'Sign up',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
   }
 }

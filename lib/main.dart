@@ -1,5 +1,6 @@
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart'; // Import Bloc
 import 'package:toma_scan/ui/pages/forgot_password.dart';
 import 'package:toma_scan/ui/pages/get_started.dart';
 import 'package:toma_scan/ui/pages/home_page.dart';
@@ -13,12 +14,27 @@ import 'package:toma_scan/ui/pages/sign_up.dart';
 import 'package:toma_scan/ui/pages/success_screen.dart';
 import 'package:toma_scan/ui/pages/terms_page.dart';
 import 'splash_screen.dart';
+import 'blocs/auth/auth_bloc.dart'; // Import AuthBloc
+import 'services/user_service.dart'; // Import UserService
 
 late List<CameraDescription> cameras;
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   cameras = await availableCameras();
-  runApp(const MyApp());
+
+  // Buat instance UserService dan sesuaikan API URL
+  final userService = UserService(
+      apiUrl: 'https://yourapi.com'); // Ganti URL dengan URL API Anda
+
+  // Wrap MyApp dengan BlocProvider untuk menyediakan AuthBloc dengan UserService
+  runApp(
+    BlocProvider<AuthBloc>(
+      create: (context) => AuthBloc(
+          userService: userService), // Injeksi UserService ke dalam AuthBloc
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -40,7 +56,8 @@ class MyApp extends StatelessWidget {
         '/onboarding_page': (context) => const OnboardingPage(),
         '/camera': (context) => CameraApp(cameras: cameras),
         '/get-started': (context) => const GetStarted(),
-        '/sign-up': (context) => const SignUpScreen(),
+        '/sign-up': (context) =>
+            const SignUpScreen(), // SignUpScreen sekarang punya akses ke AuthBloc
         '/sign-in': (context) => const LoginScreen(),
         '/forgot-password': (context) => const ForgotPasswordScreen(),
         '/success-screen': (context) => const SuccessScreenHome(),
