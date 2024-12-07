@@ -25,7 +25,8 @@ Future<void> main() async {
 
   // Buat instance UserService dan sesuaikan API URL
   final userService = UserService(
-      apiUrl: 'https://yourapi.com'); // Ganti URL dengan URL API Anda
+      apiUrl:
+          'http://tomascan.nurulmustofa.my.id/api'); // Sesuaikan URL API dengan endpoint yang benar
 
   // Wrap MyApp dengan BlocProvider untuk menyediakan AuthBloc dengan UserService
   runApp(
