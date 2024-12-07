@@ -1,86 +1,10 @@
-// widgets/custom_text_field.dart
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:toma_scan/blocs/forgot/bloc/forgot_bloc.dart';
+import 'package:toma_scan/blocs/forgot/bloc/forgot_event.dart';
+import 'package:toma_scan/blocs/forgot/bloc/forgot_state.dart';
 import 'package:toma_scan/shared/themes.dart';
 import 'package:toma_scan/ui/pages/otp_screen.dart';
-
-class CustomTextField extends StatelessWidget {
-  final String? hintText;
-  final bool readOnly;
-  final TextEditingController? controller;
-  final Widget? prefixIcon;
-
-  const CustomTextField({
-    super.key,
-    this.hintText,
-    this.readOnly = false,
-    this.controller,
-    this.prefixIcon,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.grey[100],
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: TextField(
-        controller: controller,
-        readOnly: readOnly,
-        decoration: InputDecoration(
-          hintText: hintText,
-          prefixIcon: prefixIcon,
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(8),
-            borderSide: BorderSide.none,
-          ),
-          filled: true,
-          fillColor: Colors.grey[100],
-        ),
-      ),
-    );
-  }
-}
-
-// widgets/custom_button.dart
-class CustomButton extends StatelessWidget {
-  final String text;
-  final VoidCallback onPressed;
-  final Color backgroundColor;
-  final Color textColor;
-
-  const CustomButton({
-    super.key,
-    required this.text,
-    required this.onPressed,
-    this.backgroundColor = Colors.green,
-    this.textColor = Colors.white,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      width: double.infinity,
-      child: ElevatedButton(
-        onPressed: onPressed,
-        style: ElevatedButton.styleFrom(
-          backgroundColor: backgroundColor,
-          foregroundColor: textColor,
-          padding: const EdgeInsets.symmetric(vertical: 16),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(50),
-          ),
-        ),
-        child: Text(
-          text,
-          style: const TextStyle(
-            color: Colors.white,
-          ),
-        ),
-      ),
-    );
-  }
-}
 
 class ForgotPasswordScreen extends StatefulWidget {
   const ForgotPasswordScreen({super.key});
@@ -98,6 +22,13 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
     super.dispose();
   }
 
+  // Validasi email
+  bool _isValidEmail(String email) {
+    return RegExp(r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$")
+        .hasMatch(email);
+  }
+
+  // Handle pengiriman OTP
   void _handleSendOTP() {
     final email = _emailController.text;
 
@@ -108,18 +39,15 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
       return;
     }
 
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => OtpScreen(
-          email: email,
-          onSubmit: (otp) {
-            // Tindakan ketika OTP dikirimkan, misalnya verifikasi
-            debugPrint('Submitted OTP: $otp');
-          },
-        ),
-      ),
-    );
+    if (!_isValidEmail(email)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please enter a valid email')),
+      );
+      return;
+    }
+
+    // Kirim event untuk memulai pengiriman OTP
+    context.read<ForgotPasswordBloc>().add(SendOtpEvent(email));
   }
 
   @override
@@ -171,20 +99,66 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                 ),
               ),
               const SizedBox(height: 8),
-              CustomTextField(
-                controller: _emailController,
-                hintText: 'Enter your email',
-                prefixIcon: Image.asset('assets/icons/email.png'),
+              Container(
+                decoration: BoxDecoration(
+                  color: Colors.grey[100],
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: TextField(
+                  controller: _emailController,
+                  decoration: InputDecoration(
+                    hintText: 'Enter your email',
+                    prefixIcon: Image.asset('assets/icons/email.png'),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                      borderSide: BorderSide.none,
+                    ),
+                    filled: true,
+                    fillColor: Colors.grey[100],
+                  ),
+                ),
               ),
               const Spacer(),
               const Divider(),
-              const SizedBox(
-                height: 10,
-              ),
-              CustomButton(
-                text: 'Send OTP Code',
-                onPressed: _handleSendOTP,
-                backgroundColor: primaryColor,
+              const SizedBox(height: 10),
+              BlocListener<ForgotPasswordBloc, ForgotPasswordState>(
+                listener: (context, state) {
+                  if (state is ForgotPasswordSuccess) {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => OtpScreen(
+                          email: _emailController.text,
+                          onSubmit: (otp) {
+                            debugPrint('Submitted OTP: $otp');
+                          },
+                        ),
+                      ),
+                    );
+                  } else if (state is ForgotPasswordFailure) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('Error: ${state.error}')),
+                    );
+                  }
+                },
+                child: SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: _handleSendOTP,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: primaryColor,
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(50),
+                      ),
+                    ),
+                    child: const Text(
+                      'Send OTP Code',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  ),
+                ),
               ),
               const SizedBox(height: 16),
             ],

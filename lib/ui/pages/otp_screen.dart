@@ -1,10 +1,9 @@
-// otp_screen.dart
 import 'package:flutter/material.dart';
-import 'dart:async';
-
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:toma_scan/blocs/forgot/bloc/forgot_bloc.dart';
 import 'package:toma_scan/ui/pages/secure_password.dart';
 
-class OtpScreen extends StatefulWidget {
+class OtpScreen extends StatelessWidget {
   final String email;
   final Function(String) onSubmit;
 
@@ -15,58 +14,23 @@ class OtpScreen extends StatefulWidget {
   });
 
   @override
-  State<OtpScreen> createState() => _OtpScreenState();
+  Widget build(BuildContext context) {
+    return BlocProvider(
+      create: (context) => OtpBloc(),
+      child: OtpScreenBody(email: email, onSubmit: onSubmit),
+    );
+  }
 }
 
-class _OtpScreenState extends State<OtpScreen> {
-  final List<TextEditingController> _controllers = List.generate(
-    4,
-    (index) => TextEditingController(),
-  );
+class OtpScreenBody extends StatelessWidget {
+  final String email;
+  final Function(String) onSubmit;
 
-  Timer? _timer;
-  int _remainingTime = 56;
-
-  @override
-  void initState() {
-    super.initState();
-    startTimer();
-  }
-
-  void startTimer() {
-    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
-      if (_remainingTime > 0) {
-        setState(() {
-          _remainingTime--;
-        });
-      } else {
-        _timer?.cancel();
-      }
-    });
-  }
-
-  void _navigateToSecureAccount() {
-    String otp = _controllers.map((controller) => controller.text).join();
-    if (otp.length == 4) {
-      // Panggil onSubmit atau arahkan ke halaman Secure Password
-      widget.onSubmit(otp); // Atau langsung navigasi
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => const SecureAccountScreen(),
-        ),
-      );
-    }
-  }
-
-  @override
-  void dispose() {
-    _timer?.cancel();
-    for (var controller in _controllers) {
-      controller.dispose();
-    }
-    super.dispose();
-  }
+  const OtpScreenBody({
+    super.key,
+    required this.email,
+    required this.onSubmit,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -114,53 +78,52 @@ class _OtpScreenState extends State<OtpScreen> {
               children: List.generate(
                 4,
                 (index) => OtpDigitField(
-                  controller: _controllers[index],
                   onChanged: (value) {
                     if (value.length == 1 && index < 3) {
                       FocusScope.of(context).nextFocus();
                     } else if (value.isEmpty && index > 0) {
                       FocusScope.of(context).previousFocus();
                     }
-
-                    // Cek apakah semua kolom sudah terisi
-                    if (index == 3 && value.isNotEmpty) {
-                      _navigateToSecureAccount();
-                    }
                   },
                 ),
               ),
             ),
             const SizedBox(height: 24),
-            Center(
-              child: Column(
-                children: [
-                  Text(
-                    'You can resend the code in $_remainingTime seconds',
-                    style: TextStyle(
-                      color: Colors.grey[600],
-                      fontSize: 14,
+            BlocBuilder<OtpBloc, OtpState>(
+              builder: (context, state) {
+                if (state is OtpResendState) {
+                  return Center(
+                    child: Column(
+                      children: [
+                        Text(
+                          'You can resend the code in ${state.remainingTime} seconds',
+                          style: TextStyle(
+                            color: Colors.grey[600],
+                            fontSize: 14,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        TextButton(
+                          onPressed: state.remainingTime == 0
+                              ? () {
+                                  context.read<OtpBloc>().add(OtpResendEvent());
+                                }
+                              : null,
+                          child: Text(
+                            'Resend Code',
+                            style: TextStyle(
+                              color: Colors.green[400],
+                              fontSize: 16,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
-                  ),
-                  const SizedBox(height: 8),
-                  TextButton(
-                    onPressed: _remainingTime == 0
-                        ? () {
-                            setState(() {
-                              _remainingTime = 56;
-                            });
-                            startTimer();
-                          }
-                        : null,
-                    child: Text(
-                      'Resend Code',
-                      style: TextStyle(
-                        color: Colors.green[400],
-                        fontSize: 16,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
+                  );
+                }
+                return const SizedBox
+                    .shrink(); // Empty state if not OtpResendState
+              },
             ),
           ],
         ),
@@ -170,12 +133,10 @@ class _OtpScreenState extends State<OtpScreen> {
 }
 
 class OtpDigitField extends StatelessWidget {
-  final TextEditingController controller;
   final Function(String) onChanged;
 
   const OtpDigitField({
     super.key,
-    required this.controller,
     required this.onChanged,
   });
 
@@ -191,7 +152,6 @@ class OtpDigitField extends StatelessWidget {
         ),
       ),
       child: TextField(
-        controller: controller,
         onChanged: onChanged,
         textAlign: TextAlign.center,
         keyboardType: TextInputType.number,

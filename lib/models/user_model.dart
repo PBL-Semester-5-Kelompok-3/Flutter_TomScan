@@ -9,12 +9,12 @@ class User {
     required this.name,
   });
 
-  // From JSON
-  factory User.fromJson(Map<String, dynamic> json) {
+  // Factory constructor untuk membuat objek User dari Map<String, dynamic>
+  factory User.fromMap(Map<String, dynamic> map) {
     return User(
-      id: json['id'] ?? '',
-      email: json['email'] ?? '',
-      name: json['name'] ?? '',
+      email: map['email'],
+      name: map['name'],
+      id: '',
     );
   }
 
