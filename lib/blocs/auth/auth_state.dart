@@ -1,26 +1,28 @@
-import 'package:flutter/foundation.dart';
-import 'package:toma_scan/models/user_model.dart';
+part of 'auth_bloc.dart';
 
-abstract class AuthState {}
+@immutable
+sealed class AuthState {
+  const AuthState();
+
+  List<Object> get props => [];
+}
 
 class AuthInitial extends AuthState {}
 
 class AuthLoading extends AuthState {}
 
-class AuthAuthenticated extends AuthState {
-  final User user;
+class AuthFailed extends AuthState {
+  final String e;
+  const AuthFailed(this.e);
 
-  AuthAuthenticated({required this.user});
+  @override
+  List<Object> get props => [e];
 }
 
-class AuthUnauthenticated extends AuthState {}
+class AuthSuccess extends AuthState {
+  final UserModel user;
+  const AuthSuccess(this.user);
 
-class AuthFailure extends AuthState {
-  final String error;
-
-  AuthFailure({required this.error});
+  @override
+  List<Object> get props => [user];
 }
-
-class AuthForgotPasswordSuccess extends AuthState {}
-
-class AuthOtpSent extends AuthState {}

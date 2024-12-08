@@ -1,9 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:toma_scan/blocs/forgot/bloc/forgot_bloc.dart';
-import 'package:toma_scan/blocs/forgot/bloc/forgot_event.dart';
-import 'package:toma_scan/blocs/forgot/bloc/forgot_state.dart';
-import 'package:toma_scan/shared/themes.dart';
 import 'package:toma_scan/ui/pages/otp_screen.dart';
 
 class ForgotPasswordScreen extends StatefulWidget {
@@ -46,8 +41,23 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
       return;
     }
 
-    // Kirim event untuk memulai pengiriman OTP
-    context.read<ForgotPasswordBloc>().add(SendOtpEvent(email));
+    // Simulasikan pengiriman OTP (harus diganti dengan logika backend yang sesuai)
+    _navigateToOtpScreen(email);
+  }
+
+  // Navigasi ke layar OTP
+  void _navigateToOtpScreen(String email) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => OtpScreen(
+          email: email,
+          onSubmit: (otp) {
+            debugPrint('Submitted OTP: $otp');
+          },
+        ),
+      ),
+    );
   }
 
   @override
@@ -121,42 +131,21 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
               const Spacer(),
               const Divider(),
               const SizedBox(height: 10),
-              BlocListener<ForgotPasswordBloc, ForgotPasswordState>(
-                listener: (context, state) {
-                  if (state is ForgotPasswordSuccess) {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => OtpScreen(
-                          email: _emailController.text,
-                          onSubmit: (otp) {
-                            debugPrint('Submitted OTP: $otp');
-                          },
-                        ),
-                      ),
-                    );
-                  } else if (state is ForgotPasswordFailure) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('Error: ${state.error}')),
-                    );
-                  }
-                },
-                child: SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: _handleSendOTP,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: primaryColor,
-                      foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(50),
-                      ),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: _handleSendOTP,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.blue, // Use your primary color here
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(50),
                     ),
-                    child: const Text(
-                      'Send OTP Code',
-                      style: TextStyle(color: Colors.white),
-                    ),
+                  ),
+                  child: const Text(
+                    'Send OTP Code',
+                    style: TextStyle(color: Colors.white),
                   ),
                 ),
               ),
