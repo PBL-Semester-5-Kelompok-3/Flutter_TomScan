@@ -1,7 +1,11 @@
 import 'dart:ui';
-
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:toma_scan/blocs/auth/auth_bloc.dart';
+import 'package:toma_scan/blocs/auth/auth_event.dart';
+import 'package:toma_scan/blocs/auth/auth_state.dart';
 import 'package:toma_scan/shared/themes.dart';
+import 'package:toma_scan/services/user_service.dart';
 
 // Reusable text field component
 class CustomTextField extends StatelessWidget {
@@ -172,25 +176,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
 
-  void _showLoadingModal() {
-    showDialog(
-      context: context,
-      barrierDismissible: false, // Modal tidak bisa ditutup dengan tap di luar
-      builder: (BuildContext context) {
-        return const LoadingModal();
-      },
-    );
-
-    // Simulasi proses sign up
-    Future.delayed(const Duration(seconds: 3), () {
-      // ignore: use_build_context_synchronously
-      Navigator.pushNamed(
-          // ignore: use_build_context_synchronously
-          context,
-          '/sign-in'); // Tutup modal setelah proses selesai
-      // Di sini Anda bisa menambahkan logic untuk handle hasil sign up
-      // Misalnya navigasi ke halaman berikutnya atau menampilkan pesan sukses/error
-    });
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
   }
 
   @override
@@ -243,6 +233,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   if (value?.isEmpty ?? true) {
                     return 'Please enter your email';
                   }
+                  // Add regex for email validation here if needed
                   return null;
                 },
               ),
@@ -256,6 +247,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   if (value?.isEmpty ?? true) {
                     return 'Please enter your password';
                   }
+                  // You can add additional password validation rules here
                   return null;
                 },
               ),
@@ -268,7 +260,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     style: TextStyle(fontWeight: FontWeight.bold),
                   ),
                   TextButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      Navigator.pushNamed(context, '/sign-in');
+                    },
                     child: const Text(
                       'Log in',
                       style: TextStyle(color: Color(0xff77CEAE)),
@@ -320,25 +314,51 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 onPressed: () {},
               ),
               const SizedBox(height: 24),
-              ElevatedButton(
-                onPressed: () {
-                  if (_formKey.currentState?.validate() ?? false) {
-                    _showLoadingModal(); // Tampilkan loading modal
+              BlocListener<AuthBloc, AuthState>(
+                listener: (context, state) {
+                  if (state is AuthLoading) {
+                    showDialog(
+                      context: context,
+                      barrierDismissible: false,
+                      builder: (context) {
+                        return const LoadingModal();
+                      },
+                    );
+                  } else if (state is AuthAuthenticated) {
+                    Navigator.pop(context); // Close loading modal
+                    Navigator.pushReplacementNamed(context, '/home');
+                  } else if (state is AuthFailure) {
+                    Navigator.pop(context); // Close loading modal
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text(state.error)),
+                    );
                   }
                 },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: primaryColor,
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(50),
+                child: ElevatedButton(
+                  onPressed: () {
+                    if (_formKey.currentState?.validate() ?? false) {
+                      context.read<AuthBloc>().add(
+                            AuthSignUpEvent(
+                              email: _emailController.text,
+                              password: _passwordController.text,
+                            ),
+                          );
+                    }
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: primaryColor,
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(50),
+                    ),
                   ),
-                ),
-                child: const Text(
-                  'Sign up',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
+                  child: const Text(
+                    'Sign up',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
                   ),
                 ),
               ),
@@ -347,12 +367,5 @@ class _SignUpScreenState extends State<SignUpScreen> {
         ),
       ),
     );
-  }
-
-  @override
-  void dispose() {
-    _emailController.dispose();
-    _passwordController.dispose();
-    super.dispose();
   }
 }
