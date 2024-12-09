@@ -12,7 +12,6 @@ part 'auth_state.dart';
 
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
   AuthBloc() : super(AuthInitial()) {
-<<<<<<< Updated upstream
     on<AuthEvent>((event, emit) async {
       if (event is AuthRegister) {
         try {
@@ -30,28 +29,19 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         } catch (e) {
           emit(AuthFailed(e.toString()));
         }
-=======
-    // Handle register
-    on<AuthRegister>((event, emit) async {
-      try {
-        emit(AuthLoading());
-        final user = await AuthService().register(event.data);
-        emit(AuthSuccess(user));
-      } catch (e) {
-        emit(AuthFailed(e.toString()));
       }
     });
+  }
+  // Metode untuk forgot password
+  Future<String> forgotPassword(String email) async {
+    await Future.delayed(Duration(seconds: 2)); // Simulasi panggilan API
 
-    // Handle forgot password
-    on<AuthForgotPassword>((event, emit) async {
-      try {
-        emit(AuthLoading());
-        final result = await AuthService().forgotPassword(event.email);
-        emit(AuthForgotPasswordSuccess(result));
-      } catch (e) {
-        emit(AuthForgotPasswordFailed(e.toString()));
->>>>>>> Stashed changes
-      }
-    });
+    // Validasi email
+    if (email.isEmpty || !email.contains('@')) {
+      throw Exception("Email tidak valid");
+    }
+
+    // Simulasi pengiriman tautan reset password
+    return "Tautan reset password telah dikirim ke $email";
   }
 }
