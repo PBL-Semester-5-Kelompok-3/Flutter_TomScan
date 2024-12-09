@@ -1,29 +1,35 @@
-class User {
-  final String id;
-  final String email;
-  final String name;
+class UserModel {
+  final int? id;
+  final String? username;
+  final String? email;
+  final String? password;
+  final String? token;
 
-  User({
-    required this.id,
-    required this.email,
-    required this.name,
+  UserModel({
+    this.id,
+    this.username,
+    this.email,
+    this.password,
+    this.token,
   });
 
-  // Factory constructor untuk membuat objek User dari Map<String, dynamic>
-  factory User.fromMap(Map<String, dynamic> map) {
-    return User(
-      email: map['email'],
-      name: map['name'],
-      id: '',
-    );
-  }
-
-  // To JSON
-  Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'email': email,
-      'name': name,
-    };
-  }
+  factory UserModel.fromJson(Map<String, dynamic> json) => UserModel(
+        id: json['id'],
+        username: json['username'],
+        email: json['email'],
+        password: json['password'],
+        token: json['token'],
+      );
+  UserModel copyWith({
+    String? username,
+    String? email,
+    String? password,
+  }) =>
+      UserModel(
+        id: id,
+        username: username ?? this.username,
+        email: email ?? this.email,
+        password: password ?? this.password,
+        token: token,
+      );
 }

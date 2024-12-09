@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:toma_scan/blocs/forgot/bloc/forgot_bloc.dart';
-import 'package:toma_scan/ui/pages/secure_password.dart';
 
-class OtpScreen extends StatelessWidget {
+class OtpScreen extends StatefulWidget {
   final String email;
   final Function(String) onSubmit;
 
@@ -14,23 +11,52 @@ class OtpScreen extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => OtpBloc(),
-      child: OtpScreenBody(email: email, onSubmit: onSubmit),
-    );
-  }
+  _OtpScreenState createState() => _OtpScreenState();
 }
 
-class OtpScreenBody extends StatelessWidget {
-  final String email;
-  final Function(String) onSubmit;
+class _OtpScreenState extends State<OtpScreen> {
+  // State for OTP input
+  final _otpControllers = List.generate(4, (index) => TextEditingController());
+  int _remainingTime = 60;
+  bool _isResendEnabled = false;
 
-  const OtpScreenBody({
-    super.key,
-    required this.email,
-    required this.onSubmit,
-  });
+  @override
+  void initState() {
+    super.initState();
+    _startResendTimer();
+  }
+
+  void _startResendTimer() {
+    Future.delayed(const Duration(seconds: 1), () {
+      if (_remainingTime > 0) {
+        setState(() {
+          _remainingTime--;
+        });
+        _startResendTimer();
+      } else {
+        setState(() {
+          _isResendEnabled = true;
+        });
+      }
+    });
+  }
+
+  void _resendCode() {
+    setState(() {
+      _remainingTime = 60;
+      _isResendEnabled = false;
+    });
+    _startResendTimer();
+    // Here you can add the code to resend the OTP to the email
+  }
+
+  @override
+  void dispose() {
+    for (var controller in _otpControllers) {
+      controller.dispose();
+    }
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -78,6 +104,7 @@ class OtpScreenBody extends StatelessWidget {
               children: List.generate(
                 4,
                 (index) => OtpDigitField(
+                  controller: _otpControllers[index],
                   onChanged: (value) {
                     if (value.length == 1 && index < 3) {
                       FocusScope.of(context).nextFocus();
@@ -89,26 +116,12 @@ class OtpScreenBody extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 24),
-            BlocBuilder<OtpBloc, OtpState>(
-              builder: (context, state) {
-                if (state is OtpResendState) {
-                  return Center(
+            _isResendEnabled
+                ? Center(
                     child: Column(
                       children: [
-                        Text(
-                          'You can resend the code in ${state.remainingTime} seconds',
-                          style: TextStyle(
-                            color: Colors.grey[600],
-                            fontSize: 14,
-                          ),
-                        ),
-                        const SizedBox(height: 8),
                         TextButton(
-                          onPressed: state.remainingTime == 0
-                              ? () {
-                                  context.read<OtpBloc>().add(OtpResendEvent());
-                                }
-                              : null,
+                          onPressed: _resendCode,
                           child: Text(
                             'Resend Code',
                             style: TextStyle(
@@ -119,11 +132,39 @@ class OtpScreenBody extends StatelessWidget {
                         ),
                       ],
                     ),
-                  );
-                }
-                return const SizedBox
-                    .shrink(); // Empty state if not OtpResendState
+                  )
+                : Center(
+                    child: Text(
+                      'You can resend the code in $_remainingTime seconds',
+                      style: TextStyle(
+                        color: Colors.grey[600],
+                        fontSize: 14,
+                      ),
+                    ),
+                  ),
+            const SizedBox(height: 24),
+            ElevatedButton(
+              onPressed: () {
+                // Join the OTP digits and pass to onSubmit
+                final otp =
+                    _otpControllers.map((controller) => controller.text).join();
+                widget.onSubmit(otp);
               },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.green[400],
+                padding: const EdgeInsets.symmetric(vertical: 16),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(50),
+                ),
+              ),
+              child: const Text(
+                'Submit OTP',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
+              ),
             ),
           ],
         ),
@@ -133,10 +174,12 @@ class OtpScreenBody extends StatelessWidget {
 }
 
 class OtpDigitField extends StatelessWidget {
+  final TextEditingController controller;
   final Function(String) onChanged;
 
   const OtpDigitField({
     super.key,
+    required this.controller,
     required this.onChanged,
   });
 
@@ -152,6 +195,7 @@ class OtpDigitField extends StatelessWidget {
         ),
       ),
       child: TextField(
+        controller: controller,
         onChanged: onChanged,
         textAlign: TextAlign.center,
         keyboardType: TextInputType.number,
