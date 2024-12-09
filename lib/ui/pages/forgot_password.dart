@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:toma_scan/blocs/auth/auth_bloc.dart';
 import 'package:toma_scan/ui/pages/otp_screen.dart';
 
 class ForgotPasswordScreen extends StatefulWidget {
@@ -41,23 +43,8 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
       return;
     }
 
-    // Simulasikan pengiriman OTP (harus diganti dengan logika backend yang sesuai)
-    _navigateToOtpScreen(email);
-  }
-
-  // Navigasi ke layar OTP
-  void _navigateToOtpScreen(String email) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => OtpScreen(
-          email: email,
-          onSubmit: (otp) {
-            debugPrint('Submitted OTP: $otp');
-          },
-        ),
-      ),
-    );
+    // Triggering the BLoC event for forgot password
+    context.read<AuthBloc>().add(AuthForgotPassword(email));
   }
 
   @override
@@ -150,8 +137,44 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                 ),
               ),
               const SizedBox(height: 16),
+
+              // Show loading or error state
+              BlocListener<AuthBloc, AuthState>(
+                listener: (context, state) {
+                  if (state is AuthLoading) {
+                    // Show loading indicator
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Sending OTP...')),
+                    );
+                  } else if (state is AuthForgotPasswordSuccess) {
+                    // Navigate to OTP screen on success
+                    _navigateToOtpScreen(state.message);
+                  } else if (state is AuthFailed) {
+                    // Show error message
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text(state.e)),
+                    );
+                  }
+                },
+                child: Container(),
+              ),
             ],
           ),
+        ),
+      ),
+    );
+  }
+
+  // Navigasi ke layar OTP
+  void _navigateToOtpScreen(String email) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => OtpScreen(
+          email: email,
+          onSubmit: (otp) {
+            debugPrint('Submitted OTP: $otp');
+          },
         ),
       ),
     );

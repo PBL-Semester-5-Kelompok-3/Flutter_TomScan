@@ -26,3 +26,19 @@ class AuthSuccess extends AuthState {
   @override
   List<Object> get props => [user];
 }
+
+class AuthForgotPasswordSuccess extends AuthState {
+  final String message;
+  const AuthForgotPasswordSuccess(this.message);
+
+  @override
+  List<Object> get props => [message];
+}
+
+class AuthForgotPasswordFailed extends AuthState {
+  final String message;
+  const AuthForgotPasswordFailed(this.message);
+
+  @override
+  List<Object> get props => [message];
+}
