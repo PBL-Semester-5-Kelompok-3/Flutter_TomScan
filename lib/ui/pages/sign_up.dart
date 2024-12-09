@@ -6,7 +6,7 @@ import 'package:toma_scan/models/sign_up_form_model.dart';
 import 'package:toma_scan/shared/themes.dart';
 
 // Reusable text field component
-class CustomTextField extends StatelessWidget {
+class CustomTextField extends StatefulWidget {
   final String label;
   final String icon;
   final bool isPassword;
@@ -23,12 +23,20 @@ class CustomTextField extends StatelessWidget {
   });
 
   @override
+  _CustomTextFieldState createState() => _CustomTextFieldState();
+}
+
+class _CustomTextFieldState extends State<CustomTextField> {
+  // Menyimpan status apakah password terlihat atau tersembunyi
+  bool _isPasswordVisible = false;
+
+  @override
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          label,
+          widget.label,
           style: const TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.w500,
@@ -36,30 +44,36 @@ class CustomTextField extends StatelessWidget {
         ),
         const SizedBox(height: 8),
         TextFormField(
-          controller: controller,
-          obscureText: isPassword,
+          controller: widget.controller,
+          obscureText: widget.isPassword
+              ? !_isPasswordVisible
+              : false, // Kontrol untuk menyembunyikan/menampilkan password
           decoration: InputDecoration(
-            hintText: label,
+            hintText: widget.label,
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8),
               borderSide: BorderSide.none,
             ),
             filled: true,
             fillColor: Colors.grey[100],
-            prefixIcon: Image.asset(icon),
-            suffixIcon: isPassword
+            prefixIcon: Image.asset(widget.icon),
+            suffixIcon: widget.isPassword
                 ? IconButton(
-                    icon: const Icon(
-                      Icons.visibility_off,
+                    icon: Icon(
+                      _isPasswordVisible
+                          ? Icons.visibility
+                          : Icons.visibility_off,
                       color: Colors.grey,
                     ),
                     onPressed: () {
-                      // Toggle password visibility
+                      setState(() {
+                        _isPasswordVisible = !_isPasswordVisible;
+                      });
                     },
                   )
                 : null,
           ),
-          validator: validator,
+          validator: widget.validator,
         ),
       ],
     );
@@ -171,12 +185,15 @@ class SignUpScreen extends StatefulWidget {
 
 class _SignUpScreenState extends State<SignUpScreen> {
   final _formKey = GlobalKey<FormState>();
+  final _usernameController = TextEditingController();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   bool _isLoading = false;
 
   bool validate() {
-    if (_emailController.text.isEmpty || _passwordController.text.isEmpty) {
+    if (_emailController.text.isEmpty ||
+        _passwordController.text.isEmpty ||
+        _usernameController.text.isEmpty) {
       return false;
     }
     return true;
@@ -184,6 +201,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
   @override
   void dispose() {
+    _usernameController.dispose();
     _emailController.dispose();
     _passwordController.dispose();
     super.dispose();
@@ -213,7 +231,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
               _isLoading = false;
             });
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text(state.e)),
+              const SnackBar(content: Text('the email has already been taken')),
             );
           }
         },
@@ -254,6 +272,18 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         ),
                       ),
                       const SizedBox(height: 32),
+                      CustomTextField(
+                        icon: 'assets/icons/user2.png',
+                        label: 'Username',
+                        controller: _usernameController,
+                        validator: (value) {
+                          if (value?.isEmpty ?? true) {
+                            return 'Please enter Username';
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: 16),
                       CustomTextField(
                         icon: 'assets/icons/email.png',
                         label: 'Email',
@@ -330,12 +360,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       ),
                       const SizedBox(height: 5),
                       SocialLoginButton(
-                        text: 'Continue with Apple',
-                        iconPath: 'assets/icons/apple.png',
-                        onPressed: () {},
-                      ),
-                      const SizedBox(height: 5),
-                      SocialLoginButton(
                         text: 'Continue with Facebook',
                         iconPath: 'assets/icons/facebook.png',
                         onPressed: () {},
@@ -345,7 +369,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         onPressed: () {
                           if (validate()) {
                             final signUpData = SignUpFormModel(
-                              username: _emailController.text,
+                              username: _usernameController.text,
                               email: _emailController.text,
                               password: _passwordController.text,
                             );
