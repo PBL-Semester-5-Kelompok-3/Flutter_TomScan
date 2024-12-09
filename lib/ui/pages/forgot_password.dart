@@ -12,6 +12,7 @@ class ForgotPasswordScreen extends StatefulWidget {
 
 class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   final TextEditingController _emailController = TextEditingController();
+  bool _isLoading = false;
 
   @override
   void dispose() {
@@ -42,6 +43,10 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
       );
       return;
     }
+
+    setState(() {
+      _isLoading = true;
+    });
 
     // Triggering the BLoC event for forgot password
     context.read<AuthBloc>().add(AuthForgotPassword(email));
@@ -121,36 +126,40 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
-                  onPressed: _handleSendOTP,
+                  onPressed: _isLoading ? null : _handleSendOTP,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blue, // Use your primary color here
+                    backgroundColor: Colors.blue,
                     foregroundColor: Colors.white,
                     padding: const EdgeInsets.symmetric(vertical: 16),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(50),
                     ),
                   ),
-                  child: const Text(
-                    'Send OTP Code',
-                    style: TextStyle(color: Colors.white),
-                  ),
+                  child: _isLoading
+                      ? const CircularProgressIndicator(color: Colors.white)
+                      : const Text(
+                          'Send OTP Code',
+                          style: TextStyle(color: Colors.white),
+                        ),
                 ),
               ),
               const SizedBox(height: 16),
-
               // Show loading or error state
               BlocListener<AuthBloc, AuthState>(
                 listener: (context, state) {
                   if (state is AuthLoading) {
-                    // Show loading indicator
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Sending OTP...')),
-                    );
+                    setState(() {
+                      _isLoading = true;
+                    });
                   } else if (state is AuthForgotPasswordSuccess) {
-                    // Navigate to OTP screen on success
+                    setState(() {
+                      _isLoading = false;
+                    });
                     _navigateToOtpScreen(state.message);
                   } else if (state is AuthFailed) {
-                    // Show error message
+                    setState(() {
+                      _isLoading = false;
+                    });
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(content: Text(state.e)),
                     );

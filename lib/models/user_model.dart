@@ -32,4 +32,11 @@ class UserModel {
         password: password ?? this.password,
         token: token,
       );
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'username': username,
+        'email': email,
+        'password': password,
+        'token': token,
+      };
 }

@@ -15,7 +15,6 @@ class OtpScreen extends StatefulWidget {
 }
 
 class _OtpScreenState extends State<OtpScreen> {
-  // State for OTP input
   final _otpControllers = List.generate(4, (index) => TextEditingController());
   int _remainingTime = 60;
   bool _isResendEnabled = false;
@@ -144,12 +143,16 @@ class _OtpScreenState extends State<OtpScreen> {
                   ),
             const SizedBox(height: 24),
             ElevatedButton(
-              onPressed: () {
-                // Join the OTP digits and pass to onSubmit
-                final otp =
-                    _otpControllers.map((controller) => controller.text).join();
-                widget.onSubmit(otp);
-              },
+              onPressed: _otpControllers
+                      .every((controller) => controller.text.isNotEmpty)
+                  ? () {
+                      // Join the OTP digits and pass to onSubmit
+                      final otp = _otpControllers
+                          .map((controller) => controller.text)
+                          .join();
+                      widget.onSubmit(otp);
+                    }
+                  : null,
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.green[400],
                 padding: const EdgeInsets.symmetric(vertical: 16),
