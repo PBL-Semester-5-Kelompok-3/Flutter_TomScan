@@ -29,19 +29,23 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         } catch (e) {
           emit(AuthFailed(e.toString()));
         }
+      } else if (event is AuthForgotPassword) {
+        try {
+          emit(AuthLoading());
+          final message = await AuthService().forgotPassword(event.email);
+          emit(AuthForgotPasswordSuccess(message));
+        } catch (e) {
+          emit(AuthForgotPasswordFailed(e.toString()));
+        }
+      } else if (event is AuthVerifyOTP) {
+        try {
+          emit(AuthLoading());
+          final message = await AuthService().verifyOTP(event.email, event.otp);
+          emit(AuthVerifyOTPSuccess(message));
+        } catch (e) {
+          emit(AuthVerifyOTPFailed(e.toString()));
+        }
       }
     });
-  }
-  // Metode untuk forgot password
-  Future<String> forgotPassword(String email) async {
-    await Future.delayed(Duration(seconds: 2)); // Simulasi panggilan API
-
-    // Validasi email
-    if (email.isEmpty || !email.contains('@')) {
-      throw Exception("Email tidak valid");
-    }
-
-    // Simulasi pengiriman tautan reset password
-    return "Tautan reset password telah dikirim ke $email";
   }
 }

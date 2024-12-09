@@ -30,3 +30,12 @@ class AuthForgotPassword extends AuthEvent {
   @override
   List<Object> get props => [email];
 }
+
+class AuthVerifyOTP extends AuthEvent {
+  final String email;
+  final String otp;
+  const AuthVerifyOTP(this.email, this.otp);
+
+  @override
+  List<Object> get props => [email, otp];
+}
