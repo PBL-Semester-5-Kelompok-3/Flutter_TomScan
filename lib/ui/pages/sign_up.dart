@@ -46,8 +46,8 @@ class _CustomTextFieldState extends State<CustomTextField> {
         TextFormField(
           controller: widget.controller,
           obscureText: widget.isPassword
-              ? !_isPasswordVisible
-              : false, // Kontrol untuk menyembunyikan/menampilkan password
+              ? !_isPasswordVisible // Menggunakan state visibility password
+              : false, // Jika bukan password, biarkan teks terlihat
           decoration: InputDecoration(
             hintText: widget.label,
             border: OutlineInputBorder(
@@ -71,7 +71,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
                       });
                     },
                   )
-                : null,
+                : null, // Hanya tampilkan suffixIcon jika field adalah password
           ),
           validator: widget.validator,
         ),
