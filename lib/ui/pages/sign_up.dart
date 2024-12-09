@@ -46,7 +46,7 @@ class CustomTextField extends StatelessWidget {
             ),
             filled: true,
             fillColor: Colors.grey[100],
-            prefixIcon: Image.asset(icon),
+            prefixIcon: Image.asset(icon, width: 21,),
             suffixIcon: isPassword
                 ? IconButton(
                     icon: const Icon(
@@ -252,18 +252,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           color: Colors.grey,
                           fontSize: 16,
                         ),
-                      ),
-                      const SizedBox(height: 32),
-                      CustomTextField(
-                        icon: 'assets/icons/email.png',
-                        label: 'Email',
-                        controller: _emailController,
-                        validator: (value) {
-                          if (value?.isEmpty ?? true) {
-                            return 'Please enter your email';
-                          }
-                          return null;
-                        },
                       ),
                       const SizedBox(height: 16),
                       CustomTextField(
