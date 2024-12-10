@@ -79,7 +79,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 Navigator.of(context).pop(); // Tutup dialog
 
                 // Trigger logout event
-                context.read<AuthBloc>().add(AuthLogout());
+                context.read<AuthBloc>().add(const AuthLogout());
               },
               child: const Text('Yes', style: TextStyle(color: Colors.red)),
             ),

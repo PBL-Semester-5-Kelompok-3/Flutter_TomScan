@@ -50,7 +50,7 @@ class ViewArticle extends StatelessWidget {
               child: Container(
                 padding: const EdgeInsets.all(12.0),
                 decoration: BoxDecoration(
-                  color: Color(0xFFEAF1F1), // Light gray with a hint of green
+                  color: const Color(0xFFEAF1F1), // Light gray with a hint of green
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Column(

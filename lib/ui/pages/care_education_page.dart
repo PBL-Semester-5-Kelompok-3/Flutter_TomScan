@@ -1,7 +1,6 @@
 // ignore_for_file: use_super_parameters
 
 import 'package:flutter/material.dart';
-import 'package:toma_scan/ui/pages/create_care_form.dart';
 
 class CareEducationPage extends StatelessWidget {
   const CareEducationPage({Key? key}) : super(key: key);

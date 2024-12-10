@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class CreateArticleForm extends StatefulWidget {
-  const CreateArticleForm({Key? key}) : super(key: key);
+  const CreateArticleForm({super.key});
 
   @override
   State<CreateArticleForm> createState() => _CreateArticleFormState();
@@ -15,7 +15,7 @@ class _CreateArticleFormState extends State<CreateArticleForm> {
   void _showSuccessNotification() {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Row(
+        content: const Row(
           children: [
             Icon(Icons.check_circle, color: Colors.white),
             SizedBox(width: 8),
@@ -23,9 +23,9 @@ class _CreateArticleFormState extends State<CreateArticleForm> {
           ],
         ),
         backgroundColor: Colors.green,
-        duration: Duration(seconds: 2),
+        duration: const Duration(seconds: 2),
         behavior: SnackBarBehavior.floating,
-        margin: EdgeInsets.all(20),
+        margin: const EdgeInsets.all(20),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(10),
         ),
@@ -37,7 +37,7 @@ class _CreateArticleFormState extends State<CreateArticleForm> {
     // Validate form
     if (_titleController.text.isEmpty || _contentController.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
+        const SnackBar(
           content: Text('Please fill in all fields'),
           backgroundColor: Colors.red,
           behavior: SnackBarBehavior.floating,
@@ -48,7 +48,7 @@ class _CreateArticleFormState extends State<CreateArticleForm> {
 
     // Show success notification and pop
     _showSuccessNotification();
-    Future.delayed(Duration(seconds: 1), () {
+    Future.delayed(const Duration(seconds: 1), () {
       Navigator.pop(context);
     });
   }
@@ -175,7 +175,7 @@ class _CreateArticleFormState extends State<CreateArticleForm> {
                               borderRadius: BorderRadius.circular(8),
                             ),
                             child: _selectedImagePath != null
-                                ? Center(
+                                ? const Center(
                                     child: Text('Image selected',
                                         style: TextStyle(color: Colors.green)))
                                 : const Center(
