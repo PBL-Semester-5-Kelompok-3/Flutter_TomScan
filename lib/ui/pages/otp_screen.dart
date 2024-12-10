@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:toma_scan/blocs/auth/auth_bloc.dart';
+import 'package:toma_scan/ui/pages/reset_password.dart'; // Pastikan ini diimpor dengan benar
 
 class OtpScreen extends StatefulWidget {
   final String email;
@@ -46,7 +49,10 @@ class _OtpScreenState extends State<OtpScreen> {
       _isResendEnabled = false;
     });
     _startResendTimer();
-    // Here you can add the code to resend the OTP to the email
+    // Pemanggilan ulang event BLoC untuk pengiriman OTP
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text("OTP code has been resent!")),
+    );
   }
 
   @override
@@ -91,7 +97,7 @@ class _OtpScreenState extends State<OtpScreen> {
             ),
             const SizedBox(height: 12),
             Text(
-              'Please check your email inbox for a message from Plantify. Enter the one-time verification code below.',
+              'Please check your email inbox for a message from TomaScan. Enter the one-time verification code below.',
               style: TextStyle(
                 color: Colors.grey[600],
                 fontSize: 16,
@@ -117,19 +123,15 @@ class _OtpScreenState extends State<OtpScreen> {
             const SizedBox(height: 24),
             _isResendEnabled
                 ? Center(
-                    child: Column(
-                      children: [
-                        TextButton(
-                          onPressed: _resendCode,
-                          child: Text(
-                            'Resend Code',
-                            style: TextStyle(
-                              color: Colors.green[400],
-                              fontSize: 16,
-                            ),
-                          ),
+                    child: TextButton(
+                      onPressed: _resendCode,
+                      child: Text(
+                        'Resend Code',
+                        style: TextStyle(
+                          color: Colors.green[400],
+                          fontSize: 16,
                         ),
-                      ],
+                      ),
                     ),
                   )
                 : Center(
@@ -146,11 +148,15 @@ class _OtpScreenState extends State<OtpScreen> {
               onPressed: _otpControllers
                       .every((controller) => controller.text.isNotEmpty)
                   ? () {
-                      // Join the OTP digits and pass to onSubmit
+                      // Gabungkan digit OTP menjadi satu string
                       final otp = _otpControllers
                           .map((controller) => controller.text)
                           .join();
-                      widget.onSubmit(otp);
+
+                      // Kirimkan event BLoC untuk memverifikasi OTP
+                      context
+                          .read<AuthBloc>()
+                          .add(AuthVerifyOTP(widget.email, otp));
                     }
                   : null,
               style: ElevatedButton.styleFrom(
@@ -168,6 +174,30 @@ class _OtpScreenState extends State<OtpScreen> {
                   color: Colors.white,
                 ),
               ),
+            ),
+            BlocListener<AuthBloc, AuthState>(
+              listener: (context, state) {
+                if (state is AuthVerifyOTPSuccess) {
+                  // Tindakan setelah OTP berhasil diverifikasi
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text(state.message)),
+                  );
+                  // Navigasi ke halaman reset password setelah OTP berhasil
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) =>
+                          ResetPasswordScreen(), // Ganti dengan halaman reset password yang sesuai
+                    ),
+                  );
+                } else if (state is AuthVerifyOTPFailed) {
+                  // Jika OTP gagal diverifikasi
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text(state.message)),
+                  );
+                }
+              },
+              child: Container(),
             ),
           ],
         ),

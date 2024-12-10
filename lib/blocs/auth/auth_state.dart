@@ -1,3 +1,4 @@
+//auth_state.dart
 part of 'auth_bloc.dart';
 
 @immutable
