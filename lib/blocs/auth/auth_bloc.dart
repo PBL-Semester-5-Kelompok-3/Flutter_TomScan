@@ -37,6 +37,14 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         } catch (e) {
           emit(AuthForgotPasswordFailed(e.toString()));
         }
+      } else if (event is AuthResetPassword) {
+        try {
+          emit(AuthLoading());
+          final message = await AuthService().resetPassword(event.email);
+          emit(AuthResetPasswordSuccess(message));
+        } catch (e) {
+          emit(AuthResetPasswordFailed(e.toString()));
+        }
       } else if (event is AuthVerifyOTP) {
         try {
           emit(AuthLoading());

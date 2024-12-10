@@ -49,6 +49,27 @@ class AuthService {
     }
   }
 
+  // Reset Password
+  Future<String> resetPassword(String email) async {
+  try {
+      final res = await http.post(
+        Uri.parse('https://tomascan.nurulmustofa.my.id/api/forgot-password'),
+        body: jsonEncode({'email': email}),
+        headers: {'Content-Type': 'application/json'},
+      );
+
+      if (res.statusCode == 200) {
+        final responseBody = jsonDecode(res.body);
+        return responseBody['message'] ??
+            'Tautan reset password telah dikirim.';
+      } else {
+        throw jsonDecode(res.body)['message'] ?? 'Terjadi kesalahan';
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   //Verify OTP
   Future<String> verifyOTP(String email, String otp) async {
     try {
