@@ -79,9 +79,9 @@ class AuthResetPasswordFailed extends AuthState {
 class AuthLogoutSuccess extends AuthState {}
 
 class AuthLogoutFailed extends AuthState {
-  final String e;
-  const AuthLogoutFailed(this.e);
+  final String message;
+  const AuthLogoutFailed(this.message);
 
   @override
-  List<Object> get props => [e];
+  List<Object> get props => [message];
 }

@@ -108,17 +108,25 @@ class AuthService {
   // Logout
   Future<void> logout() async {
     try {
-      final res = await http.get(
+      final response = await http.post(
         Uri.parse('https://tomascan.nurulmustofa.my.id/api/logout'),
-      );
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer YOUR_ACCESS_TOKEN', // Jika diperlukan
+        },
+      ).timeout(const Duration(seconds: 10)); // Timeout 10 detik
 
-      if (res.statusCode == 200) {
-        return;
+      if (response.statusCode == 200) {
+        if (response.body == 'Successfully logged out') {
+          return;
+        } else {
+          throw 'Unexpected response: ${response.body}';
+        }
       } else {
-        throw jsonDecode(res.body)['message'] ?? 'Terjadi kesalahan';
+        throw 'Logout failed with status code: ${response.statusCode}';
       }
     } catch (e) {
-      rethrow;
+      throw 'Logout error: $e';
     }
   }
 }

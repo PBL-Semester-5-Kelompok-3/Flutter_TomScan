@@ -193,22 +193,23 @@ class _ProfilePageState extends State<ProfilePage> {
       body: BlocListener<AuthBloc, AuthState>(
         listener: (context, state) {
           if (state is AuthLoading) {
-            // Tampilkan loading indicator jika sedang proses logout
             showDialog(
               context: context,
-              builder: (BuildContext context) {
-                return const Center(
-                  child: CircularProgressIndicator(),
-                );
-              },
+              builder: (_) => const Center(
+                child: CircularProgressIndicator(),
+              ),
+              barrierDismissible: false,
             );
-          } else if (state is AuthLogoutSuccess) {
-            // Navigasi ke halaman login jika logout berhasil
+          } else {
+            // Tutup dialog loading
+            Navigator.of(context, rootNavigator: true).pop();
+          }
+
+          if (state is AuthLogoutSuccess) {
             Navigator.pushReplacementNamed(context, '/login');
-          } else if (state is AuthFailed) {
-            // Tampilkan error jika logout gagal
+          } else if (state is AuthLogoutFailed) {
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('Logout failed: ${state.e}')),
+              SnackBar(content: Text(state.message)),
             );
           }
         },
