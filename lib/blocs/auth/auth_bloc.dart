@@ -1,5 +1,4 @@
 // auth_bloc.dart
-import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
 import 'package:toma_scan/models/sign_in_form_model.dart';
