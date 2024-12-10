@@ -1,4 +1,3 @@
-//auth_service.dart
 import 'dart:convert';
 import 'package:toma_scan/models/sign_in_form_model.dart';
 import 'package:toma_scan/models/sign_up_form_model.dart';
@@ -17,7 +16,6 @@ class AuthService {
       if (res.statusCode == 200) {
         UserModel user = UserModel.fromJson(jsonDecode(res.body));
         user = user.copyWith(password: data.password);
-
         return user;
       } else {
         throw jsonDecode(res.body)['message'];
@@ -27,7 +25,24 @@ class AuthService {
     }
   }
 
-  login(SignInFormModel data) {}
+  // Login
+  Future<UserModel> login(SignInFormModel data) async {
+    try {
+      final res = await http.post(
+        Uri.parse('https://tomascan.nurulmustofa.my.id/api/login'),
+        body: data.toJson(),
+      );
+
+      if (res.statusCode == 200) {
+        UserModel user = UserModel.fromJson(jsonDecode(res.body));
+        return user;
+      } else {
+        throw jsonDecode(res.body)['message'];
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
 
   // Forgot Password
   Future<String> forgotPassword(String email) async {
@@ -50,7 +65,7 @@ class AuthService {
     }
   }
 
-  //Verify OTP
+  // Verify OTP
   Future<String> verifyOTP(String email, String otp) async {
     try {
       final res = await http.post(
@@ -62,6 +77,43 @@ class AuthService {
       if (res.statusCode == 200) {
         final responseBody = jsonDecode(res.body);
         return responseBody['message'] ?? 'Kode OTP tidak valid';
+      } else {
+        throw jsonDecode(res.body)['message'] ?? 'Terjadi kesalahan';
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  // Reset Password
+  Future<String> resetPassword(String email, String password) async {
+    try {
+      final res = await http.post(
+        Uri.parse('https://tomascan.nurulmustofa.my.id/api/reset-password'),
+        body: jsonEncode({'email': email, 'password': password}),
+        headers: {'Content-Type': 'application/json'},
+      );
+
+      if (res.statusCode == 200) {
+        final responseBody = jsonDecode(res.body);
+        return responseBody['message'] ?? 'Password berhasil diubah';
+      } else {
+        throw jsonDecode(res.body)['message'] ?? 'Terjadi kesalahan';
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  // Logout
+  Future<void> logout() async {
+    try {
+      final res = await http.get(
+        Uri.parse('https://tomascan.nurulmustofa.my.id/api/logout'),
+      );
+
+      if (res.statusCode == 200) {
+        return;
       } else {
         throw jsonDecode(res.body)['message'] ?? 'Terjadi kesalahan';
       }

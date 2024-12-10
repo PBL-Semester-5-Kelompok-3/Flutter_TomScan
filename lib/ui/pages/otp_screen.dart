@@ -187,7 +187,7 @@ class _OtpScreenState extends State<OtpScreen> {
                     context,
                     MaterialPageRoute(
                       builder: (context) =>
-                          ResetPasswordScreen(), // Ganti dengan halaman reset password yang sesuai
+                          ResetPasswordScreen(email: widget.email),
                     ),
                   );
                 } else if (state is AuthVerifyOTPFailed) {

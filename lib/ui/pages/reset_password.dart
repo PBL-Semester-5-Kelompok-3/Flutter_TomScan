@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:toma_scan/blocs/auth/auth_bloc.dart';
 
 class ResetPasswordScreen extends StatefulWidget {
-  const ResetPasswordScreen({super.key});
+  final String email; // Menambahkan parameter email untuk reset password
+  const ResetPasswordScreen({super.key, required this.email});
 
   @override
   State<ResetPasswordScreen> createState() => _ResetPasswordScreenState();
@@ -38,12 +41,10 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
       return;
     }
 
-    setState(() {
-      _isLoading = true;
-    });
-
-    // Tambahkan logika untuk mengirim password baru ke API
-    // Misalnya, menggunakan AuthService untuk reset password dengan token yang diterima setelah OTP berhasil
+    // Kirim event ke BLoC untuk melakukan reset password
+    BlocProvider.of<AuthBloc>(context).add(
+      AuthResetPassword(widget.email, newPassword),
+    );
   }
 
   @override
@@ -76,6 +77,33 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
               child: _isLoading
                   ? const CircularProgressIndicator()
                   : const Text('Reset Password'),
+            ),
+            // Menambahkan BlocListener untuk mendengarkan state
+            BlocListener<AuthBloc, AuthState>(
+              listener: (context, state) {
+                if (state is AuthLoading) {
+                  setState(() {
+                    _isLoading = true;
+                  });
+                } else if (state is AuthResetPasswordSuccess) {
+                  setState(() {
+                    _isLoading = false;
+                  });
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text(state.message)),
+                  );
+                  Navigator.pop(context); // Kembali ke screen sebelumnya
+                } else if (state is AuthResetPasswordFailed) {
+                  setState(() {
+                    _isLoading = false;
+                  });
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text(state.message)),
+                  );
+                }
+              },
+              child:
+                  Container(), // BlocListener membutuhkan child, bisa dikosongkan
             ),
           ],
         ),
