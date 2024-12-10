@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:toma_scan/blocs/auth/auth_bloc.dart';
-import 'package:toma_scan/ui/pages/reset_password.dart'; // Pastikan ini diimpor dengan benar
+import 'package:toma_scan/ui/pages/secure_password.dart';
 
 class OtpScreen extends StatefulWidget {
   final String email;
@@ -21,6 +21,7 @@ class _OtpScreenState extends State<OtpScreen> {
   final _otpControllers = List.generate(4, (index) => TextEditingController());
   int _remainingTime = 60;
   bool _isResendEnabled = false;
+  bool _isOtpVerified = false; // Flag untuk memantau apakah OTP sudah valid
 
   @override
   void initState() {
@@ -28,28 +29,34 @@ class _OtpScreenState extends State<OtpScreen> {
     _startResendTimer();
   }
 
+  // Modifikasi fungsi _startResendTimer untuk menghentikan timer saat OTP sudah valid
   void _startResendTimer() {
+    if (_isOtpVerified) return; // Jika OTP sudah diverifikasi, hentikan timer
+
     Future.delayed(const Duration(seconds: 1), () {
-      if (_remainingTime > 0) {
+      if (_remainingTime > 0 && !_isOtpVerified) {
+        // Pastikan timer berjalan hanya jika OTP belum valid
         setState(() {
           _remainingTime--;
         });
-        _startResendTimer();
-      } else {
+        _startResendTimer(); // Rekursif untuk menjalankan timer setiap detik
+      } else if (_remainingTime == 0) {
         setState(() {
-          _isResendEnabled = true;
+          _isResendEnabled =
+              true; // Mengaktifkan tombol resend setelah countdown selesai
         });
       }
     });
   }
 
+  // Fungsi untuk mengirim ulang OTP
   void _resendCode() {
     setState(() {
       _remainingTime = 60;
       _isResendEnabled = false;
+      _isOtpVerified = false; // Reset verifikasi OTP ketika mengirim ulang kode
     });
     _startResendTimer();
-    // Pemanggilan ulang event BLoC untuk pengiriman OTP
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(content: Text("OTP code has been resent!")),
     );
@@ -148,12 +155,9 @@ class _OtpScreenState extends State<OtpScreen> {
               onPressed: _otpControllers
                       .every((controller) => controller.text.isNotEmpty)
                   ? () {
-                      // Gabungkan digit OTP menjadi satu string
                       final otp = _otpControllers
                           .map((controller) => controller.text)
                           .join();
-
-                      // Kirimkan event BLoC untuk memverifikasi OTP
                       context
                           .read<AuthBloc>()
                           .add(AuthVerifyOTP(widget.email, otp));
@@ -178,20 +182,20 @@ class _OtpScreenState extends State<OtpScreen> {
             BlocListener<AuthBloc, AuthState>(
               listener: (context, state) {
                 if (state is AuthVerifyOTPSuccess) {
-                  // Tindakan setelah OTP berhasil diverifikasi
+                  setState(() {
+                    _isOtpVerified = true; // Set OTP verified to true
+                  });
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(content: Text(state.message)),
                   );
-                  // Navigasi ke halaman reset password setelah OTP berhasil
                   Navigator.pushReplacement(
                     context,
                     MaterialPageRoute(
                       builder: (context) =>
-                          ResetPasswordScreen(email: widget.email),
+                          const SecureAccountScreen(), // Update this line
                     ),
                   );
                 } else if (state is AuthVerifyOTPFailed) {
-                  // Jika OTP gagal diverifikasi
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(content: Text(state.message)),
                   );

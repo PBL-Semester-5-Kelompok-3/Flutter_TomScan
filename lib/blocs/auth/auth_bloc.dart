@@ -1,6 +1,5 @@
-//auth_bloc.dart
+// auth_bloc.dart
 import 'dart:async';
-
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
 import 'package:toma_scan/models/sign_in_form_model.dart';
@@ -49,6 +48,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       } else if (event is AuthResetPassword) {
         try {
           emit(AuthLoading());
+          // Anda perlu mengirim email yang sesuai untuk reset password
           final message =
               await AuthService().resetPassword(event.email, event.password);
           emit(AuthResetPasswordSuccess(message));

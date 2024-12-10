@@ -13,7 +13,7 @@ class AuthService {
         body: data.toJson(),
       );
 
-      if (res.statusCode == 200) {
+      if (res.statusCode == 201) {
         UserModel user = UserModel.fromJson(jsonDecode(res.body));
         user = user.copyWith(password: data.password);
         return user;

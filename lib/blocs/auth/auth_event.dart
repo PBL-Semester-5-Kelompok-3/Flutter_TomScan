@@ -1,4 +1,4 @@
-//auth_event.dart
+// auth_event.dart
 part of 'auth_bloc.dart';
 
 @immutable
@@ -42,8 +42,9 @@ class AuthVerifyOTP extends AuthEvent {
 }
 
 class AuthResetPassword extends AuthEvent {
-  final String email;
+  final String email; // Tambahkan email untuk reset password
   final String password;
+
   const AuthResetPassword(this.email, this.password);
 
   @override
