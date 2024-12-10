@@ -34,7 +34,9 @@ class AuthForgotPassword extends AuthEvent {
 
 class AuthResetPassword extends AuthEvent {
   final String email;
-  const AuthResetPassword(this.email);
+  final String password;
+  final String confirmPassword;
+  const AuthResetPassword(this.email, this.password, this.confirmPassword);
 
   @override
   List<Object> get props => [email];

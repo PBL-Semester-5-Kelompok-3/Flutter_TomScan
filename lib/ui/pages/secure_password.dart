@@ -129,6 +129,7 @@ class _SecureAccountScreenState extends State<SecureAccountScreen> {
   final _formKey = GlobalKey<FormState>();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
+  final _emailController = TextEditingController();
   bool _isLoading = false;
 
   @override
@@ -147,6 +148,7 @@ class _SecureAccountScreenState extends State<SecureAccountScreen> {
         AuthResetPassword(
           _passwordController.text,
           _confirmPasswordController.text,
+          _emailController.text,
         ),
       );
     }

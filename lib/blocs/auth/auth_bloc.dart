@@ -37,14 +37,6 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         } catch (e) {
           emit(AuthForgotPasswordFailed(e.toString()));
         }
-      } else if (event is AuthResetPassword) {
-        try {
-          emit(AuthLoading());
-          final message = await AuthService().resetPassword(event.email);
-          emit(AuthResetPasswordSuccess(message));
-        } catch (e) {
-          emit(AuthResetPasswordFailed(e.toString()));
-        }
       } else if (event is AuthVerifyOTP) {
         try {
           emit(AuthLoading());
@@ -56,14 +48,15 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       } else if (event is AuthResetPassword) {
         try {
           emit(AuthLoading());
-          // Anda perlu mengirim email yang sesuai untuk reset password
+          // Mengirim email yang sesuai untuk reset password
           final message =
               await AuthService().resetPassword(event.email, event.password);
           emit(AuthResetPasswordSuccess(message));
         } catch (e) {
-          emit(AuthResetPasswordFailed(e.toString()));
+          emit(AuthResetPasswordFailed(e.toString(), "Failed to reset password"));
         }
-      } else if (event is AuthLogout) {
+      }
+ else if (event is AuthLogout) {
         try {
           emit(AuthLoading());
           await AuthService().logout(); // Panggil metode logout
