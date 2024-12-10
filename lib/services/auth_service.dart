@@ -13,10 +13,9 @@ class AuthService {
         body: data.toJson(),
       );
 
-      if (res.statusCode == 200) {
+      if (res.statusCode == 201) {
         UserModel user = UserModel.fromJson(jsonDecode(res.body));
         user = user.copyWith(password: data.password);
-
         return user;
       } else {
         throw jsonDecode(res.body)['message'];
@@ -26,32 +25,28 @@ class AuthService {
     }
   }
 
-  login(SignInFormModel data) {}
-
-  // Forgot Password
-  Future<String> forgotPassword(String email) async {
+  // Login
+  Future<UserModel> login(SignInFormModel data) async {
     try {
       final res = await http.post(
-        Uri.parse('https://tomascan.nurulmustofa.my.id/api/forgot-password'),
-        body: jsonEncode({'email': email}),
-        headers: {'Content-Type': 'application/json'},
+        Uri.parse('https://tomascan.nurulmustofa.my.id/api/login'),
+        body: data.toJson(),
       );
 
       if (res.statusCode == 200) {
-        final responseBody = jsonDecode(res.body);
-        return responseBody['message'] ??
-            'Tautan reset password telah dikirim.';
+        UserModel user = UserModel.fromJson(jsonDecode(res.body));
+        return user;
       } else {
-        throw jsonDecode(res.body)['message'] ?? 'Terjadi kesalahan';
+        throw jsonDecode(res.body)['message'];
       }
     } catch (e) {
       rethrow;
     }
   }
 
-  // Reset Password
-  Future<String> resetPassword(String email) async {
-  try {
+  // Forgot Password
+  Future<String> forgotPassword(String email) async {
+    try {
       final res = await http.post(
         Uri.parse('https://tomascan.nurulmustofa.my.id/api/forgot-password'),
         body: jsonEncode({'email': email}),
@@ -87,6 +82,51 @@ class AuthService {
       }
     } catch (e) {
       rethrow;
+    }
+  }
+
+  // Reset Password
+  Future<String> resetPassword(String email, String password) async {
+    try {
+      final res = await http.post(
+        Uri.parse('https://tomascan.nurulmustofa.my.id/api/reset-password'),
+        body: jsonEncode({'email': email, 'password': password}),
+        headers: {'Content-Type': 'application/json'},
+      );
+
+      if (res.statusCode == 200) {
+        final responseBody = jsonDecode(res.body);
+        return responseBody['message'] ?? 'Password berhasil diubah';
+      } else {
+        throw jsonDecode(res.body)['message'] ?? 'Terjadi kesalahan';
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  // Logout
+  Future<void> logout() async {
+    try {
+      final response = await http.post(
+        Uri.parse('https://tomascan.nurulmustofa.my.id/api/logout'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer YOUR_ACCESS_TOKEN', // Jika diperlukan
+        },
+      ).timeout(const Duration(seconds: 10)); // Timeout 10 detik
+
+      if (response.statusCode == 200) {
+        if (response.body == 'Successfully logged out') {
+          return;
+        } else {
+          throw 'Unexpected response: ${response.body}';
+        }
+      } else {
+        throw 'Logout failed with status code: ${response.statusCode}';
+      }
+    } catch (e) {
+      throw 'Logout error: $e';
     }
   }
 }

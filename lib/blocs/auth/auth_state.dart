@@ -1,3 +1,4 @@
+// auth_state.dart
 part of 'auth_bloc.dart';
 
 @immutable
@@ -70,6 +71,32 @@ class AuthVerifyOTPSuccess extends AuthState {
 class AuthVerifyOTPFailed extends AuthState {
   final String message;
   const AuthVerifyOTPFailed(this.message);
+
+  @override
+  List<Object> get props => [message];
+}
+
+class AuthResetPasswordSuccess extends AuthState {
+  final String message;
+  const AuthResetPasswordSuccess(this.message);
+
+  @override
+  List<Object> get props => [message];
+}
+
+class AuthResetPasswordFailed extends AuthState {
+  final String message;
+  const AuthResetPasswordFailed(this.message);
+
+  @override
+  List<Object> get props => [message];
+}
+
+class AuthLogoutSuccess extends AuthState {}
+
+class AuthLogoutFailed extends AuthState {
+  final String message;
+  const AuthLogoutFailed(this.message);
 
   @override
   List<Object> get props => [message];

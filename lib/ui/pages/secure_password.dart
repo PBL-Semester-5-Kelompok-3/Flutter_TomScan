@@ -1,5 +1,7 @@
 // screens/secure_account_screen.dart
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:toma_scan/blocs/auth/auth_bloc.dart';
 import 'package:toma_scan/shared/themes.dart';
 
 // constants.dart
@@ -139,9 +141,14 @@ class _SecureAccountScreenState extends State<SecureAccountScreen> {
   void _savePassword() {
     if (_formKey.currentState!.validate()) {
       setState(() => _isLoading = true);
-      // Add your password saving logic here
-      // Once done, you can navigate to the next screen
-      Navigator.pushNamed(context, '/success-screen');
+
+      // Memanggil AuthBloc untuk reset password
+      BlocProvider.of<AuthBloc>(context).add(
+        AuthResetPassword(
+          _passwordController.text,
+          _confirmPasswordController.text,
+        ),
+      );
     }
   }
 
@@ -157,69 +164,93 @@ class _SecureAccountScreenState extends State<SecureAccountScreen> {
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(24.0),
-          child: Form(
-            key: _formKey,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    const Text(
-                      'Secure Your Account',
-                      style: TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
+          child: BlocListener<AuthBloc, AuthState>(
+            listener: (context, state) {
+              if (state is AuthLoading) {
+                // Menampilkan dialog loading
+                showDialog(
+                  context: context,
+                  barrierDismissible:
+                      false, // Tidak dapat menutup dengan klik luar
+                  builder: (_) =>
+                      const Center(child: CircularProgressIndicator()),
+                );
+              } else if (state is AuthResetPasswordSuccess) {
+                // Menutup dialog loading dan navigasi ke layar success
+                Navigator.pop(context); // Menutup dialog loading
+                Navigator.pushNamed(context, '/success-screen');
+              } else if (state is AuthResetPasswordFailed) {
+                // Menutup dialog loading dan menampilkan pesan error
+                Navigator.pop(context); // Menutup dialog loading
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text(state.message)),
+                );
+              }
+            },
+            child: Form(
+              key: _formKey,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      const Text(
+                        'Secure Your Account',
+                        style: TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
-                    ),
-                    const SizedBox(width: 8),
-                    Image.asset(
-                      'assets/icons/lock1.png',
-                      width: 30,
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 12),
-                const Text(
-                  'Almost there! Create a new password for your Plantify account to keep it secure. Remember to choose a strong and unique password.',
-                  style: TextStyle(
-                    color: AppColors.darkGrey,
-                    fontSize: 14,
+                      const SizedBox(width: 8),
+                      Image.asset(
+                        'assets/icons/lock1.png',
+                        width: 30,
+                      ),
+                    ],
                   ),
-                ),
-                const SizedBox(height: 32),
-                CustomTextField(
-                  label: 'New Password',
-                  isPassword: true,
-                  controller: _passwordController,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter a password';
-                    }
-                    if (value.length < 8) {
-                      return 'Password must be at least 8 characters';
-                    }
-                    return null;
-                  },
-                ),
-                const SizedBox(height: 24),
-                CustomTextField(
-                  label: 'Confirm New Password',
-                  isPassword: true,
-                  controller: _confirmPasswordController,
-                  validator: (value) {
-                    if (value != _passwordController.text) {
-                      return 'Passwords do not match';
-                    }
-                    return null;
-                  },
-                ),
-                const Spacer(),
-                CustomButton(
-                  text: 'Save New Password',
-                  onPressed: _savePassword,
-                  isLoading: _isLoading,
-                ),
-              ],
+                  const SizedBox(height: 12),
+                  const Text(
+                    'Almost there! Create a new password for your Plantify account to keep it secure. Remember to choose a strong and unique password.',
+                    style: TextStyle(
+                      color: AppColors.darkGrey,
+                      fontSize: 14,
+                    ),
+                  ),
+                  const SizedBox(height: 32),
+                  CustomTextField(
+                    label: 'New Password',
+                    isPassword: true,
+                    controller: _passwordController,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter a password';
+                      }
+                      if (value.length < 8) {
+                        return 'Password must be at least 8 characters';
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: 24),
+                  CustomTextField(
+                    label: 'Confirm New Password',
+                    isPassword: true,
+                    controller: _confirmPasswordController,
+                    validator: (value) {
+                      if (value != _passwordController.text) {
+                        return 'Passwords do not match';
+                      }
+                      return null;
+                    },
+                  ),
+                  const Spacer(),
+                  CustomButton(
+                    text: 'Save New Password',
+                    onPressed: _savePassword,
+                    isLoading: _isLoading,
+                  ),
+                ],
+              ),
             ),
           ),
         ),

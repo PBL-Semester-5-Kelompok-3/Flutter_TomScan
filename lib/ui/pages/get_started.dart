@@ -144,11 +144,6 @@ class GetStarted extends StatelessWidget {
                   onPressed: () {},
                 ),
                 SocialLoginButton(
-                  text: 'Continue with Apple',
-                  iconPath: 'assets/icons/apple.png',
-                  onPressed: () {},
-                ),
-                SocialLoginButton(
                   text: 'Continue with Facebook',
                   iconPath: 'assets/icons/facebook.png',
                   onPressed: () {},

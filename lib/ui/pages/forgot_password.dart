@@ -1,3 +1,4 @@
+// forgot_password.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:toma_scan/blocs/auth/auth_bloc.dart';
@@ -13,6 +14,7 @@ class ForgotPasswordScreen extends StatefulWidget {
 class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   final TextEditingController _emailController = TextEditingController();
   bool _isLoading = false;
+  String? _email;
 
   @override
   void dispose() {
@@ -50,6 +52,9 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
 
     // Triggering the BLoC event for forgot password
     context.read<AuthBloc>().add(AuthForgotPassword(email));
+    setState(() {
+      _email = email; // Simpan email untuk digunakan di OTP verification
+    });
   }
 
   @override
@@ -146,6 +151,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
               const SizedBox(height: 16),
               // Show loading or error state
               BlocListener<AuthBloc, AuthState>(
+                // Listen to AuthBloc
                 listener: (context, state) {
                   if (state is AuthLoading) {
                     setState(() {
@@ -155,7 +161,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                     setState(() {
                       _isLoading = false;
                     });
-                    _navigateToOtpScreen(state.message);
+                    _navigateToOtpScreen(_email!); // Email to OTP screen
                   } else if (state is AuthFailed) {
                     setState(() {
                       _isLoading = false;
@@ -183,6 +189,8 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
           email: email,
           onSubmit: (otp) {
             debugPrint('Submitted OTP: $otp');
+            // Verifikasi OTP
+            context.read<AuthBloc>().add(AuthVerifyOTP(email, otp));
           },
         ),
       ),

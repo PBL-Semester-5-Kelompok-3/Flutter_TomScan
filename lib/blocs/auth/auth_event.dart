@@ -1,3 +1,4 @@
+// auth_event.dart
 part of 'auth_bloc.dart';
 
 @immutable
@@ -46,4 +47,8 @@ class AuthVerifyOTP extends AuthEvent {
 
   @override
   List<Object> get props => [email, otp];
+}
+
+class AuthLogout extends AuthEvent {
+  const AuthLogout();
 }

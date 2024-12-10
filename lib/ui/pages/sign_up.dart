@@ -1,6 +1,7 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:quickalert/quickalert.dart';
 import 'package:toma_scan/blocs/auth/auth_bloc.dart';
 import 'package:toma_scan/models/sign_up_form_model.dart';
 import 'package:toma_scan/shared/themes.dart';
@@ -225,13 +226,20 @@ class _SignUpScreenState extends State<SignUpScreen> {
             setState(() {
               _isLoading = false;
             });
-            Navigator.pushReplacementNamed(context, '/sign-in');
+            QuickAlert.show(
+              context: context,
+              type: QuickAlertType.success,
+              text: 'Transaction Completed Successfully!',
+            );
           } else if (state is AuthFailed) {
             setState(() {
               _isLoading = false;
             });
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('the email has already been taken')),
+            QuickAlert.show(
+              context: context,
+              type: QuickAlertType.error,
+              title: 'Oops...',
+              text: state.e,
             );
           }
         },
