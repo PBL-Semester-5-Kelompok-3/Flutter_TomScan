@@ -1,6 +1,5 @@
 // auth_bloc.dart
 import 'package:bloc/bloc.dart';
-import 'package:meta/meta.dart';
 import 'package:toma_scan/models/sign_in_form_model.dart';
 import 'package:toma_scan/models/sign_up_form_model.dart';
 import 'package:toma_scan/models/user_model.dart';
@@ -52,10 +51,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
               await AuthService().resetPassword(event.email, event.password);
           emit(AuthResetPasswordSuccess(message));
         } catch (e) {
-          emit(AuthResetPasswordFailed(e.toString(), "Failed to reset password"));
+          emit(AuthResetPasswordFailed(
+              e.toString(), "Failed to reset password"));
         }
-      }
- else if (event is AuthLogout) {
+      } else if (event is AuthLogout) {
         try {
           emit(AuthLoading());
           await AuthService().logout(); // Panggil metode logout

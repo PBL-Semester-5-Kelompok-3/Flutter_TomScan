@@ -11,6 +11,6 @@ class SignInFormModel {
     return {
       'email': email,
       'password': password,
-    }..removeWhere((key, value) => value == null);
+    };
   }
 }

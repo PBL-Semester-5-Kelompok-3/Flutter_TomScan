@@ -1,9 +1,13 @@
-// custom_text_field.dart
 import 'dart:ui';
-
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:quickalert/quickalert.dart';
+import 'package:toma_scan/blocs/auth/auth_bloc.dart';
+import 'package:toma_scan/models/sign_in_form_model.dart';
+import 'package:toma_scan/models/sign_up_form_model.dart';
 import 'package:toma_scan/shared/themes.dart';
 
+// Reusable text field component
 class CustomTextField extends StatefulWidget {
   final String label;
   final String icon;
@@ -25,6 +29,7 @@ class CustomTextField extends StatefulWidget {
 }
 
 class _CustomTextFieldState extends State<CustomTextField> {
+  // Menyimpan status apakah password terlihat atau tersembunyi
   bool _isPasswordVisible = false;
 
   @override
@@ -42,7 +47,9 @@ class _CustomTextFieldState extends State<CustomTextField> {
         const SizedBox(height: 8),
         TextFormField(
           controller: widget.controller,
-          obscureText: widget.isPassword && !_isPasswordVisible,
+          obscureText: widget.isPassword
+              ? !_isPasswordVisible // Menggunakan state visibility password
+              : false, // Jika bukan password, biarkan teks terlihat
           decoration: InputDecoration(
             hintText: widget.label,
             border: OutlineInputBorder(
@@ -66,7 +73,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
                       });
                     },
                   )
-                : null,
+                : null, // Hanya tampilkan suffixIcon jika field adalah password
           ),
           validator: widget.validator,
         ),
@@ -75,7 +82,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
   }
 }
 
-// social_button.dart
+// Reusable social login button
 class SocialLoginButton extends StatelessWidget {
   final String text;
   final String iconPath;
@@ -171,166 +178,25 @@ class LoadingModal extends StatelessWidget {
   }
 }
 
-// login_screen.dart
-class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key});
+class SignInScreen extends StatefulWidget {
+  const SignInScreen({super.key});
 
   @override
-  State<LoginScreen> createState() => _LoginScreenState();
+  State<SignInScreen> createState() => _SignInScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _SignInScreenState extends State<SignInScreen> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+  bool _isLoading = false;
   bool _isRememberMeChecked = false;
-  void _showLoadingModal() {
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) => const LoadingModal(),
-    );
 
-    Future.delayed(const Duration(seconds: 3), () {
-      // ignore: use_build_context_synchronously
-      Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false);
-      // Handle post-login actions here
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        leading: const BackButton(color: Colors.black),
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-      ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(24),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text(
-                'Welcome Back! 👋',
-                style: TextStyle(
-                  fontSize: 28,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const Text(
-                'Let\'s Continue Your Green Journey',
-                style: TextStyle(
-                  fontSize: 16,
-                  color: Colors.grey,
-                ),
-              ),
-              const SizedBox(height: 32),
-              CustomTextField(
-                icon: 'assets/icons/email.png',
-                label: 'Email',
-                controller: _emailController,
-                validator: (value) {
-                  if (value?.isEmpty ?? true) {
-                    return 'Please enter your email';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 16),
-              CustomTextField(
-                icon: 'assets/icons/password.png',
-                label: 'Password',
-                isPassword: true,
-                controller: _passwordController,
-                validator: (value) {
-                  if (value?.isEmpty ?? true) {
-                    return 'Please enter your password';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 16),
-              Row(
-                children: [
-                  Checkbox(
-                    value: _isRememberMeChecked, // Bind ke state
-                    onChanged: (value) {
-                      setState(() {
-                        _isRememberMeChecked = value ?? false; // Update state
-                      });
-                    },
-                    activeColor: primaryColor,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(4),
-                    ),
-                  ),
-                  const Text('Remember Me'),
-                  const Spacer(),
-                  TextButton(
-                    onPressed: () {
-                      Navigator.pushNamed(context, '/forgot-password');
-                    },
-                    child: const Text(
-                      'Forgot Password?',
-                      style: TextStyle(
-                        color: Colors.green,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 24),
-              Row(
-                children: [
-                  const Expanded(child: Divider()),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    child: Text(
-                      'or',
-                      style: TextStyle(color: Colors.grey[600]),
-                    ),
-                  ),
-                  const Expanded(child: Divider()),
-                ],
-              ),
-              const SizedBox(height: 24),
-              SocialLoginButton(
-                text: 'Continue with Google',
-                iconPath: 'assets/icons/google.png',
-                onPressed: () {},
-              ),
-              SocialLoginButton(
-                text: 'Continue with Facebook',
-                iconPath: 'assets/icons/facebook.png',
-                onPressed: () {},
-              ),
-              const SizedBox(height: 24),
-              ElevatedButton(
-                onPressed: () {
-                  if (_formKey.currentState?.validate() ?? false) {
-                    _showLoadingModal(); // Tampilkan loading modal
-                  }
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: primaryColor,
-                  minimumSize: const Size(double.infinity, 56),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(50),
-                  ),
-                ),
-                child: const Text(
-                  'Log in',
-                  style: TextStyle(fontSize: 16, color: Colors.white),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
+  bool validate() {
+    if (_emailController.text.isEmpty || _passwordController.text.isEmpty) {
+      return false;
+    }
+    return true;
   }
 
   @override
@@ -338,5 +204,199 @@ class _LoginScreenState extends State<LoginScreen> {
     _emailController.dispose();
     _passwordController.dispose();
     super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        leading: const BackButton(),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+      ),
+      body: BlocConsumer<AuthBloc, AuthState>(
+        listener: (context, state) {
+          if (state is AuthLoading) {
+            setState(() {
+              _isLoading = true;
+            });
+          } else if (state is AuthSuccess) {
+            setState(() {
+              _isLoading = false;
+            });
+            QuickAlert.show(
+              context: context,
+              type: QuickAlertType.success,
+              text: 'Transaction Completed Successfully!',
+            );
+          } else if (state is AuthFailed) {
+            setState(() {
+              _isLoading = false;
+            });
+            QuickAlert.show(
+              context: context,
+              type: QuickAlertType.error,
+              title: 'Oops...',
+              text: state.e,
+            );
+          }
+        },
+        builder: (context, state) {
+          return Stack(
+            children: [
+              SingleChildScrollView(
+                padding: const EdgeInsets.all(24),
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      const Text(
+                        'Welcome Back! 👋',
+                        style: TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const Text(
+                        "Let's Continue Your Green Journey",
+                        style: TextStyle(
+                          color: Colors.grey,
+                          fontSize: 16,
+                        ),
+                      ),
+                      const SizedBox(height: 32),
+                      CustomTextField(
+                        icon: 'assets/icons/email.png',
+                        label: 'Email',
+                        controller: _emailController,
+                        validator: (value) {
+                          if (value?.isEmpty ?? true) {
+                            return 'Please enter your email';
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: 16),
+                      CustomTextField(
+                        icon: 'assets/icons/password.png',
+                        label: 'Password',
+                        isPassword: true,
+                        controller: _passwordController,
+                        validator: (value) {
+                          if (value?.isEmpty ?? true) {
+                            return 'Please enter your password';
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: 24),
+                      // Row(
+                      //   children: [
+                      //     Checkbox(
+                      //       value: _isRememberMeChecked, // Bind ke state
+                      //       onChanged: (value) {
+                      //         setState(() {
+                      //           _isRememberMeChecked =
+                      //               value ?? false; // Update state
+                      //         });
+                      //       },
+                      //       activeColor: primaryColor,
+                      //       shape: RoundedRectangleBorder(
+                      //         borderRadius: BorderRadius.circular(4),
+                      //       ),
+                      //     ),
+                      //     const Text('Remember Me'),
+                      //     const Spacer(),
+                      //     TextButton(
+                      //       onPressed: () {
+                      //         Navigator.pushNamed(context, '/forgot-password');
+                      //       },
+                      //       child: const Text(
+                      //         'Forgot Password?',
+                      //         style: TextStyle(
+                      //           color: Colors.green,
+                      //         ),
+                      //       ),
+                      //     ),
+                      //   ],
+                      // ),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Divider(
+                              color: Colors.grey[300],
+                              thickness: 1,
+                            ),
+                          ),
+                          const Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 16.0),
+                            child: Text(
+                              'or',
+                              style: TextStyle(
+                                color: Colors.grey,
+                              ),
+                            ),
+                          ),
+                          Expanded(
+                            child: Divider(
+                              color: Colors.grey[300],
+                              thickness: 1,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 14),
+                      SocialLoginButton(
+                        text: 'Continue with Google',
+                        iconPath: 'assets/icons/google.png',
+                        onPressed: () {},
+                      ),
+                      const SizedBox(height: 5),
+                      SocialLoginButton(
+                        text: 'Continue with Facebook',
+                        iconPath: 'assets/icons/facebook.png',
+                        onPressed: () {},
+                      ),
+                      const SizedBox(height: 24),
+                      ElevatedButton(
+                        onPressed: () {
+                          if (validate()) {
+                            context
+                                .read<AuthBloc>()
+                                .add(AuthLogin(SignInFormModel(
+                                  email: _emailController.text,
+                                  password: _passwordController.text,
+                                )));
+                          } else {
+                            debugPrint('Error sign In process');
+                          }
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: primaryColor,
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(50),
+                          ),
+                        ),
+                        child: const Text(
+                          'Sign In',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              if (_isLoading) const LoadingModal(),
+            ],
+          );
+        },
+      ),
+    );
   }
 }

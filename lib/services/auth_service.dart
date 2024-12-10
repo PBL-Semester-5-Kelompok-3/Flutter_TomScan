@@ -25,7 +25,6 @@ class AuthService {
     }
   }
 
-  // Login
   Future<UserModel> login(SignInFormModel data) async {
     try {
       final res = await http.post(
@@ -35,6 +34,7 @@ class AuthService {
 
       if (res.statusCode == 200) {
         UserModel user = UserModel.fromJson(jsonDecode(res.body));
+        user = user.copyWith(password: data.password);
         return user;
       } else {
         throw jsonDecode(res.body)['message'];
@@ -43,6 +43,26 @@ class AuthService {
       rethrow;
     }
   }
+
+  // Login
+  // Future<UserModel> login2(SignInFormModel data) async {
+  //   try {
+  //     final res = await http.post(
+  //       Uri.parse('https://tomascan.nurulmustofa.my.id/api/login'),
+  //       body: data.toJson(),
+  //     );
+
+  //     if (res.statusCode == 201) {
+  //       UserModel user = UserModel.fromJson(jsonDecode(res.body));
+  //       user = user.copyWith(password: data.password);
+  //       return user;
+  //     } else {
+  //       throw jsonDecode(res.body)['message'];
+  //     }
+  //   } catch (e) {
+  //     rethrow;
+  //   }
+  // }
 
   // Forgot Password
   Future<String> forgotPassword(String email) async {
