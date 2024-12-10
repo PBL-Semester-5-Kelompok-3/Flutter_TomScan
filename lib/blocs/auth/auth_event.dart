@@ -32,6 +32,16 @@ class AuthForgotPassword extends AuthEvent {
   List<Object> get props => [email];
 }
 
+class AuthResetPassword extends AuthEvent {
+  final String email;
+  final String password;
+  final String confirmPassword;
+  const AuthResetPassword(this.email, this.password, this.confirmPassword);
+
+  @override
+  List<Object> get props => [email];
+}
+
 class AuthVerifyOTP extends AuthEvent {
   final String email;
   final String otp;
@@ -39,16 +49,6 @@ class AuthVerifyOTP extends AuthEvent {
 
   @override
   List<Object> get props => [email, otp];
-}
-
-class AuthResetPassword extends AuthEvent {
-  final String email; // Tambahkan email untuk reset password
-  final String password;
-
-  const AuthResetPassword(this.email, this.password);
-
-  @override
-  List<Object> get props => [email, password];
 }
 
 class AuthLogout extends AuthEvent {

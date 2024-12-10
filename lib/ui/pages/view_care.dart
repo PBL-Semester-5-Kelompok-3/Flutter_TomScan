@@ -5,7 +5,7 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +21,7 @@ class MyApp extends StatelessWidget {
 }
 
 class ViewCare extends StatelessWidget {
-  const ViewCare({Key? key}) : super(key: key);
+  const ViewCare({super.key});
 
   Widget _buildCareItem(
       int number, String title, String description, String imagePath) {
@@ -197,7 +197,7 @@ class ViewCare extends StatelessWidget {
 }
 
 class InformativePage extends StatelessWidget {
-  const InformativePage({Key? key}) : super(key: key);
+  const InformativePage({super.key});
 
   @override
   Widget build(BuildContext context) {

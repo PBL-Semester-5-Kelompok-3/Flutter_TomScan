@@ -44,6 +44,23 @@ class AuthForgotPasswordFailed extends AuthState {
   List<Object> get props => [message];
 }
 
+class AuthResetPasswordSuccess extends AuthState {
+  final String message;
+  const AuthResetPasswordSuccess(this.message);
+
+  @override
+  List<Object> get props => [message];
+}
+
+class AuthResetPasswordFailed extends AuthState {
+  final String error;
+  final String message;
+  const AuthResetPasswordFailed(this.error, this.message);
+
+  @override
+  List<Object> get props => [error];
+}
+
 class AuthVerifyOTPSuccess extends AuthState {
   final String message;
   const AuthVerifyOTPSuccess(this.message);
@@ -55,22 +72,6 @@ class AuthVerifyOTPSuccess extends AuthState {
 class AuthVerifyOTPFailed extends AuthState {
   final String message;
   const AuthVerifyOTPFailed(this.message);
-
-  @override
-  List<Object> get props => [message];
-}
-
-class AuthResetPasswordSuccess extends AuthState {
-  final String message;
-  const AuthResetPasswordSuccess(this.message);
-
-  @override
-  List<Object> get props => [message];
-}
-
-class AuthResetPasswordFailed extends AuthState {
-  final String message;
-  const AuthResetPasswordFailed(this.message);
 
   @override
   List<Object> get props => [message];

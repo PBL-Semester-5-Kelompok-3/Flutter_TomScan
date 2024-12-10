@@ -260,7 +260,7 @@ class _CameraAppState extends State<CameraApp>
                                           builder: (context) =>
                                               DetailAnalysisPage(
                                             title: labelText,
-                                            tags: [
+                                            tags: const [
                                               'Nutrisi',
                                               'Penyiraman',
                                               'Penyakit'

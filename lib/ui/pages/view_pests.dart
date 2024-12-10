@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class ViewPests extends StatelessWidget {
-  const ViewPests({Key? key}) : super(key: key);
+  const ViewPests({super.key});
 
   Widget _buildWarningBox() {
     return Container(

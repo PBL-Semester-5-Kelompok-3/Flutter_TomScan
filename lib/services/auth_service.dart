@@ -65,7 +65,7 @@ class AuthService {
     }
   }
 
-  // Verify OTP
+  //Verify OTP
   Future<String> verifyOTP(String email, String otp) async {
     try {
       final res = await http.post(
