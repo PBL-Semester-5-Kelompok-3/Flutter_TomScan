@@ -4,7 +4,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:toma_scan/shared/themes.dart';
 
-class CustomTextField extends StatelessWidget {
+class CustomTextField extends StatefulWidget {
   final String label;
   final String icon;
   final bool isPassword;
@@ -21,12 +21,19 @@ class CustomTextField extends StatelessWidget {
   });
 
   @override
+  _CustomTextFieldState createState() => _CustomTextFieldState();
+}
+
+class _CustomTextFieldState extends State<CustomTextField> {
+  bool _isPasswordVisible = false;
+
+  @override
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          label,
+          widget.label,
           style: const TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.w500,
@@ -34,30 +41,34 @@ class CustomTextField extends StatelessWidget {
         ),
         const SizedBox(height: 8),
         TextFormField(
-          controller: controller,
-          obscureText: isPassword,
+          controller: widget.controller,
+          obscureText: widget.isPassword && !_isPasswordVisible,
           decoration: InputDecoration(
-            hintText: label,
+            hintText: widget.label,
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8),
               borderSide: BorderSide.none,
             ),
             filled: true,
             fillColor: Colors.grey[100],
-            prefixIcon: Image.asset(icon),
-            suffixIcon: isPassword
+            prefixIcon: Image.asset(widget.icon),
+            suffixIcon: widget.isPassword
                 ? IconButton(
-                    icon: const Icon(
-                      Icons.visibility_off,
+                    icon: Icon(
+                      _isPasswordVisible
+                          ? Icons.visibility
+                          : Icons.visibility_off,
                       color: Colors.grey,
                     ),
                     onPressed: () {
-                      // Toggle password visibility
+                      setState(() {
+                        _isPasswordVisible = !_isPasswordVisible;
+                      });
                     },
                   )
                 : null,
           ),
-          validator: validator,
+          validator: widget.validator,
         ),
       ],
     );
