@@ -6,6 +6,7 @@ import 'package:toma_scan/blocs/auth/auth_bloc.dart';
 import 'package:toma_scan/ui/pages/help_center_page.dart';
 import 'package:toma_scan/ui/pages/privacy_policy_page.dart';
 import 'package:toma_scan/ui/pages/terms_page.dart';
+import 'package:toma_scan/blocs/auth/auth_bloc.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -18,7 +19,7 @@ class _ProfilePageState extends State<ProfilePage> {
   String username = "Astrid Risa";
   String email = "astridrisa@gmail.com";
   String phone = "089529167474";
-  String password = "************";
+  String password = "";
   bool isEditingUsername = false;
   bool isEditingEmail = false;
   bool isEditingPhone = false;
@@ -170,7 +171,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         ),
                       )
                     : Text(
-                        isPassword ? '************' : controller.text,
+                        isPassword ? '' : controller.text,
                         style: const TextStyle(color: Colors.black54),
                       ),
               ],

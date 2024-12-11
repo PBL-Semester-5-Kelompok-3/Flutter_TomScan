@@ -4,7 +4,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:quickalert/quickalert.dart';
 import 'package:toma_scan/blocs/auth/auth_bloc.dart';
 import 'package:toma_scan/models/sign_in_form_model.dart';
-import 'package:toma_scan/models/sign_up_form_model.dart';
 import 'package:toma_scan/shared/themes.dart';
 
 // Reusable text field component
