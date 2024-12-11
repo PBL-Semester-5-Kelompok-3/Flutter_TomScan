@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart'; // Import package
 import 'package:toma_scan/blocs/auth/auth_bloc.dart';
 import 'package:toma_scan/ui/pages/secure_password.dart';
 
@@ -22,6 +23,8 @@ class _OtpScreenState extends State<OtpScreen> {
   int _remainingTime = 60;
   bool _isResendEnabled = false;
   bool _isOtpVerified = false; // Flag untuk memantau apakah OTP sudah valid
+  final secureStorage =
+      const FlutterSecureStorage(); // Inisialisasi Secure Storage
 
   @override
   void initState() {
@@ -188,6 +191,15 @@ class _OtpScreenState extends State<OtpScreen> {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(content: Text(state.message)),
                   );
+
+                  // Menyimpan OTP ke Flutter Secure Storage
+                  secureStorage.write(
+                      key: 'otp',
+                      value: _otpControllers
+                          .map((controller) => controller.text)
+                          .join());
+                  secureStorage.write(key: 'email', value: widget.email);
+
                   Navigator.pushReplacement(
                     context,
                     MaterialPageRoute(

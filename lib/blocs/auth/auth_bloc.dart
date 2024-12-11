@@ -45,14 +45,13 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         }
       } else if (event is AuthResetPassword) {
         try {
-          emit(AuthLoading());
-          // Mengirim email yang sesuai untuk reset password
-          final message =
-              await AuthService().resetPassword(event.email, event.password);
-          emit(AuthResetPasswordSuccess(message));
+          emit(AuthLoading()); // Menampilkan status loading
+          final message = await AuthService().resetPassword(
+              event.email, event.password, event.confirmPassword, event.otp);
+          emit(AuthResetPasswordSuccess(message)); // Menampilkan status sukses
         } catch (e) {
           emit(AuthResetPasswordFailed(
-              e.toString(), "Failed to reset password"));
+              e.toString(), e.toString())); // Menangani error
         }
       } else if (event is AuthLogout) {
         try {

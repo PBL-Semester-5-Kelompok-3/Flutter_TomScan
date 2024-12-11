@@ -11,7 +11,6 @@ import 'package:toma_scan/ui/pages/onboarding_page.dart';
 import 'package:toma_scan/ui/pages/camera.dart';
 import 'package:toma_scan/ui/pages/privacy_policy_page.dart';
 import 'package:toma_scan/ui/pages/sign_in.dart';
-import 'package:toma_scan/ui/pages/sign_in2.dart';
 import 'package:toma_scan/ui/pages/sign_up.dart';
 import 'package:toma_scan/ui/pages/success_screen.dart';
 import 'package:toma_scan/ui/pages/terms_page.dart';

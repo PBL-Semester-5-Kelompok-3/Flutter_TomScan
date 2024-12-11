@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:toma_scan/models/sign_in_form_model.dart';
 import 'package:toma_scan/models/sign_up_form_model.dart';
 import 'package:toma_scan/models/user_model.dart';
@@ -33,12 +34,43 @@ class AuthService {
       );
 
       if (res.statusCode == 200) {
-        UserModel user = UserModel.fromJson(jsonDecode(res.body));
+        // parsing respons secara dinamis
+        final responseData = jsonDecode(res.body) as Map<String, dynamic>;
+
+        // mengambil token langsung dari root
+        String token = responseData['token'];
+
+        // Mengambil user data dari objek user
+        Map<String, dynamic> userData = responseData['user'];
+
+        // membuat instance UserModel
+        UserModel user = UserModel.fromJson(({
+          ...userData, // Sprean user data
+          'token': token, // tambahkan token ke dalam data
+        }));
+
+        // Menambahkan password dari form data
         user = user.copyWith(password: data.password);
+
+        // Simpan kredential ke local storage
+        await storeCredentialToLocal(user);
+
         return user;
       } else {
         throw jsonDecode(res.body)['message'];
       }
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<void> storeCredentialToLocal(UserModel user) async {
+    try {
+      const storage = FlutterSecureStorage();
+      await storage.write(key: 'token', value: user.token);
+      await storage.write(key: 'id', value: user.id.toString());
+      await storage.write(key: 'email', value: user.email);
+      await storage.write(key: 'password', value: user.password);
     } catch (e) {
       rethrow;
     }
@@ -106,21 +138,29 @@ class AuthService {
   }
 
   // Reset Password
-  Future<String> resetPassword(String email, String password) async {
+  Future<String> resetPassword(
+      String email, String password, String confirmPassword, String otp) async {
     try {
       final res = await http.post(
         Uri.parse('https://tomascan.nurulmustofa.my.id/api/reset-password'),
-        body: jsonEncode({'email': email, 'password': password}),
+        body: jsonEncode({
+          'email': email,
+          'otp': otp,
+          'password': password,
+          'password_confirmation': password
+        }),
         headers: {'Content-Type': 'application/json'},
       );
 
       if (res.statusCode == 200) {
         final responseBody = jsonDecode(res.body);
+        print('Response Body: $responseBody'); // Tambahkan log
         return responseBody['message'] ?? 'Password berhasil diubah';
       } else {
         throw jsonDecode(res.body)['message'] ?? 'Terjadi kesalahan';
       }
     } catch (e) {
+      print('Error: $e'); // Tambahkan log untuk error
       rethrow;
     }
   }

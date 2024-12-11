@@ -1,6 +1,7 @@
 // screens/secure_account_screen.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:toma_scan/blocs/auth/auth_bloc.dart';
 import 'package:toma_scan/shared/themes.dart';
 
@@ -139,18 +140,35 @@ class _SecureAccountScreenState extends State<SecureAccountScreen> {
     super.dispose();
   }
 
-  void _savePassword() {
+  void _savePassword() async {
     if (_formKey.currentState!.validate()) {
       setState(() => _isLoading = true);
 
-      // Memanggil AuthBloc untuk reset password
-      BlocProvider.of<AuthBloc>(context).add(
-        AuthResetPassword(
-          _passwordController.text,
-          _confirmPasswordController.text,
-          _emailController.text,
-        ),
-      );
+      // Ambil OTP dari Secure Storage
+      const secureStorage = FlutterSecureStorage();
+      String? otp = await secureStorage.read(key: 'otp');
+      String? email = await secureStorage.read(key: 'email');
+      debugPrint('otp: ');
+      debugPrint(otp);
+
+      // Periksa apakah OTP tersedia
+      if (otp != null) {
+        // Memanggil AuthBloc untuk reset password dengan OTP yang diambil dari Secure Storage
+        BlocProvider.of<AuthBloc>(context).add(
+          AuthResetPassword(
+            email!,
+            _passwordController.text,
+            _confirmPasswordController.text,
+            otp, // Menambahkan OTP yang diambil
+          ),
+        );
+      } else {
+        // Jika OTP tidak ditemukan
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+              content: Text('OTP is missing. Please verify your email first.')),
+        );
+      }
     }
   }
 
@@ -169,7 +187,6 @@ class _SecureAccountScreenState extends State<SecureAccountScreen> {
           child: BlocListener<AuthBloc, AuthState>(
             listener: (context, state) {
               if (state is AuthLoading) {
-                // Menampilkan dialog loading
                 showDialog(
                   context: context,
                   barrierDismissible:
@@ -178,14 +195,18 @@ class _SecureAccountScreenState extends State<SecureAccountScreen> {
                       const Center(child: CircularProgressIndicator()),
                 );
               } else if (state is AuthResetPasswordSuccess) {
-                // Menutup dialog loading dan navigasi ke layar success
-                Navigator.pop(context); // Menutup dialog loading
-                Navigator.pushNamed(context, '/success-screen');
-              } else if (state is AuthResetPasswordFailed) {
-                // Menutup dialog loading dan menampilkan pesan error
                 Navigator.pop(context); // Menutup dialog loading
                 ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text(state.message)),
+                  SnackBar(
+                      content: Text(state.message)), // Menampilkan pesan sukses
+                );
+                Navigator.pushNamed(
+                    context, '/success-screen'); // Arahkan ke layar sukses
+              } else if (state is AuthResetPasswordFailed) {
+                Navigator.pop(context); // Menutup dialog loading
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                      content: Text(state.message)), // Menampilkan pesan gagal
                 );
               }
             },
@@ -249,7 +270,7 @@ class _SecureAccountScreenState extends State<SecureAccountScreen> {
                   CustomButton(
                     text: 'Save New Password',
                     onPressed: _savePassword,
-                    isLoading: _isLoading,
+                    isLoading: false,
                   ),
                 ],
               ),

@@ -227,7 +227,11 @@ class _SignInScreenState extends State<SignInScreen> {
             QuickAlert.show(
               context: context,
               type: QuickAlertType.success,
-              text: 'Transaction Completed Successfully!',
+              text: 'Sign In Completed Successfully!',
+              onConfirmBtnTap: () {
+                Navigator.pushNamedAndRemoveUntil(
+                    context, '/home', (route) => false);
+              },
             );
           } else if (state is AuthFailed) {
             setState(() {
@@ -291,36 +295,36 @@ class _SignInScreenState extends State<SignInScreen> {
                         },
                       ),
                       const SizedBox(height: 24),
-                      // Row(
-                      //   children: [
-                      //     Checkbox(
-                      //       value: _isRememberMeChecked, // Bind ke state
-                      //       onChanged: (value) {
-                      //         setState(() {
-                      //           _isRememberMeChecked =
-                      //               value ?? false; // Update state
-                      //         });
-                      //       },
-                      //       activeColor: primaryColor,
-                      //       shape: RoundedRectangleBorder(
-                      //         borderRadius: BorderRadius.circular(4),
-                      //       ),
-                      //     ),
-                      //     const Text('Remember Me'),
-                      //     const Spacer(),
-                      //     TextButton(
-                      //       onPressed: () {
-                      //         Navigator.pushNamed(context, '/forgot-password');
-                      //       },
-                      //       child: const Text(
-                      //         'Forgot Password?',
-                      //         style: TextStyle(
-                      //           color: Colors.green,
-                      //         ),
-                      //       ),
-                      //     ),
-                      //   ],
-                      // ),
+                      Row(
+                        children: [
+                          Checkbox(
+                            value: _isRememberMeChecked, // Bind ke state
+                            onChanged: (value) {
+                              setState(() {
+                                _isRememberMeChecked =
+                                    value ?? false; // Update state
+                              });
+                            },
+                            activeColor: primaryColor,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(4),
+                            ),
+                          ),
+                          const Text('Remember Me'),
+                          const Spacer(),
+                          TextButton(
+                            onPressed: () {
+                              Navigator.pushNamed(context, '/forgot-password');
+                            },
+                            child: const Text(
+                              'Forgot Password?',
+                              style: TextStyle(
+                                color: Colors.green,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
                       Row(
                         children: [
                           Expanded(
