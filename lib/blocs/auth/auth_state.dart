@@ -76,12 +76,12 @@ class AuthVerifyOTPFailed extends AuthState {
   List<Object> get props => [message];
 }
 
-class AuthLogoutSuccess extends AuthState {}
-
 class AuthLogoutFailed extends AuthState {
   final String message;
-  const AuthLogoutFailed(this.message);
+  AuthLogoutFailed(this.message);
 
   @override
   List<Object> get props => [message];
 }
+
+class AuthLogoutSuccess extends AuthState {}

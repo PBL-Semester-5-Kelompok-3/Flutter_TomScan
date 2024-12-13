@@ -1,13 +1,34 @@
 import 'dart:convert';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 import 'package:toma_scan/models/informatif_model.dart';
+import 'package:toma_scan/models/informatifs_model.dart';
 
 class InformatifsService {
-  Future<List<InformatifsModel>> getAllInformatifsData() async {
-    final response = await http.get(Uri.parse('/api/informatifs'));
+  // Future<List<InformatifsModel>> getAllInformatifsData() async {
+  //   final response = await http.get(Uri.parse('/api/informatifs'));
+  //   if (response.statusCode == 200) {
+  //     final data = json.decode(response.body) as List;
+  //     return data.map((item) => InformatifsModel.fromJson(item)).toList();
+  //   } else {
+  //     throw Exception('Failed to load informatifs data');
+  //   }
+  // }
+
+  Future<List<Informative>> getAllInformatifsData() async {
+    const storage = FlutterSecureStorage();
+    String? token = await storage.read(key: 'token');
+    final response = await http.get(
+      Uri.parse('https://tomascan.nurulmustofa.my.id/api/informatifs'),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token', // Kirim token yang didapatkan
+      },
+    );
+
     if (response.statusCode == 200) {
       final data = json.decode(response.body) as List;
-      return data.map((item) => InformatifsModel.fromJson(item)).toList();
+      return data.map((item) => Informative.fromJson(item)).toList();
     } else {
       throw Exception('Failed to load informatifs data');
     }

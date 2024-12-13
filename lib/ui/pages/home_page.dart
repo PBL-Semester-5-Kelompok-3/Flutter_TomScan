@@ -39,171 +39,164 @@ class HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: Scaffold(
-        backgroundColor: Colors.grey[50],
-        appBar: AppBar(
-          backgroundColor: Colors.white,
-          elevation: 0,
-          title: const Row(
-            children: [
-              Icon(Icons.eco, color: Colors.green),
-              SizedBox(width: 8),
-              Text(
-                'TomaScan',
-                style: TextStyle(color: Colors.black),
-              ),
-            ],
-          ),
-          actions: [
-            IconButton(
-              icon: const Icon(Icons.notifications, color: Colors.grey),
-              onPressed: () {
-                Navigator.pushNamed(context, '/notification');
-              },
+    return Scaffold(
+      backgroundColor: Colors.grey[50],
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        elevation: 0,
+        title: const Row(
+          children: [
+            Icon(Icons.eco, color: Colors.green),
+            SizedBox(width: 8),
+            Text(
+              'TomaScan',
+              style: TextStyle(color: Colors.black),
             ),
           ],
         ),
-        body: _pages[_selectedIndex],
-        floatingActionButton: Container(
-          padding: const EdgeInsets.only(bottom: 0.1),
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            border: Border.all(
-              color: const Color(0xFF00E526), // Stroke color
-              width: 5.0, // Stroke width
-            ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.notifications, color: Colors.grey),
+            onPressed: () {
+              Navigator.pushNamed(context, '/notification');
+            },
           ),
-          child: FloatingActionButton(
-            onPressed: () => _onItemTapped(2),
-            shape: const CircleBorder(),
-            backgroundColor: const Color(0xff00A86B),
-            elevation: 2, // Adjust elevation as needed
-            // child: const Icon(Icons.camera_alt, color: Colors.white),
-            child: SvgPicture.asset(
-              'assets/Scan.svg',
-              semanticsLabel: 'My SVG Image',
-              // height: 100,
-              // width: 70,
-            ),
+        ],
+      ),
+      body: _pages[_selectedIndex],
+      floatingActionButton: Container(
+        padding: const EdgeInsets.only(bottom: 0.1),
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          border: Border.all(
+            color: const Color(0xFF00E526), // Stroke color
+            width: 5.0, // Stroke width
           ),
         ),
-        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-        bottomNavigationBar: BottomAppBar(
-          shape: const CircularNotchedRectangle(),
-          notchMargin: 8,
-          height: 70,
-          child: SizedBox(
-            // height: 60,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    MaterialButton(
-                      minWidth: 40,
-                      onPressed: () => _onItemTapped(0),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            Icons.home,
-                            color: _selectedIndex == 0
-                                ? Colors.green
-                                : Colors.grey,
-                            size: 20,
-                          ),
-                          Text(
-                            'Home',
-                            style: TextStyle(
-                                color: _selectedIndex == 0
-                                    ? Colors.green
-                                    : Colors.grey),
-                          ),
-                        ],
-                      ),
+        child: FloatingActionButton(
+          onPressed: () => _onItemTapped(2),
+          shape: const CircleBorder(),
+          backgroundColor: const Color(0xff00A86B),
+          elevation: 2, // Adjust elevation as needed
+          // child: const Icon(Icons.camera_alt, color: Colors.white),
+          child: SvgPicture.asset(
+            'assets/Scan.svg',
+            semanticsLabel: 'My SVG Image',
+            // height: 100,
+            // width: 70,
+          ),
+        ),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      bottomNavigationBar: BottomAppBar(
+        shape: const CircularNotchedRectangle(),
+        notchMargin: 8,
+        height: 70,
+        child: SizedBox(
+          // height: 60,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  MaterialButton(
+                    minWidth: 40,
+                    onPressed: () => _onItemTapped(0),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.home,
+                          color:
+                              _selectedIndex == 0 ? Colors.green : Colors.grey,
+                          size: 20,
+                        ),
+                        Text(
+                          'Home',
+                          style: TextStyle(
+                              color: _selectedIndex == 0
+                                  ? Colors.green
+                                  : Colors.grey),
+                        ),
+                      ],
                     ),
-                    MaterialButton(
-                      minWidth: 40,
-                      onPressed: () => _onItemTapped(1),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            Icons.info,
-                            color: _selectedIndex == 1
-                                ? Colors.green
-                                : Colors.grey,
-                            size: 20,
-                          ),
-                          Text(
-                            'Informatif',
-                            style: TextStyle(
-                                color: _selectedIndex == 1
-                                    ? Colors.green
-                                    : Colors.grey),
-                          ),
-                        ],
-                      ),
+                  ),
+                  MaterialButton(
+                    minWidth: 40,
+                    onPressed: () => _onItemTapped(1),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.info,
+                          color:
+                              _selectedIndex == 1 ? Colors.green : Colors.grey,
+                          size: 20,
+                        ),
+                        Text(
+                          'Informatif',
+                          style: TextStyle(
+                              color: _selectedIndex == 1
+                                  ? Colors.green
+                                  : Colors.grey),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    MaterialButton(
-                      minWidth: 40,
-                      onPressed: () => _onItemTapped(3),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            Icons.history,
-                            color: _selectedIndex == 3
-                                ? Colors.green
-                                : Colors.grey,
-                            size: 20,
-                          ),
-                          Text(
-                            'History',
-                            style: TextStyle(
-                                color: _selectedIndex == 3
-                                    ? Colors.green
-                                    : Colors.grey),
-                          ),
-                        ],
-                      ),
+                  ),
+                ],
+              ),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  MaterialButton(
+                    minWidth: 40,
+                    onPressed: () => _onItemTapped(3),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.history,
+                          color:
+                              _selectedIndex == 3 ? Colors.green : Colors.grey,
+                          size: 20,
+                        ),
+                        Text(
+                          'History',
+                          style: TextStyle(
+                              color: _selectedIndex == 3
+                                  ? Colors.green
+                                  : Colors.grey),
+                        ),
+                      ],
                     ),
-                    MaterialButton(
-                      minWidth: 40,
-                      onPressed: () => _onItemTapped(4),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            Icons.person,
-                            color: _selectedIndex == 4
-                                ? Colors.green
-                                : Colors.grey,
-                            size: 20,
-                          ),
-                          Text(
-                            'Profile',
-                            style: TextStyle(
-                                color: _selectedIndex == 4
-                                    ? Colors.green
-                                    : Colors.grey),
-                          ),
-                        ],
-                      ),
+                  ),
+                  MaterialButton(
+                    minWidth: 40,
+                    onPressed: () => _onItemTapped(4),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.person,
+                          color:
+                              _selectedIndex == 4 ? Colors.green : Colors.grey,
+                          size: 20,
+                        ),
+                        Text(
+                          'Profile',
+                          style: TextStyle(
+                              color: _selectedIndex == 4
+                                  ? Colors.green
+                                  : Colors.grey),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
-              ],
-            ),
+                  ),
+                ],
+              ),
+            ],
           ),
         ),
       ),

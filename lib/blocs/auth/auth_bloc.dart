@@ -56,10 +56,13 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       } else if (event is AuthLogout) {
         try {
           emit(AuthLoading());
+          print('1');
           await AuthService().logout(); // Panggil metode logout
-          emit(AuthLogoutSuccess()); // Pastikan state ini dikeluarkan
+          print('2');
+          emit(AuthInitial()); // Pastikan state ini dikeluarkan
+          print('3');
         } catch (e) {
-          emit(AuthLogoutFailed(e.toString())); // Tangani error
+          emit(AuthFailed(e.toString())); // Tangani error
         }
       }
     });

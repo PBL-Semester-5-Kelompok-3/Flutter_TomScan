@@ -52,6 +52,4 @@ class AuthVerifyOTP extends AuthEvent {
   List<Object> get props => [email, otp];
 }
 
-class AuthLogout extends AuthEvent {
-  const AuthLogout();
-}
+class AuthLogout extends AuthEvent {}

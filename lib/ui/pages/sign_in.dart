@@ -24,7 +24,7 @@ class CustomTextField extends StatefulWidget {
   });
 
   @override
-  _CustomTextFieldState createState() => _CustomTextFieldState();
+  State<CustomTextField> createState() => _CustomTextFieldState();
 }
 
 class _CustomTextFieldState extends State<CustomTextField> {
@@ -215,23 +215,19 @@ class _SignInScreenState extends State<SignInScreen> {
       ),
       body: BlocConsumer<AuthBloc, AuthState>(
         listener: (context, state) {
-          if (state is AuthLoading) {
-            setState(() {
-              _isLoading = true;
-            });
-          } else if (state is AuthSuccess) {
+          if (state is AuthSuccess) {
             setState(() {
               _isLoading = false;
             });
-            QuickAlert.show(
-              context: context,
-              type: QuickAlertType.success,
-              text: 'Sign In Completed Successfully!',
-              onConfirmBtnTap: () {
-                Navigator.pushNamedAndRemoveUntil(
-                    context, '/home', (route) => false);
-              },
-            );
+            Navigator.pushNamedAndRemoveUntil(
+                context, '/home', (route) => false);
+            // QuickAlert.show(
+            //   context: context,
+            //   type: QuickAlertType.success,
+            //   text: 'Sign In Completed Successfully!',
+            //   onConfirmBtnTap: () {
+            //   },
+            // );
           } else if (state is AuthFailed) {
             setState(() {
               _isLoading = false;
@@ -245,6 +241,9 @@ class _SignInScreenState extends State<SignInScreen> {
           }
         },
         builder: (context, state) {
+          if (state is AuthLoading) {
+            _isLoading = true;
+          }
           return Stack(
             children: [
               SingleChildScrollView(

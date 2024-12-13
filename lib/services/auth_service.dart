@@ -167,42 +167,39 @@ class AuthService {
 
   // Logout
   Future<void> logout() async {
-  try {
-    // Ambil token dari FlutterSecureStorage
-    const storage = FlutterSecureStorage();
-    String? token = await storage.read(key: 'token');
-    
-    // Pastikan token ada sebelum mengirim permintaan logout
-    if (token == null) {
-      throw 'No token found, user is not logged in.';
-    }
+    try {
+      // Ambil token dari FlutterSecureStorage
+      const storage = FlutterSecureStorage();
+      String? token = await storage.read(key: 'token');
 
-    final response = await http.post(
-      Uri.parse('https://tomascan.nurulmustofa.my.id/api/logout'),
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer $token', // Kirim token yang didapatkan
-      },
-    ).timeout(const Duration(seconds: 10)); // Timeout 10 detik
-
-    if (response.statusCode == 200) {
-      if (response.body == 'Successfully logged out') {
-        // Hapus data kredensial dari local storage setelah logout berhasil
-        await storage.delete(key: 'token');
-        await storage.delete(key: 'id');
-        await storage.delete(key: 'email');
-        await storage.delete(key: 'password');
-      } else {
-        throw 'Unexpected response: ${response.body}';
+      // Pastikan token ada sebelum mengirim permintaan logout
+      if (token == null) {
+        throw 'No token found, user is not logged in.';
       }
-    } else {
-      // Menangani status code selain 200
-      throw 'Logout failed with status code: ${response.statusCode}. Response body: ${response.body}';
+
+      final response = await http.post(
+        Uri.parse('https://tomascan.nurulmustofa.my.id/api/logout'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token', // Kirim token yang didapatkan
+        },
+      ); // Timeout 10 detik
+
+      if (response.statusCode == 200) {
+        // Hapus data kredensial dari local storage setelah logout berhasil
+        await clearLocalStorage();
+      } else {
+        // Menangani status code selain 200
+        throw jsonDecode(response.body)['message'];
+      }
+    } catch (e) {
+      // Menampilkan log error yang lebih informatif
+      throw 'Logout error: $e';
     }
-  } catch (e) {
-    // Menampilkan log error yang lebih informatif
-    print('Logout error: $e');
-    throw 'Logout error: $e';
   }
-}
+
+  Future<void> clearLocalStorage() async {
+    const storage = FlutterSecureStorage();
+    await storage.deleteAll();
+  }
 }
