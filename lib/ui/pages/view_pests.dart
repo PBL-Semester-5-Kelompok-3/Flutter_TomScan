@@ -65,7 +65,7 @@ class ViewPests extends StatelessWidget {
     );
   }
 
-  Widget _buildSolutionItem(String title, String description) {
+  Widget _buildSolutionItem(String description) {
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       child: Row(
@@ -84,15 +84,6 @@ class ViewPests extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  title,
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    color: Color(0xFF1B4332),
-                    fontSize: 16,
-                  ),
-                ),
-                const SizedBox(height: 4),
                 Text(
                   description,
                   style: const TextStyle(
@@ -215,18 +206,8 @@ class ViewPests extends StatelessWidget {
                             ),
                           ),
                           const SizedBox(height: 16),
-                          _buildSolutionItem(
-                            'Remove Infected Leaves:',
-                            'At the first sign of infection, remove and dispose of infected leaves to prevent the spread of rust spores. Do not compost these leaves, as the spores can survive and re-infect plants.',
-                          ),
-                          _buildSolutionItem(
-                            'Improve Air Circulation:',
-                            'Ensure proper spacing between plants to promote good airflow, reducing moisture levels around the plants.',
-                          ),
-                          _buildSolutionItem(
-                            'Watering Practices:',
-                            'Water the plants at the base, keeping the leaves dry.',
-                          ),
+                          for (var solution in solutions)
+                            _buildSolutionItem('• $solution'),
                         ],
                       ),
                     ),
