@@ -4,13 +4,14 @@ import 'package:toma_scan/models/sign_in_form_model.dart';
 import 'package:toma_scan/models/sign_up_form_model.dart';
 import 'package:toma_scan/models/user_model.dart';
 import 'package:http/http.dart' as http;
+import 'package:toma_scan/shared/shared_values.dart';
 
 class AuthService {
   // Register
   Future<UserModel> register(SignUpFormModel data) async {
     try {
       final res = await http.post(
-        Uri.parse('https://tomascan.nurulmustofa.my.id/api/register'),
+        Uri.parse('$baseUrl/register'),
         body: data.toJson(),
       );
 
@@ -29,7 +30,7 @@ class AuthService {
   Future<UserModel> login(SignInFormModel data) async {
     try {
       final res = await http.post(
-        Uri.parse('https://tomascan.nurulmustofa.my.id/api/login'),
+        Uri.parse('$baseUrl/login'),
         body: data.toJson(),
       );
 
@@ -76,31 +77,11 @@ class AuthService {
     }
   }
 
-  // Login
-  // Future<UserModel> login2(SignInFormModel data) async {
-  //   try {
-  //     final res = await http.post(
-  //       Uri.parse('https://tomascan.nurulmustofa.my.id/api/login'),
-  //       body: data.toJson(),
-  //     );
-
-  //     if (res.statusCode == 201) {
-  //       UserModel user = UserModel.fromJson(jsonDecode(res.body));
-  //       user = user.copyWith(password: data.password);
-  //       return user;
-  //     } else {
-  //       throw jsonDecode(res.body)['message'];
-  //     }
-  //   } catch (e) {
-  //     rethrow;
-  //   }
-  // }
-
   // Forgot Password
   Future<String> forgotPassword(String email) async {
     try {
       final res = await http.post(
-        Uri.parse('https://tomascan.nurulmustofa.my.id/api/forgot-password'),
+        Uri.parse('$baseUrl/forgot-password'),
         body: jsonEncode({'email': email}),
         headers: {'Content-Type': 'application/json'},
       );
@@ -121,7 +102,7 @@ class AuthService {
   Future<String> verifyOTP(String email, String otp) async {
     try {
       final res = await http.post(
-        Uri.parse('https://tomascan.nurulmustofa.my.id/api/verify-otp'),
+        Uri.parse('$baseUrl/verify-otp'),
         body: jsonEncode({'email': email, 'otp': otp}),
         headers: {'Content-Type': 'application/json'},
       );
@@ -142,7 +123,7 @@ class AuthService {
       String email, String password, String confirmPassword, String otp) async {
     try {
       final res = await http.post(
-        Uri.parse('https://tomascan.nurulmustofa.my.id/api/reset-password'),
+        Uri.parse('$baseUrl/reset-password'),
         body: jsonEncode({
           'email': email,
           'otp': otp,
@@ -178,7 +159,7 @@ class AuthService {
       }
 
       final response = await http.post(
-        Uri.parse('https://tomascan.nurulmustofa.my.id/api/logout'),
+        Uri.parse('$baseUrl/logout'),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $token', // Kirim token yang didapatkan

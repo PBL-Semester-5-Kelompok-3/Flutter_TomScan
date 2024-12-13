@@ -12,6 +12,7 @@ class ViewPests extends StatelessWidget {
   final String source;
 
   const ViewPests({
+    super.key,
     required this.name,
     required this.description,
     required this.warning,
@@ -41,7 +42,7 @@ class ViewPests extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
+                const Text(
                   'Warning!',
                   style: TextStyle(
                     color: Colors.red,
@@ -52,7 +53,7 @@ class ViewPests extends StatelessWidget {
                 const SizedBox(height: 4),
                 Text(
                   warning,
-                  style: TextStyle(
+                  style: const TextStyle(
                     color: Colors.black87,
                     fontSize: 14,
                   ),
@@ -143,17 +144,17 @@ class ViewPests extends StatelessWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Text(
-                            'Peppermint Parachute',
-                            style: TextStyle(
+                          Text(
+                            name,
+                            style: const TextStyle(
                               fontSize: 24,
                               fontWeight: FontWeight.bold,
                               color: Color(0xFF1B4332),
                             ),
                           ),
-                          const Text(
-                            '(Mint Plant Mushroom)',
-                            style: TextStyle(
+                          Text(
+                            '($symptoms)',
+                            style: const TextStyle(
                               fontSize: 16,
                               color: Colors.grey,
                             ),
@@ -161,21 +162,21 @@ class ViewPests extends StatelessWidget {
                           _buildWarningBox(),
                           Text(
                             'Genus: $genus',
-                            style: TextStyle(
+                            style: const TextStyle(
                               color: Color(0xFF1B4332),
                             ),
                           ),
                           const SizedBox(height: 8),
                           Text(
                             'Scientific Name: $scientificName',
-                            style: TextStyle(
+                            style: const TextStyle(
                               color: Color(0xFF1B4332),
                             ),
                           ),
                           const SizedBox(height: 8),
                           Text(
                             'Also known as: "$aliases", "$genus".',
-                            style: TextStyle(
+                            style: const TextStyle(
                               color: Color(0xFF1B4332),
                             ),
                           ),
@@ -190,8 +191,8 @@ class ViewPests extends StatelessWidget {
                           ),
                           const SizedBox(height: 8),
                           Text(
-                            '$description',
-                            style: TextStyle(
+                            description,
+                            style: const TextStyle(
                               color: Color(0xFF1B4332),
                               height: 1.5,
                             ),

@@ -154,6 +154,7 @@ class _SecureAccountScreenState extends State<SecureAccountScreen> {
       // Periksa apakah OTP tersedia
       if (otp != null) {
         // Memanggil AuthBloc untuk reset password dengan OTP yang diambil dari Secure Storage
+        // ignore: use_build_context_synchronously
         BlocProvider.of<AuthBloc>(context).add(
           AuthResetPassword(
             email!,
@@ -164,6 +165,7 @@ class _SecureAccountScreenState extends State<SecureAccountScreen> {
         );
       } else {
         // Jika OTP tidak ditemukan
+        // ignore: use_build_context_synchronously
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
               content: Text('OTP is missing. Please verify your email first.')),

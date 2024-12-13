@@ -3,7 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:toma_scan/blocs/informative/informative_bloc.dart';
 import 'package:toma_scan/blocs/PestAndDisease/pestanddisease_bloc.dart';
 import 'package:toma_scan/services/informatif_service.dart';
-import 'package:toma_scan/ui/pages/pests_desease_page.dart';
 import 'package:toma_scan/ui/pages/view_article.dart';
 import 'package:toma_scan/ui/pages/view_pests.dart';
 

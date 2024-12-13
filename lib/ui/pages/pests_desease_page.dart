@@ -1,7 +1,6 @@
 // ignore_for_file: prefer_const_constructors
 
 import 'package:flutter/material.dart';
-import 'package:toma_scan/ui/pages/view_pests.dart'; // Tambahkan import
 
 class PestsDeseasePage extends StatelessWidget {
   const PestsDeseasePage({super.key});
@@ -40,6 +39,7 @@ class PestsDeseasePage extends StatelessWidget {
                 ),
                 itemCount: 4, // Replace with your dynamic item count
                 itemBuilder: (context, index) {
+                  return Container();
                   // return ArticleCard(
                   //   imageUrl:
                   //       'https://th.bing.com/th/id/OIP.HiwZb7pY_PaooR59RRIHBgHaGK?w=239&h=198&c=7&r=0&o=5&dpr=1.9&pid=1.7',

@@ -2,13 +2,14 @@ import 'dart:convert';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 import 'package:toma_scan/models/informatifs_model.dart';
+import 'package:toma_scan/shared/shared_values.dart';
 
 class InformatifsService {
   Future<List<Informative>> getAllInformatifsData() async {
     const storage = FlutterSecureStorage();
     String? token = await storage.read(key: 'token');
     final response = await http.get(
-      Uri.parse('https://tomascan.nurulmustofa.my.id/api/informatifs'),
+      Uri.parse('$baseUrl/informatifs'),
       headers: {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer $token', // Kirim token yang didapatkan
@@ -31,7 +32,7 @@ class InformatifsService {
 
     final response = await http.get(
       Uri.parse(
-          'https://tomascan.nurulmustofa.my.id/api/pests-and-diseases'), // Replace with your actual endpoint
+          '$baseUrl/pests-and-diseases'), // Replace with your actual endpoint
       headers: {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer $token', // Send the token
