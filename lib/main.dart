@@ -1,7 +1,7 @@
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart'; // Add this import
-import 'package:toma_scan/blocs/auth/auth_bloc.dart'; // Import AuthBloc
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:toma_scan/blocs/auth/auth_bloc.dart';
 import 'package:toma_scan/ui/pages/forgot_password.dart';
 import 'package:toma_scan/ui/pages/get_started.dart';
 import 'package:toma_scan/ui/pages/home_page.dart';

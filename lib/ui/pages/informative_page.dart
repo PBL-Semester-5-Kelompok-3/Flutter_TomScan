@@ -2,89 +2,251 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:toma_scan/blocs/informative/informative_bloc.dart';
 import 'package:toma_scan/services/informatif_service.dart';
-import 'package:toma_scan/ui/pages/care_education_page.dart';
 import 'package:toma_scan/ui/pages/pests_desease_page.dart';
-import 'package:toma_scan/ui/pages/popular_article_page.dart';
 import 'package:toma_scan/ui/pages/view_article.dart';
-import 'package:toma_scan/ui/pages/view_care.dart';
-import 'package:toma_scan/ui/pages/view_pests.dart';
 
 class InformativePage extends StatelessWidget {
   const InformativePage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Informatifs'),
-      ),
-      body: BlocProvider(
-        create: (context) =>
-            InformativeBloc(InformatifsService())..add(FetchInformatives()),
-        child: BlocBuilder<InformativeBloc, InformativeState>(
-          builder: (context, state) {
-            if (state is InformativeError &&
-                state.message.contains('Failed to load informatifs data')) {
-              debugPrint('1');
-              debugPrint(state.message);
-              Navigator.pushNamedAndRemoveUntil(
-                  context, '/sign-in', (route) => false);
-            }
-            if (state is InformativeLoading) {
-              debugPrint('2');
-              return const Center(child: CircularProgressIndicator());
-            } else if (state is InformativeSuccess) {
-              debugPrint('3');
-              final informatifs = state.informatives;
-              return ListView(
-                padding: const EdgeInsets.all(16),
-                children: [
-                  SectionHeader(
-                    title: 'Informativs',
-                    onViewAll: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const PestsDeseasePage()),
-                      );
-                    },
-                  ),
-                  const SizedBox(height: 8),
-                  GridView.builder(
-                    physics: const NeverScrollableScrollPhysics(),
-                    shrinkWrap: true,
-                    gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2,
-                      mainAxisSpacing: 8,
-                      crossAxisSpacing: 8,
-                      childAspectRatio: 2,
-                    ),
-                    itemCount: informatifs.length,
-                    itemBuilder: (context, index) => ArticleCard(
-                      imageUrl: informatifs[index].image,
-                      title: informatifs[index].title,
-                      onTap: () => Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => ViewArticle(
-                            title: informatifs[index].title,
-                            tag: informatifs[index].type,
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (context) =>
+              InformativeBloc(InformatifsService())..add(FetchInformatives()),
+        ),
+        BlocProvider(
+          create: (context) => InformativeBloc(InformatifsService())
+            ..add(FetchPestAndDiseases()),
+        ),
+      ],
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text('Informatifs'),
+        ),
+        body: Column(
+          children: [
+            Expanded(
+              child: BlocBuilder<InformativeBloc, InformativeState>(
+                builder: (context, state) {
+                  if (state is InformativeLoading) {
+                    return const Center(child: CircularProgressIndicator());
+                  } else if (state is InformativeSuccess) {
+                    final informatifs = state.informatives;
+
+                    return ListView(
+                      padding: const EdgeInsets.all(16),
+                      children: [
+                        SectionHeader(
+                          title: 'Artikel',
+                          onViewAll: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      const PestsDeseasePage()),
+                            );
+                          },
+                        ),
+                        const SizedBox(height: 8),
+                        GridView.builder(
+                          physics: const NeverScrollableScrollPhysics(),
+                          shrinkWrap: true,
+                          gridDelegate:
+                              const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 2,
+                            mainAxisSpacing: 8,
+                            crossAxisSpacing: 8,
+                            childAspectRatio: 2,
+                          ),
+                          itemCount: informatifs.length,
+                          itemBuilder: (context, index) => ArticleCard(
                             imageUrl: informatifs[index].image,
-                            content: informatifs[index].content,
+                            title: informatifs[index].title,
+                            onTap: () => Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => ViewArticle(
+                                  title: informatifs[index].title,
+                                  tag: informatifs[index].type,
+                                  imageUrl: informatifs[index].image,
+                                  content: informatifs[index].content,
+                                ),
+                              ),
+                            ),
                           ),
                         ),
-                      ),
-                    ),
-                  ),
-                ],
-              );
-            } else if (state is InformativeError) {
-              return Center(child: Text('Error: ${state.message}'));
-            } else {
-              return const Center(child: Text('No data found'));
-            }
-          },
+                        BlocBuilder<InformativeBloc, InformativeState>(
+                          builder: (context, state) {
+                            if (state is InformativeLoading) {
+                              return const Center(
+                                  child: CircularProgressIndicator());
+                            } else if (state is PestAndDiseaseSuccess) {
+                              final pestsDeseases = state.pestAndDiseases;
+
+                              return Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const SizedBox(height: 16),
+                                  const Text(
+                                    'Pests and Diseases',
+                                    style: TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                  const SizedBox(height: 8),
+                                  ListView.builder(
+                                    physics:
+                                        const NeverScrollableScrollPhysics(),
+                                    shrinkWrap: true,
+                                    itemCount: pestsDeseases.length,
+                                    itemBuilder: (context, index) {
+                                      final pest = pestsDeseases[index];
+                                      return ListTile(
+                                        title: Text(pest.name),
+                                        subtitle: Text(pest.description),
+                                      );
+                                    },
+                                  ),
+                                ],
+                              );
+                            } else if (state is InformativeError) {
+                              return Center(
+                                  child: Text('Error: ${state.message}'));
+                            } else {
+                              return const Center(child: Text('No data found'));
+                            }
+                          },
+                        ),
+                      ],
+                    );
+                  } else if (state is InformativeError) {
+                    return Center(child: Text('Error: ${state.message}'));
+                  } else {
+                    return const Center(child: Text('No data found'));
+                  }
+                },
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class SectionHeader extends StatelessWidget {
+  final String title;
+  final VoidCallback onViewAll;
+
+  const SectionHeader(
+      {super.key, required this.title, required this.onViewAll});
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(
+          title,
+          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        ),
+        GestureDetector(
+          onTap: onViewAll,
+          child: const Text(
+            'View all',
+            style: TextStyle(fontSize: 14, color: Colors.green),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class ArticleCard extends StatelessWidget {
+  final String imageUrl;
+  final String title;
+  final VoidCallback onTap; // Tambahkan parameter onTap
+
+  const ArticleCard({
+    super.key,
+    required this.imageUrl,
+    required this.title,
+    required this.onTap, // Tambahkan required parameter
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      // Wrap dengan GestureDetector
+      onTap: onTap,
+      child: Container(
+        height: 100,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(8),
+          image: DecorationImage(
+            image: NetworkImage(imageUrl),
+            fit: BoxFit.cover,
+          ),
+        ),
+        child: Align(
+          alignment: Alignment.bottomCenter,
+          child: Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(4),
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.75),
+              borderRadius: const BorderRadius.only(
+                bottomLeft: Radius.circular(8),
+                bottomRight: Radius.circular(8),
+              ),
+            ),
+            child: Text(
+              title,
+              style: const TextStyle(fontSize: 12),
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class EducationCard extends StatelessWidget {
+  final IconData icon;
+  final String title;
+  final VoidCallback onTap; // Tambahkan parameter onTap
+
+  const EducationCard({
+    super.key,
+    required this.icon,
+    required this.title,
+    required this.onTap, // Tambahkan required parameter
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      // Wrap dengan GestureDetector
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.all(8),
+        decoration: BoxDecoration(
+          color: Colors.green[100],
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(icon, color: Colors.green),
+            const SizedBox(width: 4),
+            Text(
+              title,
+              style: const TextStyle(color: Colors.green),
+            ),
+          ],
         ),
       ),
     );
@@ -249,122 +411,6 @@ class InformativePage extends StatelessWidget {
 //   }
 // }
 
-class SectionHeader extends StatelessWidget {
-  final String title;
-  final VoidCallback onViewAll;
-
-  const SectionHeader(
-      {super.key, required this.title, required this.onViewAll});
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Text(
-          title,
-          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-        ),
-        GestureDetector(
-          onTap: onViewAll,
-          child: const Text(
-            'View all',
-            style: TextStyle(fontSize: 14, color: Colors.green),
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class ArticleCard extends StatelessWidget {
-  final String imageUrl;
-  final String title;
-  final VoidCallback onTap; // Tambahkan parameter onTap
-
-  const ArticleCard({
-    super.key,
-    required this.imageUrl,
-    required this.title,
-    required this.onTap, // Tambahkan required parameter
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      // Wrap dengan GestureDetector
-      onTap: onTap,
-      child: Container(
-        height: 100,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(8),
-          image: DecorationImage(
-            image: NetworkImage(imageUrl),
-            fit: BoxFit.cover,
-          ),
-        ),
-        child: Align(
-          alignment: Alignment.bottomCenter,
-          child: Container(
-            width: double.infinity,
-            padding: const EdgeInsets.all(4),
-            decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.75),
-              borderRadius: const BorderRadius.only(
-                bottomLeft: Radius.circular(8),
-                bottomRight: Radius.circular(8),
-              ),
-            ),
-            child: Text(
-              title,
-              style: const TextStyle(fontSize: 12),
-              overflow: TextOverflow.ellipsis,
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class EducationCard extends StatelessWidget {
-  final IconData icon;
-  final String title;
-  final VoidCallback onTap; // Tambahkan parameter onTap
-
-  const EducationCard({
-    super.key,
-    required this.icon,
-    required this.title,
-    required this.onTap, // Tambahkan required parameter
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      // Wrap dengan GestureDetector
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.all(8),
-        decoration: BoxDecoration(
-          color: Colors.green[100],
-          borderRadius: BorderRadius.circular(8),
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(icon, color: Colors.green),
-            const SizedBox(width: 4),
-            Text(
-              title,
-              style: const TextStyle(color: Colors.green),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
 // import 'package:flutter/material.dart';
 // import 'package:flutter_bloc/flutter_bloc.dart';
 // import 'package:toma_scan/blocs/informatif/bloc/informatif_bloc.dart';

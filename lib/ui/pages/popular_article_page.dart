@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:toma_scan/ui/pages/view_article.dart';
 
 class PopularArticlePage extends StatelessWidget {
   const PopularArticlePage({super.key});

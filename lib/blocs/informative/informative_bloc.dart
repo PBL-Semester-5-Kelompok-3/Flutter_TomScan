@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:toma_scan/models/informatifs_model.dart';
@@ -11,18 +10,36 @@ class InformativeBloc extends Bloc<InformativeEvent, InformativeState> {
   final InformatifsService informatifsService;
 
   InformativeBloc(this.informatifsService) : super(InformativeInitial()) {
-    on<FetchInformatives>((event, emit) async {
-      try {
-        emit(InformativeLoading());
-        final informatives = await informatifsService.getAllInformatifsData();
-        emit(InformativeSuccess(informatives));
-      } catch (e) {
-        if (e.toString().contains('Token expired')) {
-          emit(const InformativeError('Session expired, logging out...'));
-        } else {
-          emit(InformativeError(e.toString()));
-        }
-      }
-    });
+    on<FetchInformatives>(_onFetchInformatives);
+    on<FetchPestAndDiseases>(_onFetchPestAndDiseases);
+  }
+
+  Future<void> _onFetchInformatives(
+      FetchInformatives event, Emitter<InformativeState> emit) async {
+    try {
+      emit(InformativeLoading());
+      final informatives = await informatifsService.getAllInformatifsData();
+      emit(InformativeSuccess(informatives));
+    } catch (e) {
+      final errorMessage = e.toString().contains('Token expired')
+          ? 'Session expired, logging out...'
+          : e.toString();
+      emit(InformativeError(errorMessage));
+    }
+  }
+
+  Future<void> _onFetchPestAndDiseases(
+      FetchPestAndDiseases event, Emitter<InformativeState> emit) async {
+    try {
+      emit(InformativeLoading());
+      final pestAndDiseases =
+          await informatifsService.getAllPestAndDiseaseData();
+      emit(PestAndDiseaseSuccess(pestAndDiseases));
+    } catch (e) {
+      final errorMessage = e.toString().contains('Token expired')
+          ? 'Session expired, logging out...'
+          : e.toString();
+      emit(InformativeError(errorMessage));
+    }
   }
 }

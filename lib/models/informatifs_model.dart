@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 class Informative {
   final int id;
   final String title;
@@ -23,6 +25,44 @@ class Informative {
       content: json['content'],
       image: json['image'],
       createdAt: DateTime.parse(json['created_at']),
+    );
+  }
+}
+
+class PestAndDisease {
+  final int id;
+  final String name;
+  final String description;
+  final String warning;
+  final String genus;
+  final String scientificName;
+  final String aliases;
+  final String symptoms;
+  final List<String> solutions;
+
+  PestAndDisease({
+    required this.id,
+    required this.name,
+    required this.description,
+    required this.warning,
+    required this.genus,
+    required this.scientificName,
+    required this.aliases,
+    required this.symptoms,
+    required this.solutions,
+  });
+
+  factory PestAndDisease.fromJson(Map<String, dynamic> json) {
+    return PestAndDisease(
+      id: json['id'],
+      name: json['name'],
+      description: json['description'],
+      warning: json['warning'],
+      genus: json['genus'],
+      scientificName: json['scientific_name'],
+      aliases: json['aliases'],
+      symptoms: json['symptoms'],
+      solutions: List<String>.from(jsonDecode(json['solutions'])),
     );
   }
 }

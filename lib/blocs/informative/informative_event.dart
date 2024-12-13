@@ -8,3 +8,12 @@ abstract class InformativeEvent extends Equatable {
 }
 
 class FetchInformatives extends InformativeEvent {}
+
+abstract class PestAndDiseaseEvent extends Equatable {
+  const PestAndDiseaseEvent();
+
+  @override
+  List<Object> get props => [];
+}
+
+class FetchPestAndDiseases extends InformativeEvent {}
