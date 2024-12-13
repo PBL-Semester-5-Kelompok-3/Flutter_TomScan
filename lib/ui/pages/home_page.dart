@@ -5,6 +5,7 @@ import 'history_page.dart';
 import 'profile_page.dart';
 import 'informative_page.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:carousel_slider/carousel_slider.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -239,14 +240,9 @@ class HomeContent extends StatelessWidget {
             ),
           ),
           _buildSectionHeader('Popular Article', () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => const PopularArticlePage(),
-              ),
-            );
+            // Navigasi ke halaman Popular Article (opsional)
           }),
-          _buildPopularArticles(),
+          _buildPopularArticlesCarousel(),
           _buildSectionHeader('Last Detection', () {
             Navigator.push(
               context,
@@ -296,38 +292,85 @@ class HomeContent extends StatelessWidget {
     );
   }
 
-  Widget _buildPopularArticles() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: Row(
-        children: [
-          _buildArticleCard(),
-          const SizedBox(width: 16),
-          _buildArticleCard(),
-        ],
+  Widget _buildPopularArticlesCarousel() {
+    // Data dummy untuk artikel populer
+    final List<String> articleImages = [
+      'https://th.bing.com/th/id/OIP.HiwZb7pY_PaooR59RRIHBgHaGK?w=239&h=198&c=7&r=0&o=5&dpr=1.9&pid=1.7',
+      'https://i5.walmartimages.com/asr/9f8b7456-81d0-4dc2-b422-97cf63077762.0ddba51bbf14a5029ce82f5fce878dee.jpeg',
+      'https://upload.wikimedia.org/wikipedia/commons/3/3a/Tomato_je.jpg',
+    ];
+
+    final List<String> articleTitles = [
+      "Croatia doubles tomato production with Podravka's...",
+      "5 Tips for Growing Healthier Tomatoes",
+      "Latest Innovations in Tomato Farming",
+    ];
+
+    return CarouselSlider.builder(
+      itemCount: articleImages.length,
+      itemBuilder: (BuildContext context, int index, int realIndex) {
+        return _buildArticleCard(articleImages[index], articleTitles[index]);
+      },
+      options: CarouselOptions(
+        height: 200,
+        enlargeCenterPage: true,
+        enableInfiniteScroll: true,
+        autoPlay: true,
+        autoPlayInterval: const Duration(seconds: 5),
+        aspectRatio: 16 / 9,
+        viewportFraction: 0.8,
       ),
     );
   }
 
-  Widget _buildArticleCard() {
-    return Expanded(
-      child: Column(
-        children: [
-          ClipRRect(
-            borderRadius: BorderRadius.circular(12),
-            child: Image.network(
-              'https://th.bing.com/th/id/OIP.HiwZb7pY_PaooR59RRIHBgHaGK?w=239&h=198&c=7&r=0&o=5&dpr=1.9&pid=1.7',
-              height: 300,
+  Widget _buildArticleCard(String imageUrl, String title) {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 8),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.5),
+            spreadRadius: 2,
+            blurRadius: 7,
+            offset: const Offset(0, 3), // changes position of shadow
+          ),
+        ],
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(12),
+        child: Stack(
+          children: [
+            Image.network(
+              imageUrl,
+              height: double.infinity,
               width: double.infinity,
               fit: BoxFit.cover,
             ),
-          ),
-          const SizedBox(height: 8),
-          const Text(
-            'Croatia doubles tomato production with Podravka\'s...',
-            style: TextStyle(fontSize: 14),
-          ),
-        ],
+            Positioned(
+              bottom: 10,
+              left: 10,
+              right: 10,
+              child: Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: Colors.black54,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Text(
+                  title,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
