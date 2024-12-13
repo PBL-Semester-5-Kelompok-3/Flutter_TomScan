@@ -1,6 +1,6 @@
+// auth_state.dart
 part of 'auth_bloc.dart';
 
-@immutable
 sealed class AuthState {
   const AuthState();
 
@@ -26,3 +26,62 @@ class AuthSuccess extends AuthState {
   @override
   List<Object> get props => [user];
 }
+
+class AuthForgotPasswordSuccess extends AuthState {
+  final String message;
+  const AuthForgotPasswordSuccess(this.message);
+
+  @override
+  List<Object> get props => [message];
+}
+
+class AuthForgotPasswordFailed extends AuthState {
+  final String message;
+  const AuthForgotPasswordFailed(this.message);
+
+  @override
+  List<Object> get props => [message];
+}
+
+class AuthResetPasswordSuccess extends AuthState {
+  final String message;
+  const AuthResetPasswordSuccess(this.message);
+
+  @override
+  List<Object> get props => [message];
+}
+
+class AuthResetPasswordFailed extends AuthState {
+  final String error;
+  final String message;
+  const AuthResetPasswordFailed(this.error, this.message);
+
+  @override
+  List<Object> get props => [error];
+}
+
+class AuthVerifyOTPSuccess extends AuthState {
+  final String message;
+  const AuthVerifyOTPSuccess(this.message);
+
+  @override
+  List<Object> get props => [message];
+}
+
+class AuthVerifyOTPFailed extends AuthState {
+  final String message;
+  const AuthVerifyOTPFailed(this.message);
+
+  @override
+  List<Object> get props => [message];
+}
+
+class AuthLogoutFailed extends AuthState {
+  final String message;
+  AuthLogoutFailed(this.message);
+
+  @override
+  List<Object> get props => [message];
+}
+
+class AuthLogoutSuccess extends AuthState {}

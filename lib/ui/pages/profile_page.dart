@@ -1,6 +1,8 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:toma_scan/blocs/auth/auth_bloc.dart';
 import 'package:toma_scan/ui/pages/help_center_page.dart';
 import 'package:toma_scan/ui/pages/privacy_policy_page.dart';
 import 'package:toma_scan/ui/pages/terms_page.dart';
@@ -9,14 +11,14 @@ class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
 
   @override
-  _ProfilePageState createState() => _ProfilePageState();
+  State<ProfilePage> createState() => _ProfilePageState();
 }
 
 class _ProfilePageState extends State<ProfilePage> {
   String username = "Astrid Risa";
   String email = "astridrisa@gmail.com";
   String phone = "089529167474";
-  String password = "************";
+  String password = "";
   bool isEditingUsername = false;
   bool isEditingEmail = false;
   bool isEditingPhone = false;
@@ -58,7 +60,7 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   // Fungsi untuk konfirmasi logout
-  void _showLogoutDialog(BuildContext context) {
+  void showLogoutDialog(BuildContext context) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -74,9 +76,10 @@ class _ProfilePageState extends State<ProfilePage> {
             ),
             TextButton(
               onPressed: () {
-                // Tambahkan logika logout di sini
                 Navigator.of(context).pop(); // Tutup dialog
-                // Navigator.pushReplacementNamed(context, '/login'); // Navigasi ke login
+
+                // Trigger logout event
+                context.read<AuthBloc>().add(AuthLogout());
               },
               child: const Text('Yes', style: TextStyle(color: Colors.red)),
             ),
@@ -106,7 +109,6 @@ class _ProfilePageState extends State<ProfilePage> {
               onPressed: () {
                 // Tambahkan logika delete account di sini
                 Navigator.of(context).pop(); // Tutup dialog
-                // Navigator.pushReplacementNamed(context, '/login'); // Navigasi ke login
               },
               child: const Text('Delete', style: TextStyle(color: Colors.red)),
             ),
@@ -156,7 +158,8 @@ class _ProfilePageState extends State<ProfilePage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(label, style: const TextStyle(fontWeight: FontWeight.bold)),
+                Text(label,
+                    style: const TextStyle(fontWeight: FontWeight.bold)),
                 isEditing
                     ? TextField(
                         controller: controller,
@@ -167,7 +170,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         ),
                       )
                     : Text(
-                        isPassword ? '************' : controller.text,
+                        isPassword ? '' : controller.text,
                         style: const TextStyle(color: Colors.black54),
                       ),
               ],
@@ -187,260 +190,296 @@ class _ProfilePageState extends State<ProfilePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(20.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text(
-                'My Account',
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 20),
-              Center(
-                child: Stack(
+      body: BlocConsumer<AuthBloc, AuthState>(
+        listener: (context, state) {
+          if (state is AuthFailed) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text(state.e)),
+            );
+          }
+
+          if (state is AuthInitial) {
+            Navigator.pushNamedAndRemoveUntil(
+                context, '/sign-in', (route) => false);
+          }
+        },
+        builder: (context, state) {
+          if (state is AuthLoading) {
+            return const Center(
+              child: CircularProgressIndicator(color: Colors.blue),
+            );
+          }
+          if (state is AuthSuccess) {
+            return SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Container(
-                      width: 100,
-                      height: 100,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        border: Border.all(
-                          color: const Color(0xFF00BF63),
-                          width: 2,
-                        ),
-                        image: profileImagePath != null
-                            ? DecorationImage(
-                                image: FileImage(File(profileImagePath!)),
-                                fit: BoxFit.cover,
-                              )
-                            : null,
-                      ),
-                      child: profileImagePath == null
-                          ? const CircleAvatar(
-                              backgroundColor: Color(0xFF00BF63),
-                              child: Icon(
-                                Icons.person,
-                                size: 50,
-                                color: Colors.white,
-                              ),
-                            )
-                          : null,
+                    const Text(
+                      'My Account',
+                      style:
+                          TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                     ),
-                    Positioned(
-                      right: 0,
-                      bottom: 0,
-                      child: InkWell(
-                        onTap: _pickImage,
-                        child: Container(
-                          padding: const EdgeInsets.all(4),
-                          decoration: const BoxDecoration(
-                            color: Color(0xFF00BF63),
-                            shape: BoxShape.circle,
+                    const SizedBox(height: 20),
+                    Center(
+                      child: Stack(
+                        children: [
+                          Container(
+                            width: 100,
+                            height: 100,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              border: Border.all(
+                                color: const Color(0xFF00BF63),
+                                width: 2,
+                              ),
+                              image: profileImagePath != null
+                                  ? DecorationImage(
+                                      image: FileImage(File(profileImagePath!)),
+                                      fit: BoxFit.cover,
+                                    )
+                                  : null,
+                            ),
+                            child: profileImagePath == null
+                                ? const CircleAvatar(
+                                    backgroundColor: Color(0xFF00BF63),
+                                    child: Icon(
+                                      Icons.person,
+                                      size: 50,
+                                      color: Colors.white,
+                                    ),
+                                  )
+                                : null,
                           ),
-                          child: const Icon(
-                            Icons.edit,
-                            size: 20,
-                            color: Colors.white,
+                          Positioned(
+                            right: 0,
+                            bottom: 0,
+                            child: InkWell(
+                              onTap: _pickImage,
+                              child: Container(
+                                padding: const EdgeInsets.all(4),
+                                decoration: const BoxDecoration(
+                                  color: Color(0xFF00BF63),
+                                  shape: BoxShape.circle,
+                                ),
+                                child: const Icon(
+                                  Icons.edit,
+                                  size: 20,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 30),
+                    _buildEditableItem(
+                      icon: Icons.person_outline,
+                      label: "Username",
+                      controller: _usernameController,
+                      isEditing: isEditingUsername,
+                      onEditToggle: () {
+                        setState(() {
+                          isEditingUsername = !isEditingUsername;
+                        });
+                      },
+                      onSave: () {
+                        setState(() {
+                          username = _usernameController.text;
+                          isEditingUsername = false;
+                        });
+                      },
+                    ),
+                    _buildEditableItem(
+                      icon: Icons.email_outlined,
+                      label: "E-mail",
+                      controller: _emailController,
+                      isEditing: isEditingEmail,
+                      onEditToggle: () {
+                        setState(() {
+                          isEditingEmail = !isEditingEmail;
+                        });
+                      },
+                      onSave: () {
+                        setState(() {
+                          email = _emailController.text;
+                          isEditingEmail = false;
+                        });
+                      },
+                    ),
+                    _buildEditableItem(
+                      icon: Icons.phone_outlined,
+                      label: "Phone",
+                      controller: _phoneController,
+                      isEditing: isEditingPhone,
+                      onEditToggle: () {
+                        setState(() {
+                          isEditingPhone = !isEditingPhone;
+                        });
+                      },
+                      onSave: () {
+                        setState(() {
+                          phone = _phoneController.text;
+                          isEditingPhone = false;
+                        });
+                      },
+                    ),
+                    _buildEditableItem(
+                      icon: Icons.lock_outline,
+                      label: "Password",
+                      controller: _passwordController,
+                      isEditing: isEditingPassword,
+                      isPassword: true,
+                      onEditToggle: () {
+                        setState(() {
+                          isEditingPassword = !isEditingPassword;
+                        });
+                      },
+                      onSave: () {
+                        setState(() {
+                          password = _passwordController.text;
+                          isEditingPassword = false;
+                        });
+                      },
+                    ),
+                    Center(
+                      child: SizedBox(
+                        width: 400,
+                        height: 40,
+                        child: ElevatedButton(
+                          onPressed: () {
+                            _showSaveSuccessDialog(
+                                context); // Tampilkan alert sukses
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xFF00BF63),
+                            padding: const EdgeInsets.symmetric(horizontal: 16),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                          ),
+                          child: const Center(
+                            child: Text(
+                              'Save',
+                              style:
+                                  TextStyle(color: Colors.white, fontSize: 16),
+                              textAlign: TextAlign.center,
+                            ),
                           ),
                         ),
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    Container(
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: Colors.green.shade50,
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(color: Colors.green.shade200),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            'About',
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                          const SizedBox(height: 16),
+                          ListTile(
+                            leading: const Icon(Icons.description_outlined,
+                                color: Colors.black54),
+                            title: const Text('Terms and Conditions'),
+                            trailing: const Icon(Icons.chevron_right,
+                                color: Colors.black54),
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => const TermsPage(),
+                                ),
+                              );
+                            },
+                          ),
+                          const Divider(),
+                          ListTile(
+                            leading: const Icon(Icons.shield_outlined,
+                                color: Colors.black54),
+                            title: const Text('Privacy Policy'),
+                            trailing: const Icon(Icons.chevron_right,
+                                color: Colors.black54),
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      const PrivacyPolicyPage(),
+                                ),
+                              );
+                            },
+                          ),
+                          const Divider(),
+                          ListTile(
+                            leading: const Icon(Icons.help_outline,
+                                color: Colors.black54),
+                            title: const Text('Help Center'),
+                            trailing: const Icon(Icons.chevron_right,
+                                color: Colors.black54),
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => const HelpCenterPage(),
+                                ),
+                              );
+                            },
+                          ),
+                          const SizedBox(height: 16),
+                          Center(
+                            child: TextButton(
+                              onPressed: () {
+                                context.read<AuthBloc>().add(AuthLogout());
+                              },
+                              child: const Text(
+                                'Logout',
+                                style: TextStyle(
+                                  color: Colors.red,
+                                  fontSize: 16,
+                                ),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 16),
+                          Center(
+                            child: TextButton(
+                              onPressed: () {
+                                _showDeleteDialog(context);
+                              },
+                              child: const Text(
+                                'Delete Account',
+                                style: TextStyle(
+                                  color: Colors.red,
+                                  fontSize: 16,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ],
                 ),
               ),
-              const SizedBox(height: 30),
-              _buildEditableItem(
-                icon: Icons.person_outline,
-                label: "Username",
-                controller: _usernameController,
-                isEditing: isEditingUsername,
-                onEditToggle: () {
-                  setState(() {
-                    isEditingUsername = !isEditingUsername;
-                  });
-                },
-                onSave: () {
-                  setState(() {
-                    username = _usernameController.text;
-                    isEditingUsername = false;
-                  });
-                },
-              ),
-              _buildEditableItem(
-                icon: Icons.email_outlined,
-                label: "E-mail",
-                controller: _emailController,
-                isEditing: isEditingEmail,
-                onEditToggle: () {
-                  setState(() {
-                    isEditingEmail = !isEditingEmail;
-                  });
-                },
-                onSave: () {
-                  setState(() {
-                    email = _emailController.text;
-                    isEditingEmail = false;
-                  });
-                },
-              ),
-              _buildEditableItem(
-                icon: Icons.phone_outlined,
-                label: "Phone",
-                controller: _phoneController,
-                isEditing: isEditingPhone,
-                onEditToggle: () {
-                  setState(() {
-                    isEditingPhone = !isEditingPhone;
-                  });
-                },
-                onSave: () {
-                  setState(() {
-                    phone = _phoneController.text;
-                    isEditingPhone = false;
-                  });
-                },
-              ),
-              _buildEditableItem(
-                icon: Icons.lock_outline,
-                label: "Password",
-                controller: _passwordController,
-                isEditing: isEditingPassword,
-                isPassword: true,
-                onEditToggle: () {
-                  setState(() {
-                    isEditingPassword = !isEditingPassword;
-                  });
-                },
-                onSave: () {
-                  setState(() {
-                    password = _passwordController.text;
-                    isEditingPassword = false;
-                  });
-                },
-              ),
-               Center(
-                child: SizedBox(
-                  width: 400,
-                  height: 40,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      _showSaveSuccessDialog(context); // Tampilkan alert sukses
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF00BF63),
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                    ),
-                    child: const Center(
-                      child: Text(
-                        'Save',
-                        style: TextStyle(color: Colors.white, fontSize: 16),
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            const SizedBox(height: 20),
-              Container(
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: Colors.green.shade50,
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: Colors.green.shade200),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text(
-                      'About',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    ListTile(
-                      leading: const Icon(Icons.description_outlined, color: Colors.black54),
-                      title: const Text('Terms and Conditions'),
-                      trailing: const Icon(Icons.chevron_right, color: Colors.black54),
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const TermsPage(),
-                          ),
-                        );
-                      },
-                    ),
-                    const Divider(),
-                    ListTile(
-                      leading: const Icon(Icons.shield_outlined, color: Colors.black54),
-                      title: const Text('Privacy Policy'),
-                      trailing: const Icon(Icons.chevron_right, color: Colors.black54),
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const PrivacyPolicyPage(),
-                          ),
-                        );
-                      },
-                    ),
-                    const Divider(),
-                    ListTile(
-                      leading: const Icon(Icons.help_outline, color: Colors.black54),
-                      title: const Text('Help Center'),
-                      trailing: const Icon(Icons.chevron_right, color: Colors.black54),
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const HelpCenterPage(),
-                          ),
-                        );
-                      },
-                    ),
-              const SizedBox(height: 16),
-              Center(
-              child: TextButton(
-                onPressed: () {
-                  _showLogoutDialog(context);
-                },
-                child: const Text(
-                          'Logout',
-                          style: TextStyle(
-                            color: Colors.red,
-                            fontSize: 16,
-                          ),
-                        ),
-                      ),
-                    ),
-              const SizedBox(height: 16),
-              Center(
-                  child: TextButton(
-                onPressed: () {
-                  _showDeleteDialog(context);
-                },
-                child: const Text(
-                          'Delete Account',
-                          style: TextStyle(
-                            color: Colors.red,
-                            fontSize: 16,
-                          ),
-                        ),
-                      ),
-                    ),
-            ],
-          ),
-        ),
-       ],
-      ),
-        ),
+            );
+          }
+          return const Center(
+            child: Text('Unknown state. Please try again.'),
+          );
+        },
       ),
     );
   }

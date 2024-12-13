@@ -49,9 +49,8 @@ class MyApp extends StatelessWidget {
         '/onboarding_page': (context) => const OnboardingPage(),
         '/camera': (context) => CameraApp(cameras: cameras),
         '/get-started': (context) => const GetStarted(),
-        '/sign-up': (context) =>
-            const SignUpScreen(), // SignUpScreen now has access to AuthBloc
-        '/sign-in': (context) => const LoginScreen(),
+        '/sign-up': (context) => const SignUpScreen(),
+        '/sign-in': (context) => const SignInScreen(),
         '/forgot-password': (context) => const ForgotPasswordScreen(),
         '/success-screen': (context) => const SuccessScreenHome(),
         '/PrivacyPolicyPage': (context) => const PrivacyPolicyPage(),

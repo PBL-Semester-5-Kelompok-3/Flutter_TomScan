@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart'; // Import package
+import 'package:toma_scan/blocs/auth/auth_bloc.dart';
+import 'package:toma_scan/ui/pages/secure_password.dart';
 
 class OtpScreen extends StatefulWidget {
   final String email;
@@ -15,10 +19,12 @@ class OtpScreen extends StatefulWidget {
 }
 
 class _OtpScreenState extends State<OtpScreen> {
-  // State for OTP input
   final _otpControllers = List.generate(4, (index) => TextEditingController());
   int _remainingTime = 60;
   bool _isResendEnabled = false;
+  bool _isOtpVerified = false; // Flag untuk memantau apakah OTP sudah valid
+  final secureStorage =
+      const FlutterSecureStorage(); // Inisialisasi Secure Storage
 
   @override
   void initState() {
@@ -26,28 +32,37 @@ class _OtpScreenState extends State<OtpScreen> {
     _startResendTimer();
   }
 
+  // Modifikasi fungsi _startResendTimer untuk menghentikan timer saat OTP sudah valid
   void _startResendTimer() {
+    if (_isOtpVerified) return; // Jika OTP sudah diverifikasi, hentikan timer
+
     Future.delayed(const Duration(seconds: 1), () {
-      if (_remainingTime > 0) {
+      if (_remainingTime > 0 && !_isOtpVerified) {
+        // Pastikan timer berjalan hanya jika OTP belum valid
         setState(() {
           _remainingTime--;
         });
-        _startResendTimer();
-      } else {
+        _startResendTimer(); // Rekursif untuk menjalankan timer setiap detik
+      } else if (_remainingTime == 0) {
         setState(() {
-          _isResendEnabled = true;
+          _isResendEnabled =
+              true; // Mengaktifkan tombol resend setelah countdown selesai
         });
       }
     });
   }
 
+  // Fungsi untuk mengirim ulang OTP
   void _resendCode() {
     setState(() {
       _remainingTime = 60;
       _isResendEnabled = false;
+      _isOtpVerified = false; // Reset verifikasi OTP ketika mengirim ulang kode
     });
     _startResendTimer();
-    // Here you can add the code to resend the OTP to the email
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text("OTP code has been resent!")),
+    );
   }
 
   @override
@@ -92,7 +107,7 @@ class _OtpScreenState extends State<OtpScreen> {
             ),
             const SizedBox(height: 12),
             Text(
-              'Please check your email inbox for a message from Plantify. Enter the one-time verification code below.',
+              'Please check your email inbox for a message from TomaScan. Enter the one-time verification code below.',
               style: TextStyle(
                 color: Colors.grey[600],
                 fontSize: 16,
@@ -118,19 +133,15 @@ class _OtpScreenState extends State<OtpScreen> {
             const SizedBox(height: 24),
             _isResendEnabled
                 ? Center(
-                    child: Column(
-                      children: [
-                        TextButton(
-                          onPressed: _resendCode,
-                          child: Text(
-                            'Resend Code',
-                            style: TextStyle(
-                              color: Colors.green[400],
-                              fontSize: 16,
-                            ),
-                          ),
+                    child: TextButton(
+                      onPressed: _resendCode,
+                      child: Text(
+                        'Resend Code',
+                        style: TextStyle(
+                          color: Colors.green[400],
+                          fontSize: 16,
                         ),
-                      ],
+                      ),
                     ),
                   )
                 : Center(
@@ -144,12 +155,17 @@ class _OtpScreenState extends State<OtpScreen> {
                   ),
             const SizedBox(height: 24),
             ElevatedButton(
-              onPressed: () {
-                // Join the OTP digits and pass to onSubmit
-                final otp =
-                    _otpControllers.map((controller) => controller.text).join();
-                widget.onSubmit(otp);
-              },
+              onPressed: _otpControllers
+                      .every((controller) => controller.text.isNotEmpty)
+                  ? () {
+                      final otp = _otpControllers
+                          .map((controller) => controller.text)
+                          .join();
+                      context
+                          .read<AuthBloc>()
+                          .add(AuthVerifyOTP(widget.email, otp));
+                    }
+                  : null,
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.green[400],
                 padding: const EdgeInsets.symmetric(vertical: 16),
@@ -165,6 +181,39 @@ class _OtpScreenState extends State<OtpScreen> {
                   color: Colors.white,
                 ),
               ),
+            ),
+            BlocListener<AuthBloc, AuthState>(
+              listener: (context, state) {
+                if (state is AuthVerifyOTPSuccess) {
+                  setState(() {
+                    _isOtpVerified = true; // Set OTP verified to true
+                  });
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text(state.message)),
+                  );
+
+                  // Menyimpan OTP ke Flutter Secure Storage
+                  secureStorage.write(
+                      key: 'otp',
+                      value: _otpControllers
+                          .map((controller) => controller.text)
+                          .join());
+                  secureStorage.write(key: 'email', value: widget.email);
+
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) =>
+                          const SecureAccountScreen(), // Update this line
+                    ),
+                  );
+                } else if (state is AuthVerifyOTPFailed) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text(state.message)),
+                  );
+                }
+              },
+              child: Container(),
             ),
           ],
         ),

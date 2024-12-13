@@ -31,13 +31,17 @@ dependencies:
   bloc: ^8.1.4
   camera: ^0.11.0+2
   carousel_slider: ^5.0.0
+  equatable: ^2.0.7
   flutter:
     sdk: flutter
   flutter_bloc: ^8.1.6
+  flutter_secure_storage: ^9.2.2
   flutter_svg: ^2.0.14
   google_fonts: ^6.2.1
   http: ^1.2.2
   image_picker: ^1.1.2
+  loading_indicator: ^3.1.1
+  quickalert: ^1.1.0
 dev_dependencies:
   flutter_lints: ^4.0.0
   flutter_test:

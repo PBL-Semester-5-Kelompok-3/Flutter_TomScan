@@ -1,4 +1,7 @@
+// forgot_password.dart
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:toma_scan/blocs/auth/auth_bloc.dart';
 import 'package:toma_scan/ui/pages/otp_screen.dart';
 
 class ForgotPasswordScreen extends StatefulWidget {
@@ -10,6 +13,8 @@ class ForgotPasswordScreen extends StatefulWidget {
 
 class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   final TextEditingController _emailController = TextEditingController();
+  bool _isLoading = false;
+  String? _email;
 
   @override
   void dispose() {
@@ -41,23 +46,15 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
       return;
     }
 
-    // Simulasikan pengiriman OTP (harus diganti dengan logika backend yang sesuai)
-    _navigateToOtpScreen(email);
-  }
+    setState(() {
+      _isLoading = true;
+    });
 
-  // Navigasi ke layar OTP
-  void _navigateToOtpScreen(String email) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => OtpScreen(
-          email: email,
-          onSubmit: (otp) {
-            debugPrint('Submitted OTP: $otp');
-          },
-        ),
-      ),
-    );
+    // Triggering the BLoC event for forgot password
+    context.read<AuthBloc>().add(AuthForgotPassword(email));
+    setState(() {
+      _email = email; // Simpan email untuk digunakan di OTP verification
+    });
   }
 
   @override
@@ -134,24 +131,67 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
-                  onPressed: _handleSendOTP,
+                  onPressed: _isLoading ? null : _handleSendOTP,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blue, // Use your primary color here
+                    backgroundColor: Colors.green,
                     foregroundColor: Colors.white,
                     padding: const EdgeInsets.symmetric(vertical: 16),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(50),
                     ),
                   ),
-                  child: const Text(
-                    'Send OTP Code',
-                    style: TextStyle(color: Colors.white),
-                  ),
+                  child: _isLoading
+                      ? const CircularProgressIndicator(color: Colors.white)
+                      : const Text(
+                          'Send OTP Code',
+                          style: TextStyle(color: Colors.white),
+                        ),
                 ),
               ),
               const SizedBox(height: 16),
+              // Show loading or error state
+              BlocListener<AuthBloc, AuthState>(
+                // Listen to AuthBloc
+                listener: (context, state) {
+                  if (state is AuthLoading) {
+                    setState(() {
+                      _isLoading = true;
+                    });
+                  } else if (state is AuthForgotPasswordSuccess) {
+                    setState(() {
+                      _isLoading = false;
+                    });
+                    _navigateToOtpScreen(_email!); // Email to OTP screen
+                  } else if (state is AuthFailed) {
+                    setState(() {
+                      _isLoading = false;
+                    });
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text(state.e)),
+                    );
+                  }
+                },
+                child: Container(),
+              ),
             ],
           ),
+        ),
+      ),
+    );
+  }
+
+  // Navigasi ke layar OTP
+  void _navigateToOtpScreen(String email) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => OtpScreen(
+          email: email,
+          onSubmit: (otp) {
+            debugPrint('Submitted OTP: $otp');
+            // Verifikasi OTP
+            context.read<AuthBloc>().add(AuthVerifyOTP(email, otp));
+          },
         ),
       ),
     );

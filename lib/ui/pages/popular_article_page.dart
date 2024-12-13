@@ -43,11 +43,7 @@ class PopularArticlePage extends StatelessWidget {
                         'https://th.bing.com/th/id/OIP.HiwZb7pY_PaooR59RRIHBgHaGK?w=239&h=198&c=7&r=0&o=5&dpr=1.9&pid=1.7',
                     title:
                         "Croatia doubles tomato production with Podravka's...",
-                    onTap: () => Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const ViewArticle()),
-                    ),
+                    onTap: () => {},
                   );
                 },
               ),

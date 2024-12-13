@@ -1,7 +1,18 @@
 import 'package:flutter/material.dart';
 
 class ViewArticle extends StatelessWidget {
-  const ViewArticle({super.key});
+  final String title;
+  final String tag;
+  final String imageUrl;
+  final String content;
+
+  const ViewArticle({
+    super.key,
+    required this.title,
+    required this.tag,
+    required this.imageUrl,
+    required this.content,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -16,11 +27,9 @@ class ViewArticle extends StatelessWidget {
                 Container(
                   height: 300,
                   width: double.infinity,
-                  decoration: const BoxDecoration(
+                  decoration: BoxDecoration(
                     image: DecorationImage(
-                      image: NetworkImage(
-                        'https://th.bing.com/th/id/OIP.HiwZb7pY_PaooR59RRIHBgHaGK?w=239&h=198&c=7&r=0&o=5&dpr=1.9&pid=1.7',
-                      ),
+                      image: NetworkImage(imageUrl),
                       fit: BoxFit.cover,
                     ),
                   ),
@@ -50,15 +59,15 @@ class ViewArticle extends StatelessWidget {
               child: Container(
                 padding: const EdgeInsets.all(12.0),
                 decoration: BoxDecoration(
-                  color: Color(0xFFEAF1F1), // Light gray with a hint of green
+                  color: const Color(0xFFEAF1F1),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
-                      'Whiteflies',
-                      style: TextStyle(
+                    Text(
+                      title,
+                      style: const TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
                         color: Color(0xFF1B4332),
@@ -75,7 +84,7 @@ class ViewArticle extends StatelessWidget {
                         ),
                         const SizedBox(width: 4),
                         Text(
-                          'Article',
+                          tag,
                           style: TextStyle(
                             color: Colors.green.shade400,
                             fontSize: 14,
@@ -85,9 +94,9 @@ class ViewArticle extends StatelessWidget {
                     ),
                     const SizedBox(height: 16),
                     // Article content
-                    const Text(
-                      'Mint (Mentha) is a versatile herb widely used for its refreshing flavor and medicinal properties. It is commonly used in cooking to add flavor to dishes, teas, and beverages. In herbal medicine, mint helps with digestion, relieves headaches, and soothes cold symptoms.',
-                      style: TextStyle(
+                    Text(
+                      content,
+                      style: const TextStyle(
                         fontSize: 16,
                         color: Color(0xFF1B4332),
                         height: 1.5,

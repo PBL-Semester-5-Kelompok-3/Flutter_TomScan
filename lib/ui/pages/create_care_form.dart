@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class CreateEducationForm extends StatefulWidget {
-  const CreateEducationForm({Key? key}) : super(key: key);
+  const CreateEducationForm({super.key});
 
   @override
   State<CreateEducationForm> createState() => _CreateEducationFormState();
@@ -17,7 +17,7 @@ class _CreateEducationFormState extends State<CreateEducationForm> {
   void _showSuccessNotification() {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Row(
+        content: const Row(
           children: [
             Icon(Icons.check_circle, color: Colors.white),
             SizedBox(width: 8),
@@ -25,9 +25,9 @@ class _CreateEducationFormState extends State<CreateEducationForm> {
           ],
         ),
         backgroundColor: Colors.green,
-        duration: Duration(seconds: 2),
+        duration: const Duration(seconds: 2),
         behavior: SnackBarBehavior.floating,
-        margin: EdgeInsets.all(20),
+        margin: const EdgeInsets.all(20),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(10),
         ),
@@ -42,7 +42,7 @@ class _CreateEducationFormState extends State<CreateEducationForm> {
         _steps2Controller.text.isEmpty ||
         _steps3Controller.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
+        const SnackBar(
           content: Text('Please fill in all fields'),
           backgroundColor: Colors.red,
           behavior: SnackBarBehavior.floating,
@@ -53,7 +53,7 @@ class _CreateEducationFormState extends State<CreateEducationForm> {
 
     // Show success notification and pop
     _showSuccessNotification();
-    Future.delayed(Duration(seconds: 1), () {
+    Future.delayed(const Duration(seconds: 1), () {
       Navigator.pop(context);
     });
   }
@@ -268,7 +268,7 @@ class _CreateEducationFormState extends State<CreateEducationForm> {
     TextEditingController controller,
   ) {
     return Container(
-      padding: EdgeInsets.all(15),
+      padding: const EdgeInsets.all(15),
       decoration: BoxDecoration(
         color: Colors.grey[100],
         borderRadius: BorderRadius.circular(8),
@@ -305,7 +305,7 @@ class _CreateEducationFormState extends State<CreateEducationForm> {
                 child: Center(
                   child: Text(
                     '$stepNumber',
-                    style: TextStyle(
+                    style: const TextStyle(
                       color: Colors.white,
                       fontWeight: FontWeight.bold,
                     ),
@@ -322,7 +322,7 @@ class _CreateEducationFormState extends State<CreateEducationForm> {
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8),
                     ),
-                    contentPadding: EdgeInsets.all(12),
+                    contentPadding: const EdgeInsets.all(12),
                   ),
                 ),
               ),
@@ -343,7 +343,7 @@ class _CreateEducationFormState extends State<CreateEducationForm> {
                 borderRadius: BorderRadius.circular(8),
               ),
               child: _selectedImages[stepNumber] != null
-                  ? Center(
+                  ? const Center(
                       child: Text(
                         'Image selected',
                         style: TextStyle(color: Colors.green),
@@ -353,7 +353,7 @@ class _CreateEducationFormState extends State<CreateEducationForm> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Icon(Icons.add, color: Colors.grey[600]),
-                        SizedBox(height: 4),
+                        const SizedBox(height: 4),
                         Text(
                           'Input your image',
                           style: TextStyle(color: Colors.grey[600]),
@@ -370,7 +370,7 @@ class _CreateEducationFormState extends State<CreateEducationForm> {
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(8),
               ),
-              contentPadding: EdgeInsets.all(12),
+              contentPadding: const EdgeInsets.all(12),
             ),
           ),
         ],
