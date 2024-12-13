@@ -17,9 +17,10 @@ class InformatifsService {
 
     if (response.statusCode == 200) {
       final data = json.decode(response.body) as List;
-      print(data.map((item) => Informative.fromJson(item)).toList());
+      print('berhasil');
       return data.map((item) => Informative.fromJson(item)).toList();
     } else {
+      print('gagal');
       throw Exception('Failed to load informatifs data');
     }
   }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:toma_scan/blocs/informative/informative_bloc.dart';
+import 'package:toma_scan/blocs/PestAndDisease/pestanddisease_bloc.dart';
 import 'package:toma_scan/services/informatif_service.dart';
 import 'package:toma_scan/ui/pages/pests_desease_page.dart';
 import 'package:toma_scan/ui/pages/view_article.dart';
@@ -17,7 +18,7 @@ class InformativePage extends StatelessWidget {
               InformativeBloc(InformatifsService())..add(FetchInformatives()),
         ),
         BlocProvider(
-          create: (context) => InformativeBloc(InformatifsService())
+          create: (context) => PestAndDiseaseBloc(InformatifsService())
             ..add(FetchPestAndDiseases()),
         ),
       ],
@@ -25,10 +26,11 @@ class InformativePage extends StatelessWidget {
         appBar: AppBar(
           title: const Text('Informatifs'),
         ),
-        body: Column(
-          children: [
-            Expanded(
-              child: BlocBuilder<InformativeBloc, InformativeState>(
+        body: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              BlocBuilder<InformativeBloc, InformativeState>(
                 builder: (context, state) {
                   if (state is InformativeLoading) {
                     return const Center(child: CircularProgressIndicator());
@@ -36,20 +38,13 @@ class InformativePage extends StatelessWidget {
                     final informatifs = state.informatives;
 
                     return ListView(
-                      padding: const EdgeInsets.all(16),
+                      physics: const NeverScrollableScrollPhysics(),
+                      shrinkWrap: true,
                       children: [
                         SectionHeader(
                           title: 'Artikel',
-                          onViewAll: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) =>
-                                      const PestsDeseasePage()),
-                            );
-                          },
+                          onViewAll: () {},
                         ),
-                        const SizedBox(height: 8),
                         GridView.builder(
                           physics: const NeverScrollableScrollPhysics(),
                           shrinkWrap: true,
@@ -64,60 +59,8 @@ class InformativePage extends StatelessWidget {
                           itemBuilder: (context, index) => ArticleCard(
                             imageUrl: informatifs[index].image,
                             title: informatifs[index].title,
-                            onTap: () => Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => ViewArticle(
-                                  title: informatifs[index].title,
-                                  tag: informatifs[index].type,
-                                  imageUrl: informatifs[index].image,
-                                  content: informatifs[index].content,
-                                ),
-                              ),
-                            ),
+                            onTap: () {},
                           ),
-                        ),
-                        BlocBuilder<InformativeBloc, InformativeState>(
-                          builder: (context, state) {
-                            if (state is InformativeLoading) {
-                              return const Center(
-                                  child: CircularProgressIndicator());
-                            } else if (state is PestAndDiseaseSuccess) {
-                              final pestsDeseases = state.pestAndDiseases;
-
-                              return Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  const SizedBox(height: 16),
-                                  const Text(
-                                    'Pests and Diseases',
-                                    style: TextStyle(
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                  const SizedBox(height: 8),
-                                  ListView.builder(
-                                    physics:
-                                        const NeverScrollableScrollPhysics(),
-                                    shrinkWrap: true,
-                                    itemCount: pestsDeseases.length,
-                                    itemBuilder: (context, index) {
-                                      final pest = pestsDeseases[index];
-                                      return ListTile(
-                                        title: Text(pest.name),
-                                        subtitle: Text(pest.description),
-                                      );
-                                    },
-                                  ),
-                                ],
-                              );
-                            } else if (state is InformativeError) {
-                              return Center(
-                                  child: Text('Error: ${state.message}'));
-                            } else {
-                              return const Center(child: Text('No data found'));
-                            }
-                          },
                         ),
                       ],
                     );
@@ -128,8 +71,34 @@ class InformativePage extends StatelessWidget {
                   }
                 },
               ),
-            ),
-          ],
+              BlocBuilder<PestAndDiseaseBloc, PestAndDiseaseState>(
+                builder: (context, state) {
+                  if (state is PestAndDiseaseLoading) {
+                    return const Center(child: CircularProgressIndicator());
+                  } else if (state is PestAndDiseaseSuccess) {
+                    final pestsDeseases = state.pestAndDiseases;
+
+                    return ListView.builder(
+                      physics: const NeverScrollableScrollPhysics(),
+                      shrinkWrap: true,
+                      itemCount: pestsDeseases.length,
+                      itemBuilder: (context, index) {
+                        final pest = pestsDeseases[index];
+                        return ListTile(
+                          title: Text(pest.name),
+                          subtitle: Text(pest.description),
+                        );
+                      },
+                    );
+                  } else if (state is PestAndDiseaseError) {
+                    return Center(child: Text('Error: ${state.message}'));
+                  } else {
+                    return const Center(child: Text('No data found'));
+                  }
+                },
+              ),
+            ],
+          ),
         ),
       ),
     );

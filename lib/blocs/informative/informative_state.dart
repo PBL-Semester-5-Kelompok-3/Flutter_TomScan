@@ -30,31 +30,31 @@ class InformativeError extends InformativeState {
 }
 
 // Pest And Disease State
-abstract class PestAndDiseaseState extends Equatable {
-  const PestAndDiseaseState();
+// abstract class PestAndDiseaseState extends Equatable {
+//   const PestAndDiseaseState();
 
-  @override
-  List<Object> get props => [];
-}
+//   @override
+//   List<Object> get props => [];
+// }
 
-class PestAndDiseaseInitial extends InformativeState {}
+// class PestAndDiseaseInitial extends InformativeState {}
 
-class PestAndDiseaseLoading extends InformativeState {}
+// class PestAndDiseaseLoading extends InformativeState {}
 
-class PestAndDiseaseSuccess extends InformativeState {
-  final List<PestAndDisease> pestAndDiseases;
+// class PestAndDiseaseSuccess extends InformativeState {
+//   final List<PestAndDisease> pestAndDiseases;
 
-  const PestAndDiseaseSuccess(this.pestAndDiseases);
+//   const PestAndDiseaseSuccess(this.pestAndDiseases);
 
-  @override
-  List<Object> get props => [pestAndDiseases];
-}
+//   @override
+//   List<Object> get props => [pestAndDiseases];
+// }
 
-class PestAndDiseaseError extends InformativeState {
-  final String message;
+// class PestAndDiseaseError extends InformativeState {
+//   final String message;
 
-  const PestAndDiseaseError(this.message);
+//   const PestAndDiseaseError(this.message);
 
-  @override
-  List<Object> get props => [message];
-}
+//   @override
+//   List<Object> get props => [message];
+// }

@@ -11,7 +11,6 @@ class InformativeBloc extends Bloc<InformativeEvent, InformativeState> {
 
   InformativeBloc(this.informatifsService) : super(InformativeInitial()) {
     on<FetchInformatives>(_onFetchInformatives);
-    on<FetchPestAndDiseases>(_onFetchPestAndDiseases);
   }
 
   Future<void> _onFetchInformatives(
@@ -20,21 +19,6 @@ class InformativeBloc extends Bloc<InformativeEvent, InformativeState> {
       emit(InformativeLoading());
       final informatives = await informatifsService.getAllInformatifsData();
       emit(InformativeSuccess(informatives));
-    } catch (e) {
-      final errorMessage = e.toString().contains('Token expired')
-          ? 'Session expired, logging out...'
-          : e.toString();
-      emit(InformativeError(errorMessage));
-    }
-  }
-
-  Future<void> _onFetchPestAndDiseases(
-      FetchPestAndDiseases event, Emitter<InformativeState> emit) async {
-    try {
-      emit(InformativeLoading());
-      final pestAndDiseases =
-          await informatifsService.getAllPestAndDiseaseData();
-      emit(PestAndDiseaseSuccess(pestAndDiseases));
     } catch (e) {
       final errorMessage = e.toString().contains('Token expired')
           ? 'Session expired, logging out...'

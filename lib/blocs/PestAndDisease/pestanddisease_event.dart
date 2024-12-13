@@ -1,13 +1,11 @@
-part of 'informative_bloc.dart';
+part of 'pestanddisease_bloc.dart';
 
-abstract class InformativeEvent extends Equatable {
-  const InformativeEvent();
+abstract class PestanddiseaseEvent extends Equatable {
+  const PestanddiseaseEvent();
 
   @override
   List<Object> get props => [];
 }
-
-class FetchInformatives extends InformativeEvent {}
 
 abstract class PestAndDiseaseEvent extends Equatable {
   const PestAndDiseaseEvent();
@@ -15,3 +13,5 @@ abstract class PestAndDiseaseEvent extends Equatable {
   @override
   List<Object> get props => [];
 }
+
+class FetchPestAndDiseases extends PestAndDiseaseEvent {}
