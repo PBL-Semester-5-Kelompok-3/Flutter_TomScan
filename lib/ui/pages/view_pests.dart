@@ -12,6 +12,7 @@ class ViewPests extends StatelessWidget {
   final String source;
 
   const ViewPests({
+    super.key,
     required this.name,
     required this.description,
     required this.warning,
@@ -143,16 +144,16 @@ class ViewPests extends StatelessWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Text(
-                            'Peppermint Parachute',
+                          Text(
+                            '$name',
                             style: TextStyle(
                               fontSize: 24,
                               fontWeight: FontWeight.bold,
                               color: Color(0xFF1B4332),
                             ),
                           ),
-                          const Text(
-                            '(Mint Plant Mushroom)',
+                          Text(
+                            '($aliases)',
                             style: TextStyle(
                               fontSize: 16,
                               color: Colors.grey,
