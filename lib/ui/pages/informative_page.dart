@@ -3,6 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:toma_scan/blocs/informative/informative_bloc.dart';
 import 'package:toma_scan/blocs/PestAndDisease/pestanddisease_bloc.dart';
 import 'package:toma_scan/services/informatif_service.dart';
+import 'package:toma_scan/ui/pages/pests_desease_page.dart';
+import 'package:toma_scan/ui/pages/popular_article_page.dart';
 import 'package:toma_scan/ui/pages/view_article.dart';
 import 'package:toma_scan/ui/pages/view_pests.dart';
 
@@ -23,9 +25,6 @@ class InformativePage extends StatelessWidget {
         ),
       ],
       child: Scaffold(
-        // appBar: AppBar(
-        //     // title: const Text('Informatifs'),
-        //     ),
         body: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -43,7 +42,14 @@ class InformativePage extends StatelessWidget {
                       children: [
                         SectionHeader(
                           title: 'Article Populer',
-                          onViewAll: () {},
+                          onViewAll: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      const PopularArticlePage()), // Halaman baru untuk melihat semua artikel
+                            );
+                          },
                         ),
                         GridView.builder(
                           physics: const NeverScrollableScrollPhysics(),
@@ -93,7 +99,14 @@ class InformativePage extends StatelessWidget {
                       children: [
                         SectionHeader(
                           title: 'Pests and Diseases',
-                          onViewAll: () {},
+                          onViewAll: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      const PestsDeseasePage()), // Halaman baru untuk melihat semua artikel
+                            );
+                          },
                         ),
                         GridView.builder(
                           physics: const NeverScrollableScrollPhysics(),
