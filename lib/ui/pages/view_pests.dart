@@ -1,7 +1,27 @@
 import 'package:flutter/material.dart';
 
 class ViewPests extends StatelessWidget {
-  const ViewPests({super.key});
+  final String name;
+  final String description;
+  final String warning;
+  final String genus;
+  final String scientificName;
+  final String aliases;
+  final String symptoms;
+  final List<String> solutions;
+  final String source;
+
+  const ViewPests({
+    required this.name,
+    required this.description,
+    required this.warning,
+    required this.genus,
+    required this.scientificName,
+    required this.aliases,
+    required this.symptoms,
+    required this.solutions,
+    required this.source,
+  });
 
   Widget _buildWarningBox() {
     return Container(
@@ -17,7 +37,7 @@ class ViewPests extends StatelessWidget {
         children: [
           Icon(Icons.warning_amber_rounded, color: Colors.red[600], size: 24),
           const SizedBox(width: 12),
-          const Expanded(
+          Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -29,12 +49,12 @@ class ViewPests extends StatelessWidget {
                     fontSize: 16,
                   ),
                 ),
-                SizedBox(height: 4),
+                const SizedBox(height: 4),
                 Text(
-                  'While not known to be toxic, the Peppermint Parachute should not be consumed unless positively identified by an expert. It can be mistaken for other mushrooms, some of which may be harmful. Handle with caution, and avoid consumption unless verified by a mycologist.',
+                  warning,
                   style: TextStyle(
-                    color: Color(0xFF1B4332),
-                    height: 1.5,
+                    color: Colors.black87,
+                    fontSize: 14,
                   ),
                 ),
               ],
@@ -103,7 +123,7 @@ class ViewPests extends StatelessWidget {
                     Stack(
                       children: [
                         Image.network(
-                          'https://th.bing.com/th/id/OIP.HiwZb7pY_PaooR59RRIHBgHaGK?w=239&h=198&c=7&r=0&o=5&dpr=1.9&pid=1.7',
+                          source,
                           width: double.infinity,
                           height: 250,
                           fit: BoxFit.cover,
@@ -148,36 +168,22 @@ class ViewPests extends StatelessWidget {
                             ),
                           ),
                           _buildWarningBox(),
-                          const Text(
-                            'Genus: ',
+                          Text(
+                            'Genus: $genus',
                             style: TextStyle(
-                              color: Color(0xFF1B4332),
-                            ),
-                          ),
-                          const Text(
-                            'Marasmius',
-                            style: TextStyle(
-                              fontStyle: FontStyle.italic,
                               color: Color(0xFF1B4332),
                             ),
                           ),
                           const SizedBox(height: 8),
-                          const Text(
-                            'Scientific Name: ',
+                          Text(
+                            'Scientific Name: $scientificName',
                             style: TextStyle(
-                              color: Color(0xFF1B4332),
-                            ),
-                          ),
-                          const Text(
-                            'Marasmius cohaerens',
-                            style: TextStyle(
-                              fontStyle: FontStyle.italic,
                               color: Color(0xFF1B4332),
                             ),
                           ),
                           const SizedBox(height: 8),
-                          const Text(
-                            'Also known as: "Marasmius mushroom", "Peppermint Parachute".',
+                          Text(
+                            'Also known as: "$aliases", "$genus".',
                             style: TextStyle(
                               color: Color(0xFF1B4332),
                             ),
@@ -192,8 +198,8 @@ class ViewPests extends StatelessWidget {
                             ),
                           ),
                           const SizedBox(height: 8),
-                          const Text(
-                            'The Peppermint Parachute is a delicate mushroom with a cap that resembles a parachute, typically white or pale with a minty fragrance when crushed. The stem is slender, often dark brown or black at the base. It is commonly found in mint fields or near plants in the Lamiaceae family, growing on decaying plant matter like dead leaves and wood chips.',
+                          Text(
+                            '$description',
                             style: TextStyle(
                               color: Color(0xFF1B4332),
                               height: 1.5,

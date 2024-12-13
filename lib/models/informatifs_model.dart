@@ -39,6 +39,7 @@ class PestAndDisease {
   final String aliases;
   final String symptoms;
   final List<String> solutions;
+  final String source;
 
   PestAndDisease({
     required this.id,
@@ -50,6 +51,7 @@ class PestAndDisease {
     required this.aliases,
     required this.symptoms,
     required this.solutions,
+    required this.source,
   });
 
   factory PestAndDisease.fromJson(Map<String, dynamic> json) {
@@ -63,6 +65,7 @@ class PestAndDisease {
       aliases: json['aliases'],
       symptoms: json['symptoms'],
       solutions: List<String>.from(jsonDecode(json['solutions'])),
+      source: json['source'],
     );
   }
 }

@@ -40,17 +40,17 @@ class PestsDeseasePage extends StatelessWidget {
                 ),
                 itemCount: 4, // Replace with your dynamic item count
                 itemBuilder: (context, index) {
-                  return ArticleCard(
-                    imageUrl:
-                        'https://th.bing.com/th/id/OIP.HiwZb7pY_PaooR59RRIHBgHaGK?w=239&h=198&c=7&r=0&o=5&dpr=1.9&pid=1.7',
-                    title:
-                        "Croatia doubles tomato production with Podravka's...",
-                    onTap: () => Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const ViewPests()),
-                    ),
-                  );
+                  // return ArticleCard(
+                  //   imageUrl:
+                  //       'https://th.bing.com/th/id/OIP.HiwZb7pY_PaooR59RRIHBgHaGK?w=239&h=198&c=7&r=0&o=5&dpr=1.9&pid=1.7',
+                  //   title:
+                  //       "Croatia doubles tomato production with Podravka's...",
+                  //   onTap: () => Navigator.push(
+                  //     context,
+                  //     MaterialPageRoute(
+                  //         builder: (context) => const ViewPests()),
+                  //   ),
+                  // );
                 },
               ),
             ),
