@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:toma_scan/blocs/auth/auth_bloc.dart';
@@ -15,34 +16,45 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-  String username = "";
-  String email = "";
-  String password = "";
   bool isEditingUsername = false;
   bool isEditingEmail = false;
+  bool isEditingPhone = false;
   bool isEditingPassword = false;
   String? profileImagePath;
+  final storage = FlutterSecureStorage();
 
   final ImagePicker _picker = ImagePicker();
 
   late TextEditingController _usernameController;
   late TextEditingController _emailController;
+  late TextEditingController _phoneController;
   late TextEditingController _passwordController;
 
   @override
   void initState() {
     super.initState();
-    // Panggil event untuk mendapatkan profil pengguna saat halaman pertama kali dimuat
-    context.read<AuthBloc>().add(AuthGetProfile());
-    _usernameController = TextEditingController(text: username);
-    _emailController = TextEditingController(text: email);
-    _passwordController = TextEditingController(text: password);
+    _usernameController = TextEditingController(text: "");
+    _emailController = TextEditingController(text: "");
+    _phoneController = TextEditingController(text: "");
+    _passwordController = TextEditingController(text: "");
+    _initUsername();
+  }
+
+  Future<void> _initUsername() async {
+    String? username = await storage.read(key: 'username');
+    if (username != null) {
+      setState(() {
+        _usernameController.text =
+            username; // Set nilai controller dengan username
+      });
+    }
   }
 
   @override
   void dispose() {
     _usernameController.dispose();
     _emailController.dispose();
+    _phoneController.dispose();
     _passwordController.dispose();
     super.dispose();
   }
@@ -207,10 +219,6 @@ class _ProfilePageState extends State<ProfilePage> {
             );
           }
           if (state is AuthSuccess || state is AuthProfileSuccess) {
-            if (state is AuthProfileSuccess) {
-              _usernameController.text = state.user.username!;
-              _emailController.text = state.user.email!;
-            }
             return SingleChildScrollView(
               child: Padding(
                 padding: const EdgeInsets.all(20.0),
@@ -288,7 +296,6 @@ class _ProfilePageState extends State<ProfilePage> {
                       },
                       onSave: () {
                         setState(() {
-                          username = _usernameController.text;
                           isEditingUsername = false;
                         });
                       },
@@ -305,8 +312,23 @@ class _ProfilePageState extends State<ProfilePage> {
                       },
                       onSave: () {
                         setState(() {
-                          email = _emailController.text;
                           isEditingEmail = false;
+                        });
+                      },
+                    ),
+                    _buildEditableItem(
+                      icon: Icons.phone_outlined,
+                      label: "Phone",
+                      controller: _phoneController,
+                      isEditing: isEditingPhone,
+                      onEditToggle: () {
+                        setState(() {
+                          isEditingPhone = !isEditingPhone;
+                        });
+                      },
+                      onSave: () {
+                        setState(() {
+                          isEditingPhone = false;
                         });
                       },
                     ),
@@ -323,7 +345,6 @@ class _ProfilePageState extends State<ProfilePage> {
                       },
                       onSave: () {
                         setState(() {
-                          password = _passwordController.text;
                           isEditingPassword = false;
                         });
                       },
