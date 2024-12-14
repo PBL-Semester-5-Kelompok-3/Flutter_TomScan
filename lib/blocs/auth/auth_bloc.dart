@@ -72,14 +72,38 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         } catch (e) {
           emit(AuthProfileFailed(e.toString())); // Emit error jika gagal
         }
-      } else if (event is AuthEditProfile) {
+      } else if (event is AuthUpdateProfile) {
         try {
-          emit(AuthLoading());
-          final updatedUser =
-              await AuthService().editProfile(event.updatedUser);
-          emit(AuthEditProfileSuccess(updatedUser));
+          emit(AuthLoading()); // Menampilkan status loading
+
+          // Jika hanya username yang diubah
+          if (event.username != null && event.password == null) {
+            final updatedUser =
+                await AuthService().updateUsername(event.username!);
+            emit(AuthEditProfileSuccess(
+                updatedUser)); // Emit user yang diperbarui
+          }
+          // Jika hanya password yang diubah
+          else if (event.username == null && event.password != null) {
+            final updatedUser =
+                await AuthService().updatePassword(event.password!);
+            emit(AuthEditProfileSuccess(
+                updatedUser)); // Emit user yang diperbarui
+          }
+          // Jika username dan password keduanya diubah
+          else if (event.username != null && event.password != null) {
+            final updatedUser = await AuthService()
+                .updateProfile(event.username!, event.password!);
+            emit(AuthEditProfileSuccess(
+                updatedUser)); // Emit user yang diperbarui
+          }
+          // Jika tidak ada perubahan (keduanya null), bisa dilemparkan error atau kondisi khusus
+          else {
+            emit(AuthEditProfileFailed("Tidak ada data yang diperbarui"));
+          }
         } catch (e) {
-          emit(AuthEditProfileFailed(e.toString()));
+          emit(AuthEditProfileFailed(
+              e.toString())); // Emit pesan error jika gagal
         }
       }
     });

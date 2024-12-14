@@ -323,9 +323,10 @@ class _ProfilePageState extends State<ProfilePage> {
                           isEditingUsername = false;
                         });
                         // Trigger update username
-                        context
-                            .read<AuthBloc>()
-                            .add(AuthUpdateUsername(_usernameController.text));
+                        context.read<AuthBloc>().add(AuthUpdateProfile(
+                            username: _usernameController.text,
+                            password: _passwordController
+                                .text)); // Add password update logic here
                       },
                     ),
                     _buildEditableItem(
@@ -343,12 +344,11 @@ class _ProfilePageState extends State<ProfilePage> {
                         setState(() {
                           isEditingPassword = false;
                         });
-                        // Save password and trigger update
-                        await storage.write(
-                            key: 'password', value: _passwordController.text);
-                        context
-                            .read<AuthBloc>()
-                            .add(AuthUpdatePassword(_passwordController.text));
+                        // Trigger password update
+                        context.read<AuthBloc>().add(AuthUpdateProfile(
+                            username: _usernameController.text,
+                            password: _passwordController
+                                .text)); // Trigger password update
                       },
                     ),
                     Center(

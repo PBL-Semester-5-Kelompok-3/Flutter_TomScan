@@ -56,19 +56,15 @@ class AuthLogout extends AuthEvent {}
 
 class AuthGetProfile extends AuthEvent {}
 
-class AuthEditProfile extends AuthEvent {
-  final UserModel updatedUser;
-  AuthEditProfile(this.updatedUser);
-}
+class AuthUpdateProfile extends AuthEvent {
+  final String? username;
+  final String? password;
 
-class AuthUpdateUsername extends AuthEvent {
-  final String username;
+  const AuthUpdateProfile({this.username, this.password});
 
-  AuthUpdateUsername(this.username);
-}
-
-class AuthUpdatePassword extends AuthEvent {
-  final String password;
-
-  AuthUpdatePassword(this.password);
+  @override
+  List<Object> get props => [
+        username ?? '',
+        password ?? ''
+      ]; // Ganti null dengan string kosong jika null
 }
