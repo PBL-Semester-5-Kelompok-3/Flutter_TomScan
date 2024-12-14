@@ -15,11 +15,13 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-  String username = "";
-  String email = "";
+  String username = "Astrid Risa";
+  String email = "astridrisa@gmail.com";
+  String phone = "089529167474";
   String password = "";
   bool isEditingUsername = false;
   bool isEditingEmail = false;
+  bool isEditingPhone = false;
   bool isEditingPassword = false;
   String? profileImagePath;
 
@@ -27,15 +29,15 @@ class _ProfilePageState extends State<ProfilePage> {
 
   late TextEditingController _usernameController;
   late TextEditingController _emailController;
+  late TextEditingController _phoneController;
   late TextEditingController _passwordController;
 
   @override
   void initState() {
     super.initState();
-    // Panggil event untuk mendapatkan profil pengguna saat halaman pertama kali dimuat
-    context.read<AuthBloc>().add(AuthGetProfile());
     _usernameController = TextEditingController(text: username);
     _emailController = TextEditingController(text: email);
+    _phoneController = TextEditingController(text: phone);
     _passwordController = TextEditingController(text: password);
   }
 
@@ -43,6 +45,7 @@ class _ProfilePageState extends State<ProfilePage> {
   void dispose() {
     _usernameController.dispose();
     _emailController.dispose();
+    _phoneController.dispose();
     _passwordController.dispose();
     super.dispose();
   }
@@ -207,8 +210,6 @@ class _ProfilePageState extends State<ProfilePage> {
             );
           }
           if (state is AuthSuccess) {
-            _usernameController.text = state.user.username!;
-            _emailController.text = state.user.email!;
             return SingleChildScrollView(
               child: Padding(
                 padding: const EdgeInsets.all(20.0),
@@ -305,6 +306,23 @@ class _ProfilePageState extends State<ProfilePage> {
                         setState(() {
                           email = _emailController.text;
                           isEditingEmail = false;
+                        });
+                      },
+                    ),
+                    _buildEditableItem(
+                      icon: Icons.phone_outlined,
+                      label: "Phone",
+                      controller: _phoneController,
+                      isEditing: isEditingPhone,
+                      onEditToggle: () {
+                        setState(() {
+                          isEditingPhone = !isEditingPhone;
+                        });
+                      },
+                      onSave: () {
+                        setState(() {
+                          phone = _phoneController.text;
+                          isEditingPhone = false;
                         });
                       },
                     ),
