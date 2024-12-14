@@ -96,3 +96,13 @@ class AuthProfileFailed extends AuthState {
   final String error;
   AuthProfileFailed(this.error);
 }
+
+class AuthEditProfileSuccess extends AuthState {
+  final UserModel updatedUser;
+  AuthEditProfileSuccess(this.updatedUser);
+}
+
+class AuthEditProfileFailed extends AuthState {
+  final String error;
+  AuthEditProfileFailed(this.error);
+}

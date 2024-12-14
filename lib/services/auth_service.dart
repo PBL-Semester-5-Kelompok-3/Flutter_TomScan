@@ -1,3 +1,283 @@
+// import 'dart:convert';
+// import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+// import 'package:toma_scan/models/sign_in_form_model.dart';
+// import 'package:toma_scan/models/sign_up_form_model.dart';
+// import 'package:toma_scan/models/user_model.dart';
+// import 'package:http/http.dart' as http;
+// import 'package:toma_scan/shared/shared_values.dart';
+
+// class AuthService {
+//   // Register
+//   Future<UserModel> register(SignUpFormModel data) async {
+//     try {
+//       final res = await http.post(
+//         Uri.parse('$baseUrl/register'),
+//         body: data.toJson(),
+//       );
+
+//       if (res.statusCode == 201) {
+//         UserModel user = UserModel.fromJson(jsonDecode(res.body));
+//         user = user.copyWith(password: data.password);
+//         return user;
+//       } else {
+//         throw jsonDecode(res.body)['message'];
+//       }
+//     } catch (e) {
+//       rethrow;
+//     }
+//   }
+
+//   Future<UserModel> login(SignInFormModel data) async {
+//     try {
+//       final res = await http.post(
+//         Uri.parse('$baseUrl/login'),
+//         body: data.toJson(),
+//       );
+
+//       if (res.statusCode == 200) {
+//         // parsing respons secara dinamis
+//         final responseData = jsonDecode(res.body) as Map<String, dynamic>;
+
+//         // mengambil token langsung dari root
+//         String token = responseData['token'];
+
+//         // Mengambil user data dari objek user
+//         Map<String, dynamic> userData = responseData['user'];
+
+//         // membuat instance UserModel
+//         UserModel user = UserModel.fromJson(({
+//           ...userData, // Sprean user data
+//           'token': token, // tambahkan token ke dalam data
+//         }));
+
+//         // Menambahkan password dari form data
+//         user = user.copyWith(password: data.password);
+
+//         // Simpan kredential ke local storage
+//         await storeCredentialToLocal(user);
+
+//         return user;
+//       } else {
+//         throw jsonDecode(res.body)['message'];
+//       }
+//     } catch (e) {
+//       rethrow;
+//     }
+//   }
+
+//   Future<void> storeCredentialToLocal(UserModel user) async {
+//     try {
+//       const storage = FlutterSecureStorage();
+//       await storage.write(key: 'token', value: user.token);
+//       await storage.write(key: 'id', value: user.id.toString());
+//       await storage.write(key: 'username', value: user.username);
+//       await storage.write(key: 'email', value: user.email);
+//       await storage.write(key: 'password', value: user.password);
+//     } catch (e) {
+//       rethrow;
+//     }
+//   }
+
+//   // View Profile
+//   Future<UserModel> getProfile() async {
+//     try {
+//       // Ambil token dari FlutterSecureStorage
+//       const storage = FlutterSecureStorage();
+//       String? token = await storage.read(
+//         key: 'token',
+//       );
+//       String? username = await storage.read(
+//         key: 'username',
+//       );
+//       String? email = await storage.read(
+//         key: 'email',
+//       );
+//       String? password = await storage.read(
+//         key: 'password',
+//       );
+
+//       // Pastikan token ada sebelum mengirim permintaan
+//       if (token == null) {
+//         throw 'No token found, user is not logged in.';
+//       }
+
+//       // Mengirim permintaan GET untuk mengambil data profil pengguna
+//       final res = await http.get(
+//         Uri.parse('$baseUrl/profile'),
+//         headers: {
+//           'Authorization':
+//               'Bearer $token', // Kirim token dalam header Authorization
+//           'Content-Type': 'application/json',
+//         },
+//       );
+
+//       if (res.statusCode == 200) {
+//         final responseData = jsonDecode(res.body) as Map<String, dynamic>;
+
+//         // Ambil data user dari response
+//         Map<String, dynamic> userData = responseData['user'];
+
+//         // Membuat instance UserModel
+//         UserModel user = UserModel.fromJson(userData);
+
+//         // Menyimpan profil pengguna ke dalam local storage
+//         await storeCredentialToLocal(user);
+
+//         return user;
+//       } else {
+//         throw jsonDecode(res.body)['message'];
+//       }
+//     } catch (e) {
+//       rethrow;
+//     }
+//   }
+
+//   Future<UserModel> editProfile(UserModel updatedUser) async {
+//     try {
+//       // Ambil token dari secure storage
+//       const storage = FlutterSecureStorage();
+//       String? token = await storage.read(key: 'token');
+
+//       if (token == null) {
+//         throw 'No token found, user is not logged in.';
+//       }
+
+//       // Membuat request PUT untuk mengupdate profil pengguna
+//       final response = await http.put(
+//         Uri.parse('$baseUrl/edit-profile'), // Endpoint untuk edit profile
+//         headers: {
+//           'Content-Type': 'application/json',
+//           'Authorization': 'Bearer $token', // Mengirimkan token di header
+//         },
+//         body: jsonEncode(
+//             updatedUser.toJson()), // Mengirim data profil yang diupdate
+//       );
+
+//       if (response.statusCode == 200) {
+//         // Parsing response body untuk mendapatkan data profil terbaru
+//         final responseData = jsonDecode(response.body);
+//         UserModel updatedUserProfile = UserModel.fromJson(responseData['user']);
+
+//         // Simpan kembali data pengguna yang telah diperbarui ke local storage
+//         await storeCredentialToLocal(updatedUserProfile);
+
+//         // Kembalikan instance UserModel yang telah diperbarui
+//         return updatedUserProfile;
+//       } else {
+//         throw jsonDecode(response.body)['message'] ??
+//             'Failed to update profile';
+//       }
+//     } catch (e) {
+//       rethrow;
+//     }
+//   }
+
+//   // Forgot Password
+//   Future<String> forgotPassword(String email) async {
+//     try {
+//       final res = await http.post(
+//         Uri.parse('$baseUrl/forgot-password'),
+//         body: jsonEncode({'email': email}),
+//         headers: {'Content-Type': 'application/json'},
+//       );
+
+//       if (res.statusCode == 200) {
+//         final responseBody = jsonDecode(res.body);
+//         return responseBody['message'] ??
+//             'Tautan reset password telah dikirim.';
+//       } else {
+//         throw jsonDecode(res.body)['message'] ?? 'Terjadi kesalahan';
+//       }
+//     } catch (e) {
+//       rethrow;
+//     }
+//   }
+
+//   //Verify OTP
+//   Future<String> verifyOTP(String email, String otp) async {
+//     try {
+//       final res = await http.post(
+//         Uri.parse('$baseUrl/verify-otp'),
+//         body: jsonEncode({'email': email, 'otp': otp}),
+//         headers: {'Content-Type': 'application/json'},
+//       );
+
+//       if (res.statusCode == 200) {
+//         final responseBody = jsonDecode(res.body);
+//         return responseBody['message'] ?? 'Kode OTP tidak valid';
+//       } else {
+//         throw jsonDecode(res.body)['message'] ?? 'Terjadi kesalahan';
+//       }
+//     } catch (e) {
+//       rethrow;
+//     }
+//   }
+
+//   // Reset Password
+//   Future<String> resetPassword(
+//       String email, String password, String confirmPassword, String otp) async {
+//     try {
+//       final res = await http.post(
+//         Uri.parse('$baseUrl/reset-password'),
+//         body: jsonEncode({
+//           'email': email,
+//           'otp': otp,
+//           'password': password,
+//           'password_confirmation': password
+//         }),
+//         headers: {'Content-Type': 'application/json'},
+//       );
+
+//       if (res.statusCode == 200) {
+//         final responseBody = jsonDecode(res.body);
+//         print('Response Body: $responseBody'); // Tambahkan log
+//         return responseBody['message'] ?? 'Password berhasil diubah';
+//       } else {
+//         throw jsonDecode(res.body)['message'] ?? 'Terjadi kesalahan';
+//       }
+//     } catch (e) {
+//       print('Error: $e'); // Tambahkan log untuk error
+//       rethrow;
+//     }
+//   }
+
+//   // Logout
+//   Future<void> logout() async {
+//     try {
+//       // Ambil token dari FlutterSecureStorage
+//       const storage = FlutterSecureStorage();
+//       String? token = await storage.read(key: 'token');
+
+//       // Pastikan token ada sebelum mengirim permintaan logout
+//       if (token == null) {
+//         throw 'No token found, user is not logged in.';
+//       }
+
+//       final response = await http.post(
+//         Uri.parse('$baseUrl/logout'),
+//         headers: {
+//           'Content-Type': 'application/json',
+//           'Authorization': 'Bearer $token', // Kirim token yang didapatkan
+//         },
+//       ); // Timeout 10 detik
+
+//       if (response.statusCode == 200) {
+//         // Hapus data kredensial dari local storage setelah logout berhasil
+//         await clearLocalStorage();
+//       } else {
+//         // Menangani status code selain 200
+//         throw jsonDecode(response.body)['message'];
+//       }
+//     } catch (e) {
+//       // Menampilkan log error yang lebih informatif
+//       throw 'Logout error: $e';
+//     }
+//   }
+
+//   Future<void> clearLocalStorage() async {
+//     const storage = FlutterSecureStorage();
+//     await storage.deleteAll();
+//   }
 import 'dart:convert';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:toma_scan/models/sign_in_form_model.dart';
@@ -12,7 +292,9 @@ class AuthService {
     try {
       final res = await http.post(
         Uri.parse('$baseUrl/register'),
-        body: data.toJson(),
+        body: jsonEncode(
+            data.toJson()), // Pastikan data dikirim dalam format JSON
+        headers: {'Content-Type': 'application/json'},
       );
 
       if (res.statusCode == 201) {
@@ -20,51 +302,48 @@ class AuthService {
         user = user.copyWith(password: data.password);
         return user;
       } else {
-        throw jsonDecode(res.body)['message'];
+        throw jsonDecode(res.body)['message'] ?? 'Failed to register';
       }
     } catch (e) {
       rethrow;
     }
   }
 
+  // Login
   Future<UserModel> login(SignInFormModel data) async {
     try {
       final res = await http.post(
         Uri.parse('$baseUrl/login'),
-        body: data.toJson(),
+        body: jsonEncode(
+            data.toJson()), // Pastikan data dikirim dalam format JSON
+        headers: {'Content-Type': 'application/json'},
       );
 
       if (res.statusCode == 200) {
-        // parsing respons secara dinamis
         final responseData = jsonDecode(res.body) as Map<String, dynamic>;
 
-        // mengambil token langsung dari root
         String token = responseData['token'];
-
-        // Mengambil user data dari objek user
         Map<String, dynamic> userData = responseData['user'];
 
-        // membuat instance UserModel
-        UserModel user = UserModel.fromJson(({
-          ...userData, // Sprean user data
-          'token': token, // tambahkan token ke dalam data
-        }));
+        UserModel user = UserModel.fromJson({
+          ...userData,
+          'token': token,
+        });
 
-        // Menambahkan password dari form data
         user = user.copyWith(password: data.password);
 
-        // Simpan kredential ke local storage
         await storeCredentialToLocal(user);
 
         return user;
       } else {
-        throw jsonDecode(res.body)['message'];
+        throw jsonDecode(res.body)['message'] ?? 'Failed to login';
       }
     } catch (e) {
       rethrow;
     }
   }
 
+  // Store credentials to local storage
   Future<void> storeCredentialToLocal(UserModel user) async {
     try {
       const storage = FlutterSecureStorage();
@@ -81,32 +360,20 @@ class AuthService {
   // View Profile
   Future<UserModel> getProfile() async {
     try {
-      // Ambil token dari FlutterSecureStorage
       const storage = FlutterSecureStorage();
-      String? token = await storage.read(
-        key: 'token',
-      );
-      String? username = await storage.read(
-        key: 'username',
-      );
-      String? email = await storage.read(
-        key: 'email',
-      );
-      String? password = await storage.read(
-        key: 'password',
-      );
+      String? token = await storage.read(key: 'token');
+      String? username = await storage.read(key: 'username');
+      String? email = await storage.read(key: 'email');
+      String? password = await storage.read(key: 'password');
 
-      // Pastikan token ada sebelum mengirim permintaan
       if (token == null) {
         throw 'No token found, user is not logged in.';
       }
 
-      // Mengirim permintaan GET untuk mengambil data profil pengguna
       final res = await http.get(
         Uri.parse('$baseUrl/profile'),
         headers: {
-          'Authorization':
-              'Bearer $token', // Kirim token dalam header Authorization
+          'Authorization': 'Bearer $token',
           'Content-Type': 'application/json',
         },
       );
@@ -114,18 +381,51 @@ class AuthService {
       if (res.statusCode == 200) {
         final responseData = jsonDecode(res.body) as Map<String, dynamic>;
 
-        // Ambil data user dari response
         Map<String, dynamic> userData = responseData['user'];
 
-        // Membuat instance UserModel
         UserModel user = UserModel.fromJson(userData);
 
-        // Menyimpan profil pengguna ke dalam local storage
         await storeCredentialToLocal(user);
 
         return user;
       } else {
-        throw jsonDecode(res.body)['message'];
+        throw jsonDecode(res.body)['message'] ?? 'Failed to fetch profile';
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  // Edit Profile
+  Future<UserModel> editProfile(UserModel updatedUser) async {
+    try {
+      const storage = FlutterSecureStorage();
+      String? token = await storage.read(key: 'token');
+
+      if (token == null) {
+        throw 'No token found, user is not logged in.';
+      }
+
+      final response = await http.put(
+        Uri.parse('$baseUrl/edit-profile'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+        body: jsonEncode(
+            updatedUser.toJson()), // Pastikan data yang dikirim valid
+      );
+
+      if (response.statusCode == 200) {
+        final responseData = jsonDecode(response.body);
+        UserModel updatedUserProfile = UserModel.fromJson(responseData['user']);
+
+        await storeCredentialToLocal(updatedUserProfile);
+
+        return updatedUserProfile;
+      } else {
+        throw jsonDecode(response.body)['message'] ??
+            'Failed to update profile';
       }
     } catch (e) {
       rethrow;
@@ -153,7 +453,7 @@ class AuthService {
     }
   }
 
-  //Verify OTP
+  // Verify OTP
   Future<String> verifyOTP(String email, String otp) async {
     try {
       final res = await http.post(
@@ -183,20 +483,18 @@ class AuthService {
           'email': email,
           'otp': otp,
           'password': password,
-          'password_confirmation': password
+          'password_confirmation': confirmPassword
         }),
         headers: {'Content-Type': 'application/json'},
       );
 
       if (res.statusCode == 200) {
         final responseBody = jsonDecode(res.body);
-        print('Response Body: $responseBody'); // Tambahkan log
         return responseBody['message'] ?? 'Password berhasil diubah';
       } else {
         throw jsonDecode(res.body)['message'] ?? 'Terjadi kesalahan';
       }
     } catch (e) {
-      print('Error: $e'); // Tambahkan log untuk error
       rethrow;
     }
   }
@@ -204,11 +502,9 @@ class AuthService {
   // Logout
   Future<void> logout() async {
     try {
-      // Ambil token dari FlutterSecureStorage
       const storage = FlutterSecureStorage();
       String? token = await storage.read(key: 'token');
 
-      // Pastikan token ada sebelum mengirim permintaan logout
       if (token == null) {
         throw 'No token found, user is not logged in.';
       }
@@ -217,23 +513,21 @@ class AuthService {
         Uri.parse('$baseUrl/logout'),
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': 'Bearer $token', // Kirim token yang didapatkan
+          'Authorization': 'Bearer $token',
         },
-      ); // Timeout 10 detik
+      );
 
       if (response.statusCode == 200) {
-        // Hapus data kredensial dari local storage setelah logout berhasil
         await clearLocalStorage();
       } else {
-        // Menangani status code selain 200
-        throw jsonDecode(response.body)['message'];
+        throw jsonDecode(response.body)['message'] ?? 'Logout error';
       }
     } catch (e) {
-      // Menampilkan log error yang lebih informatif
-      throw 'Logout error: $e';
+      rethrow;
     }
   }
 
+  // Clear all credentials from local storage
   Future<void> clearLocalStorage() async {
     const storage = FlutterSecureStorage();
     await storage.deleteAll();

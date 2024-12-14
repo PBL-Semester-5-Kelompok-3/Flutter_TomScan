@@ -17,27 +17,23 @@ class ProfilePage extends StatefulWidget {
 
 class _ProfilePageState extends State<ProfilePage> {
   bool isEditingUsername = false;
-  bool isEditingEmail = false;
-  bool isEditingPhone = false;
   bool isEditingPassword = false;
+  bool _isPasswordVisible = false;
   String? profileImagePath;
   final storage = FlutterSecureStorage();
 
   final ImagePicker _picker = ImagePicker();
 
   late TextEditingController _usernameController;
-  late TextEditingController _emailController;
-  late TextEditingController _phoneController;
   late TextEditingController _passwordController;
 
   @override
   void initState() {
     super.initState();
     _usernameController = TextEditingController(text: "");
-    _emailController = TextEditingController(text: "");
-    _phoneController = TextEditingController(text: "");
     _passwordController = TextEditingController(text: "");
     _initUsername();
+    _initPassword();
   }
 
   Future<void> _initUsername() async {
@@ -50,11 +46,19 @@ class _ProfilePageState extends State<ProfilePage> {
     }
   }
 
+  Future<void> _initPassword() async {
+    String? password = await storage.read(key: 'password');
+    if (password != null) {
+      setState(() {
+        _passwordController.text =
+            password; // Set nilai controller dengan password
+      });
+    }
+  }
+
   @override
   void dispose() {
     _usernameController.dispose();
-    _emailController.dispose();
-    _phoneController.dispose();
     _passwordController.dispose();
     super.dispose();
   }
@@ -172,23 +176,43 @@ class _ProfilePageState extends State<ProfilePage> {
                 isEditing
                     ? TextField(
                         controller: controller,
-                        obscureText: isPassword,
+                        obscureText: isPassword &&
+                            !_isPasswordVisible, // If password, use _isPasswordVisible
                         decoration: InputDecoration(
                           hintText: isPassword ? "Enter new password" : null,
                           border: const OutlineInputBorder(),
                         ),
                       )
                     : Text(
-                        isPassword ? '' : controller.text,
+                        isPassword
+                            ? '•' * controller.text.length
+                            : controller.text,
                         style: const TextStyle(color: Colors.black54),
                       ),
               ],
             ),
           ),
           IconButton(
-            onPressed: isEditing ? onSave : onEditToggle,
-            icon: Icon(isEditing ? Icons.check : Icons.edit,
-                color: const Color(0xFF00BF63)),
+            onPressed: isEditing
+                ? () {
+                    if (isPassword) {
+                      // Toggle visibility
+                      setState(() {
+                        _isPasswordVisible = !_isPasswordVisible;
+                      });
+                    } else {
+                      onSave(); // Save when clicking the pencil icon
+                    }
+                  }
+                : onEditToggle, // Start editing when clicking the pencil icon
+            icon: Icon(
+              isEditing
+                  ? (isPassword && _isPasswordVisible
+                      ? Icons.visibility_off
+                      : Icons.visibility)
+                  : Icons.edit, // Pencil icon when not editing
+              color: const Color(0xFF00BF63),
+            ),
           ),
         ],
       ),
@@ -298,38 +322,10 @@ class _ProfilePageState extends State<ProfilePage> {
                         setState(() {
                           isEditingUsername = false;
                         });
-                      },
-                    ),
-                    _buildEditableItem(
-                      icon: Icons.email_outlined,
-                      label: "E-mail",
-                      controller: _emailController,
-                      isEditing: isEditingEmail,
-                      onEditToggle: () {
-                        setState(() {
-                          isEditingEmail = !isEditingEmail;
-                        });
-                      },
-                      onSave: () {
-                        setState(() {
-                          isEditingEmail = false;
-                        });
-                      },
-                    ),
-                    _buildEditableItem(
-                      icon: Icons.phone_outlined,
-                      label: "Phone",
-                      controller: _phoneController,
-                      isEditing: isEditingPhone,
-                      onEditToggle: () {
-                        setState(() {
-                          isEditingPhone = !isEditingPhone;
-                        });
-                      },
-                      onSave: () {
-                        setState(() {
-                          isEditingPhone = false;
-                        });
+                        // Trigger update username
+                        context
+                            .read<AuthBloc>()
+                            .add(AuthUpdateUsername(_usernameController.text));
                       },
                     ),
                     _buildEditableItem(
@@ -343,10 +339,16 @@ class _ProfilePageState extends State<ProfilePage> {
                           isEditingPassword = !isEditingPassword;
                         });
                       },
-                      onSave: () {
+                      onSave: () async {
                         setState(() {
                           isEditingPassword = false;
                         });
+                        // Save password and trigger update
+                        await storage.write(
+                            key: 'password', value: _passwordController.text);
+                        context
+                            .read<AuthBloc>()
+                            .add(AuthUpdatePassword(_passwordController.text));
                       },
                     ),
                     Center(

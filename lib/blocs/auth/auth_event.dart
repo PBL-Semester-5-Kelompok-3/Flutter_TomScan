@@ -55,3 +55,20 @@ class AuthVerifyOTP extends AuthEvent {
 class AuthLogout extends AuthEvent {}
 
 class AuthGetProfile extends AuthEvent {}
+
+class AuthEditProfile extends AuthEvent {
+  final UserModel updatedUser;
+  AuthEditProfile(this.updatedUser);
+}
+
+class AuthUpdateUsername extends AuthEvent {
+  final String username;
+
+  AuthUpdateUsername(this.username);
+}
+
+class AuthUpdatePassword extends AuthEvent {
+  final String password;
+
+  AuthUpdatePassword(this.password);
+}

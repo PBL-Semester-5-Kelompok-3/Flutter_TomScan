@@ -72,6 +72,15 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         } catch (e) {
           emit(AuthProfileFailed(e.toString())); // Emit error jika gagal
         }
+      } else if (event is AuthEditProfile) {
+        try {
+          emit(AuthLoading());
+          final updatedUser =
+              await AuthService().editProfile(event.updatedUser);
+          emit(AuthEditProfileSuccess(updatedUser));
+        } catch (e) {
+          emit(AuthEditProfileFailed(e.toString()));
+        }
       }
     });
   }
