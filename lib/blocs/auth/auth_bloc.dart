@@ -64,6 +64,14 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         } catch (e) {
           emit(AuthFailed(e.toString())); // Tangani error
         }
+      } else if (event is AuthGetProfile) {
+        try {
+          emit(AuthLoading());
+          final user = await AuthService().getProfile(); // Ambil profil
+          emit(AuthProfileSuccess(user)); // Emit data profil berhasil
+        } catch (e) {
+          emit(AuthProfileFailed(e.toString())); // Emit error jika gagal
+        }
       }
     });
   }

@@ -85,3 +85,14 @@ class AuthLogoutFailed extends AuthState {
 }
 
 class AuthLogoutSuccess extends AuthState {}
+
+// State untuk profil
+class AuthProfileSuccess extends AuthState {
+  final UserModel user;
+  AuthProfileSuccess(this.user);
+}
+
+class AuthProfileFailed extends AuthState {
+  final String error;
+  AuthProfileFailed(this.error);
+}

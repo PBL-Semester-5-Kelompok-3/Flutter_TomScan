@@ -77,6 +77,60 @@ class AuthService {
     }
   }
 
+  // View Profile
+  Future<UserModel> getProfile() async {
+    try {
+      // Ambil token dari FlutterSecureStorage
+      const storage = FlutterSecureStorage();
+      String? token = await storage.read(
+        key: 'token',
+      );
+      String? username = await storage.read(
+        key: 'username',
+      );
+      String? email = await storage.read(
+        key: 'email',
+      );
+      String? password = await storage.read(
+        key: 'password',
+      );
+
+      // Pastikan token ada sebelum mengirim permintaan
+      if (token == null) {
+        throw 'No token found, user is not logged in.';
+      }
+
+      // Mengirim permintaan GET untuk mengambil data profil pengguna
+      final res = await http.get(
+        Uri.parse('$baseUrl/profile'),
+        headers: {
+          'Authorization':
+              'Bearer $token', // Kirim token dalam header Authorization
+          'Content-Type': 'application/json',
+        },
+      );
+
+      if (res.statusCode == 200) {
+        final responseData = jsonDecode(res.body) as Map<String, dynamic>;
+
+        // Ambil data user dari response
+        Map<String, dynamic> userData = responseData['user'];
+
+        // Membuat instance UserModel
+        UserModel user = UserModel.fromJson(userData);
+
+        // Menyimpan profil pengguna ke dalam local storage
+        await storeCredentialToLocal(user);
+
+        return user;
+      } else {
+        throw jsonDecode(res.body)['message'];
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   // Forgot Password
   Future<String> forgotPassword(String email) async {
     try {

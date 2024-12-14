@@ -53,3 +53,5 @@ class AuthVerifyOTP extends AuthEvent {
 }
 
 class AuthLogout extends AuthEvent {}
+
+class AuthGetProfile extends AuthEvent {}
