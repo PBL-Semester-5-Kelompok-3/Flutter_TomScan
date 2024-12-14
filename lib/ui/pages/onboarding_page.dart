@@ -15,15 +15,15 @@ class _OnboardingPageState extends State<OnboardingPage> {
       CarouselSliderController();
 
   List<String> titles = [
-    'Identify the Green World Around You',
-    'You All-in-One Plant Care Companion',
-    'My Plants - A Green Diary Just For You',
+    'Tomato Leaf Disease Detection in an Instant',
+    'Latest Articles, Reliable Solutions',
+    'Save and Monitor Your Diagnosis Results',
   ];
 
   List<String> subtitles = [
-    'Turn your smartphone into a plant expert. Scan any plant using your camera and let Plantify identify it for you.',
-    'Tomato Doctor helps you care for your plants, set reminders, document their growth, and diagnose diseases with a quick camera scan',
-    'Bring your garden to life! Add your favorite plants, set care reminders, snap progress photos, & explore your planting history.',
+    'Simply take a picture, and the system will accurately analyze the condition of your tomato leaves.',
+    'Read useful information about plant diseases, treatments, and the best cultivation techniques.',
+    'View identification history to monitor the progress of plant health over time.',
   ];
 
   List<String> images = [
