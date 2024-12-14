@@ -1,3 +1,4 @@
+//lib/services/auth_service.dart
 import 'dart:convert';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:toma_scan/models/sign_in_form_model.dart';
@@ -64,6 +65,35 @@ class AuthService {
     }
   }
 
+  // Update Profile
+ Future<UserModel> updateProfile(UserModel userData, String username, String email, String password) async {
+  try {
+    final res = await http.put(
+      Uri.parse('https://tomascan.nurulmustofa.my.id/api/update-profile'),
+      body: jsonEncode({
+        'username': username,
+        'email': email,
+        'password': password,
+      }),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    );
+
+    if (res.statusCode == 200) {
+      final responseBody = jsonDecode(res.body);
+      return UserModel.fromJson(responseBody);
+    } else if (res.statusCode == 422) {
+      throw 'Data yang Anda kirimkan tidak valid: ${jsonDecode(res.body)['message']}';
+    } else {
+      throw 'Terjadi kesalahan: ${jsonDecode(res.body)['message']}';
+    }
+  } catch (e) {
+    throw 'Gagal memperbarui profil: $e';
+  }
+}
+
+
   Future<void> storeCredentialToLocal(UserModel user) async {
     try {
       const storage = FlutterSecureStorage();
@@ -116,6 +146,7 @@ class AuthService {
       rethrow;
     }
   }
+  
 
   //Verify OTP
   Future<String> verifyOTP(String email, String otp) async {
@@ -202,4 +233,6 @@ class AuthService {
     const storage = FlutterSecureStorage();
     await storage.deleteAll();
   }
+
+
 }

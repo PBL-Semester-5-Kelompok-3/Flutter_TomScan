@@ -57,7 +57,6 @@ class _ProfilePageState extends State<ProfilePage> {
         profileImagePath = pickedFile.path;
       });
     }
-  }
 
   // Fungsi untuk konfirmasi logout
   void showLogoutDialog(BuildContext context) {
@@ -120,24 +119,25 @@ class _ProfilePageState extends State<ProfilePage> {
 
   // Fungsi untuk menampilkan alert sukses setelah tombol Save ditekan
   void _showSaveSuccessDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Success'),
-          content: const Text('Your changes have been saved successfully.'),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop(); // Tutup dialog
-              },
-              child: const Text('OK'),
-            ),
-          ],
-        );
-      },
-    );
-  }
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: const Text('Success'),
+        content: const Text('Your changes have been saved successfully.'),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop(); // Tutup dialog
+            },
+            child: const Text('OK'),
+          ),
+        ],
+      );
+    },
+  );
+}
+
 
   Widget _buildEditableItem({
     required String label,
@@ -291,24 +291,7 @@ class _ProfilePageState extends State<ProfilePage> {
                           isEditingUsername = false;
                         });
                       },
-                    ),
-                    _buildEditableItem(
-                      icon: Icons.email_outlined,
-                      label: "E-mail",
-                      controller: _emailController,
-                      isEditing: isEditingEmail,
-                      onEditToggle: () {
-                        setState(() {
-                          isEditingEmail = !isEditingEmail;
-                        });
-                      },
-                      onSave: () {
-                        setState(() {
-                          email = _emailController.text;
-                          isEditingEmail = false;
-                        });
-                      },
-                    ),
+                    ),                    
                     _buildEditableItem(
                       icon: Icons.phone_outlined,
                       label: "Phone",
@@ -350,6 +333,16 @@ class _ProfilePageState extends State<ProfilePage> {
                         height: 40,
                         child: ElevatedButton(
                           onPressed: () {
+                            // Simulate updating profile (you can replace this with the actual update logic)
+                            setState(() {
+                              // Update logic, such as saving the updated details
+                              username = _usernameController.text;
+                              email = _emailController.text;
+                              phone = _phoneController.text;
+                              password = _passwordController.text;
+                            });
+
+                            // Show a success message or dialog after update
                             _showSaveSuccessDialog(
                                 context); // Tampilkan alert sukses
                           },
@@ -370,7 +363,7 @@ class _ProfilePageState extends State<ProfilePage> {
                           ),
                         ),
                       ),
-                    ),
+                    ),         
                     const SizedBox(height: 20),
                     Container(
                       padding: const EdgeInsets.all(16),
@@ -391,6 +384,7 @@ class _ProfilePageState extends State<ProfilePage> {
                           ),
                           const SizedBox(height: 16),
                           ListTile(
+                  
                             leading: const Icon(Icons.description_outlined,
                                 color: Colors.black54),
                             title: const Text('Terms and Conditions'),
@@ -482,5 +476,12 @@ class _ProfilePageState extends State<ProfilePage> {
         },
       ),
     );
+  }
+}
+
+  @override
+  Widget build(BuildContext context) {
+    // TODO: implement build
+    throw UnimplementedError();
   }
 }

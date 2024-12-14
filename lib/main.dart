@@ -1,7 +1,13 @@
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
+<<<<<<< Updated upstream
 import 'package:flutter_bloc/flutter_bloc.dart'; // Add this import
 import 'package:toma_scan/blocs/auth/auth_bloc.dart'; // Import AuthBloc
+=======
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:toma_scan/blocs/auth/auth_bloc.dart';
+import 'package:toma_scan/blocs/profile/profile_bloc.dart';
+>>>>>>> Stashed changes
 import 'package:toma_scan/ui/pages/forgot_password.dart';
 import 'package:toma_scan/ui/pages/get_started.dart';
 import 'package:toma_scan/ui/pages/home_page.dart';
@@ -21,12 +27,13 @@ late List<CameraDescription> cameras;
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   cameras = await availableCameras();
-  runApp(
-    // Provide the AuthBloc at the root of the app
-    BlocProvider(
-      create: (context) => AuthBloc(),
+  runApp(MultiBlocProvider(
+    providers: [
+      BlocProvider(create: (context) => AuthBloc()),
+      BlocProvider(create: (context)=> ProfileUpdateBloc())
+    ],
       child: const MyApp(),
-    ),
+  ) 
   );
 }
 

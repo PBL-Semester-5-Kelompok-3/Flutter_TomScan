@@ -1,7 +1,31 @@
 import 'package:flutter/material.dart';
 
 class ViewPests extends StatelessWidget {
+<<<<<<< Updated upstream
   const ViewPests({super.key});
+=======
+  final String name;
+  final String description;
+  final String warning;
+  final String genus;
+  final String scientificName;
+  final String aliases;
+  final String symptoms;
+  final List<String> solutions;
+  final String source;
+
+  const ViewPests({super.key, 
+    required this.name,
+    required this.description,
+    required this.warning,
+    required this.genus,
+    required this.scientificName,
+    required this.aliases,
+    required this.symptoms,
+    required this.solutions,
+    required this.source,
+  });
+>>>>>>> Stashed changes
 
   Widget _buildWarningBox() {
     return Container(

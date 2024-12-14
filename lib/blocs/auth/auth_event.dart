@@ -1,4 +1,3 @@
-// auth_event.dart
 part of 'auth_bloc.dart';
 
 sealed class AuthEvent {
@@ -36,8 +35,7 @@ class AuthResetPassword extends AuthEvent {
   final String password;
   final String confirmPassword;
   final String otp;
-  const AuthResetPassword(
-      this.email, this.password, this.confirmPassword, this.otp);
+  const AuthResetPassword(this.email, this.password, this.confirmPassword, this.otp);
 
   @override
   List<Object> get props => [email, password, confirmPassword, otp];

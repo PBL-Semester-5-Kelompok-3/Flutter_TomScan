@@ -2,12 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:toma_scan/blocs/informative/informative_bloc.dart';
 import 'package:toma_scan/services/informatif_service.dart';
+<<<<<<< Updated upstream
 import 'package:toma_scan/ui/pages/care_education_page.dart';
 import 'package:toma_scan/ui/pages/pests_desease_page.dart';
 import 'package:toma_scan/ui/pages/popular_article_page.dart';
+=======
+>>>>>>> Stashed changes
 import 'package:toma_scan/ui/pages/view_article.dart';
 import 'package:toma_scan/ui/pages/view_care.dart';
 import 'package:toma_scan/ui/pages/view_pests.dart';
+
 
 class InformativePage extends StatelessWidget {
   const InformativePage({super.key});

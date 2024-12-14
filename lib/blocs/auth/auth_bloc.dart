@@ -1,4 +1,3 @@
-// auth_bloc.dart
 import 'package:bloc/bloc.dart';
 import 'package:toma_scan/models/sign_in_form_model.dart';
 import 'package:toma_scan/models/sign_up_form_model.dart';
@@ -45,26 +44,22 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         }
       } else if (event is AuthResetPassword) {
         try {
-          emit(AuthLoading()); // Menampilkan status loading
+          emit(AuthLoading());
           final message = await AuthService().resetPassword(
               event.email, event.password, event.confirmPassword, event.otp);
-          emit(AuthResetPasswordSuccess(message)); // Menampilkan status sukses
+          emit(AuthResetPasswordSuccess(message));
         } catch (e) {
-          emit(AuthResetPasswordFailed(
-              e.toString(), e.toString())); // Menangani error
+          emit(AuthResetPasswordFailed(e.toString(), e.toString()));
         }
       } else if (event is AuthLogout) {
         try {
           emit(AuthLoading());
-          print('1');
-          await AuthService().logout(); // Panggil metode logout
-          print('2');
-          emit(AuthInitial()); // Pastikan state ini dikeluarkan
-          print('3');
+          await AuthService().logout();
+          emit(AuthInitial());
         } catch (e) {
-          emit(AuthFailed(e.toString())); // Tangani error
+          emit(AuthFailed(e.toString()));
         }
-      }
+      } 
     });
   }
 }
