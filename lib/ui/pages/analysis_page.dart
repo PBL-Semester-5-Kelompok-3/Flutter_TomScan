@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'dart:io';
 
 class DetailAnalysisPage extends StatelessWidget {
   final String title;
@@ -103,6 +104,7 @@ class DetailAnalysisPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    debugPrint('Image Path: $imageUrl');
     return Scaffold(
       body: SingleChildScrollView(
         child: Column(
@@ -110,8 +112,8 @@ class DetailAnalysisPage extends StatelessWidget {
           children: [
             Stack(
               children: [
-                Image.network(
-                  imageUrl,
+                Image.file(
+                  File(imageUrl), // Gunakan path lokal
                   width: double.infinity,
                   height: 300,
                   fit: BoxFit.cover,

@@ -206,9 +206,11 @@ class _ProfilePageState extends State<ProfilePage> {
               child: CircularProgressIndicator(color: Colors.blue),
             );
           }
-          if (state is AuthSuccess) {
-            _usernameController.text = state.user.username!;
-            _emailController.text = state.user.email!;
+          if (state is AuthSuccess || state is AuthProfileSuccess) {
+            if (state is AuthProfileSuccess) {
+              _usernameController.text = state.user.username!;
+              _emailController.text = state.user.email!;
+            }
             return SingleChildScrollView(
               child: Padding(
                 padding: const EdgeInsets.all(20.0),

@@ -1,7 +1,10 @@
+import 'dart:convert';
+
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:toma_scan/ui/pages/analysis_page.dart';
+import 'package:http/http.dart' as http;
 
 late List<CameraDescription> _cameras;
 
@@ -55,6 +58,87 @@ class _CameraAppState extends State<CameraApp>
     _controller.dispose();
     _animationController.dispose();
     super.dispose();
+  }
+
+  Future<Map<String, dynamic>?> _sendImageToAPI(String imagePath) async {
+    try {
+      final uri =
+          Uri.parse('https://deb5-180-248-25-27.ngrok-free.app/predict/');
+      final request = http.MultipartRequest('POST', uri);
+      request.headers.addAll({
+        'Content-Type': 'multipart/form-data',
+        'ngrok-skip-browser-warning': 'true', // Untuk ngrok
+      });
+
+      request.files.add(await http.MultipartFile.fromPath('file', imagePath));
+      final streamedResponse = await request.send();
+      final response = await http.Response.fromStream(streamedResponse);
+
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> jsonResponse = json.decode(response.body);
+        return jsonResponse;
+      } else {
+        debugPrint('Error: ${response.statusCode}');
+        debugPrint('Error: {$response.body}');
+        return null;
+      }
+    } catch (e) {
+      debugPrint('Error sending image: $e');
+      return null;
+    }
+  }
+
+  void handleCapture() async {
+    try {
+      final pickedFile = await _controller.takePicture();
+      final imagePath = pickedFile.path;
+
+      // Tampilkan dialog loading
+      showDialog(
+        // ignore: use_build_context_synchronously
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          return const Center(child: CircularProgressIndicator());
+        },
+      );
+
+      // Kirim gambar ke API
+      final response = await _sendImageToAPI(imagePath);
+      debugPrint(response.toString());
+
+      // Tutup dialog loading
+      if (mounted) Navigator.of(context).pop();
+
+      if (response != null) {
+        final predictedClass = response['predicted_class'];
+        final confidence = response['confidence'];
+
+        // Navigasikan ke DetailAnalysisPage dengan data dari API
+        Navigator.push(
+          // ignore: use_build_context_synchronously
+          context,
+          MaterialPageRoute(
+            builder: (context) => DetailAnalysisPage(
+              title: predictedClass,
+              tags: ['Confidence: ${(confidence * 100).toStringAsFixed(2)}%'],
+              imageUrl: imagePath,
+            ),
+          ),
+        );
+      } else {
+        // Tampilkan pesan error
+        // ignore: use_build_context_synchronously
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Failed to process the image. Please try again.'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } catch (e) {
+      debugPrint('Error capturing image: $e');
+    }
   }
 
   void _toggleFlash() async {
@@ -219,59 +303,60 @@ class _CameraAppState extends State<CameraApp>
                         // Pause the camera preview while the dialog is open
                         _controller.pausePreview();
                         setState(() {});
-                        showDialog(
-                          // ignore: use_build_context_synchronously
-                          context: context,
-                          builder: (BuildContext context) {
-                            String labelText = '';
-                            return AlertDialog(
-                              title: const Text('Name the label?'),
-                              content: TextField(
-                                onChanged: (value) {
-                                  labelText = value;
-                                },
-                                decoration: const InputDecoration(
-                                  hintText: 'Type the label name...',
-                                ),
-                              ),
-                              actions: [
-                                TextButton(
-                                  child: const Text('Cancel'),
-                                  onPressed: () {
-                                    // Close the dialog, reset the _showDialog state, and resume the camera
-                                    setState(() {});
-                                    Navigator.of(context).pop();
-                                    _controller.resumePreview();
-                                  },
-                                ),
-                                TextButton(
-                                  child: const Text('Accept'),
-                                  onPressed: () {
-                                    setState(() {});
-                                    Navigator.of(context).pop();
-                                    _controller
-                                        .resumePreview(); // Resume preview on Accept
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) =>
-                                            DetailAnalysisPage(
-                                          title: labelText,
-                                          tags: const [
-                                            'Nutrisi',
-                                            'Penyiraman',
-                                            'Penyakit'
-                                          ],
-                                          imageUrl: pickedFile.path,
-                                        ),
-                                      ),
-                                    );
-                                  },
-                                ),
-                              ],
-                            );
-                          },
-                        );
+                        handleCapture();
+                        // showDialog(
+                        //   // ignore: use_build_context_synchronously
+                        //   context: context,
+                        //   builder: (BuildContext context) {
+                        //     String labelText = '';
+                        //     return AlertDialog(
+                        //       title: const Text('Name the label?'),
+                        //       content: TextField(
+                        //         onChanged: (value) {
+                        //           labelText = value;
+                        //         },
+                        //         decoration: const InputDecoration(
+                        //           hintText: 'Type the label name...',
+                        //         ),
+                        //       ),
+                        //       actions: [
+                        //         TextButton(
+                        //           child: const Text('Cancel'),
+                        //           onPressed: () {
+                        //             // Close the dialog, reset the _showDialog state, and resume the camera
+                        //             setState(() {});
+                        //             Navigator.of(context).pop();
+                        //             _controller.resumePreview();
+                        //           },
+                        //         ),
+                        //         TextButton(
+                        //           child: const Text('Accept'),
+                        //           onPressed: () {
+                        //             setState(() {});
+                        //             Navigator.of(context).pop();
+                        //             _controller
+                        //                 .resumePreview(); // Resume preview on Accept
+                        //             // Navigator.push(
+                        //             //   context,
+                        //             //   MaterialPageRoute(
+                        //             //     builder: (context) =>
+                        //             //         DetailAnalysisPage(
+                        //             //       title: labelText,
+                        //             //       tags: const [
+                        //             //         'Nutrisi',
+                        //             //         'Penyiraman',
+                        //             //         'Penyakit'
+                        //             //       ],
+                        //             //       imageUrl: pickedFile.path,
+                        //             //     ),
+                        //             //   ),
+                        //             // );
+                        //           },
+                        //         ),
+                        //       ],
+                        //     );
+                        //   },
+                        // );
 
                         // Pause the camera preview while the dialog is open
                         _controller.pausePreview();
