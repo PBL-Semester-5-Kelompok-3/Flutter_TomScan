@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:toma_scan/blocs/history/history_bloc.dart';
+import 'package:toma_scan/blocs/history/history_state.dart';
 import 'package:toma_scan/blocs/informative/informative_bloc.dart';
+import 'package:toma_scan/models/history_model.dart';
+import 'package:toma_scan/services/history_service.dart';
 import 'package:toma_scan/services/informatif_service.dart';
 import 'package:toma_scan/ui/pages/popular_article_page.dart';
 import 'package:toma_scan/ui/pages/view_article.dart';
@@ -434,38 +438,133 @@ class HomeContent extends StatelessWidget {
   }
 
   Widget _buildLastDetections() {
-    return Column(
-      children: List.generate(3, (index) => _buildDetectionItem()),
+    return FutureBuilder<List<History>>(
+      future: fetchDetections(), // Replace with your data-fetching method
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        } else if (snapshot.hasError) {
+          return Center(child: Text('Error: ${snapshot.error}'));
+        } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+          return const Center(child: Text('No recent detections found.'));
+        } else {
+          final detections = snapshot.data!;
+          return ListView.builder(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            itemCount: detections.length,
+            itemBuilder: (context, index) {
+              final detection = detections[index];
+              return _buildDetectionItem(
+                context,
+                date: detection.createdAt.toString(),
+                imageUrl: detection.imagePath,
+                title: detection.disease,
+                description: detection.schedule.isNotEmpty
+                    ? detection.schedule[0].description
+                    : 'No description available',
+                history: detection,
+              );
+            },
+          );
+        }
+      },
     );
   }
 
-  Widget _buildDetectionItem() {
-    return const Padding(
-      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      child: Row(
-        children: [
-          CircleAvatar(
-            radius: 24,
-            backgroundImage: NetworkImage(
-                'https://i5.walmartimages.com/asr/9f8b7456-81d0-4dc2-b422-97cf63077762.0ddba51bbf14a5029ce82f5fce878dee.jpeg'),
-          ),
-          SizedBox(width: 16),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Water Your Tomatoes today',
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                ),
-                Text(
-                  'It\'s 2 weeks old, you have to water it twice a w...',
-                  style: TextStyle(color: Colors.grey),
-                ),
-              ],
+  Future<List<History>> fetchDetections() async {
+    try {
+      final historyService =
+          HistoryService(baseUrl: 'https://tomascan.nurulmustofa.my.id');
+      final allHistories = await historyService.getAllHistories();
+
+      // Sort and take the latest 3 detections
+      allHistories.sort((a, b) =>
+          b.createdAt.compareTo(a.createdAt)); // Sort by date descending
+      return allHistories.take(3).toList(); // Take only the latest 3
+    } catch (error) {
+      throw Exception('Failed to fetch detections: $error');
+    }
+  }
+
+  Widget _buildDetectionItem(
+    BuildContext context, {
+    required String date,
+    required String imageUrl,
+    required String title,
+    required String description,
+    required History history,
+  }) {
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => DetailHistoryPage(
+              title: history.disease,
+              imageUrl: history.imagePath,
+              disease: history.disease,
+              schedule: history.schedule,
+              solutions: history.solutions,
+              pests: history.pest,
             ),
           ),
-          Icon(Icons.chevron_right, color: Colors.grey),
+        );
+      },
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            date,
+            style: const TextStyle(color: Colors.grey, fontSize: 12),
+          ),
+          const SizedBox(height: 8),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Display detection image
+              Image.network(
+                imageUrl,
+                width: 64,
+                height: 64,
+                fit: BoxFit.cover,
+              ),
+              const SizedBox(width: 8),
+
+              // Title and description
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      title,
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 1,
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      description,
+                      style: const TextStyle(
+                        color: Colors.grey,
+                        fontSize: 12,
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 2,
+                    ),
+                  ],
+                ),
+              ),
+
+              // Chevron icon for navigation
+              const Icon(Icons.chevron_right, color: Colors.grey),
+            ],
+          ),
+          const Divider(height: 32),
         ],
       ),
     );
