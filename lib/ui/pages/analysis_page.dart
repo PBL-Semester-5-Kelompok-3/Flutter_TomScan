@@ -222,7 +222,8 @@ class DetailAnalysisPage extends StatelessWidget {
                   top: 40,
                   left: 16,
                   child: GestureDetector(
-                    onTap: () => Navigator.pop(context),
+                    // onTap: () => Navigator.pop(context),
+                    onTap: () => Navigator.pushNamed(context, '/camera'),
                     child: Container(
                       padding: const EdgeInsets.all(8),
                       decoration: BoxDecoration(
