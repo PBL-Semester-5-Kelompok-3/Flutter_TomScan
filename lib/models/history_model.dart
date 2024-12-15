@@ -34,7 +34,7 @@ class History {
       createdAt: DateTime.parse(json['history']['created_at']),
       updatedAt: DateTime.parse(json['history']['updated_at']),
       user: User.fromJson(json['history']['user']),
-      disease: Disease.fromJson(json['history']['disease']),
+      disease: Disease.fromJson(json['history']['disease']['name']),
       schedule: (json['schedule'] as List)
           .map((scheduleJson) => Schedule.fromJson(scheduleJson))
           .toList(),
