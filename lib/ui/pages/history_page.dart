@@ -16,8 +16,8 @@ class HistoryPage extends StatelessWidget {
         final history = histories[index];
         return _buildHistoryItem(
           context,
-          date: history.date,
-          imageUrl: history.imageUrl,
+          date: history.,
+          imageUrl: history.imagePath,
           title: history.title,
           description: history.description,
         );
