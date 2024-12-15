@@ -68,11 +68,19 @@ class AuthService {
   Future<void> storeCredentialToLocal(UserModel user) async {
     try {
       const storage = FlutterSecureStorage();
-      await storage.write(key: 'token', value: user.token);
-      await storage.write(key: 'id', value: user.id.toString());
-      await storage.write(key: 'username', value: user.username);
-      await storage.write(key: 'email', value: user.email);
-      await storage.write(key: 'password', value: user.password);
+      // Baca data lama jika ada
+      String? token = await storage.read(key: 'token');
+      String? id = await storage.read(key: 'id');
+      String? email = await storage.read(key: 'email');
+      String? username = await storage.read(key: 'username');
+      String? password = await storage.read(key: 'password');
+
+      // Tulis data baru atau gunakan data lama jika null
+      await storage.write(key: 'token', value: user.token ?? token);
+      await storage.write(key: 'id', value: user.id?.toString() ?? id);
+      await storage.write(key: 'username', value: user.username ?? username);
+      await storage.write(key: 'email', value: user.email ?? email);
+      await storage.write(key: 'password', value: user.password ?? password);
     } catch (e) {
       rethrow;
     }
@@ -211,90 +219,52 @@ class AuthService {
   }
 
 // Update Profile (Username dan Password)
-  Future<UserModel> updateProfile(String s, String s,
-      {String? username, String? password}) async {
+  Future<UserModel> updateProfile({String? username, String? password}) async {
     try {
-      // Ambil token dari secure storage
       const storage = FlutterSecureStorage();
       String? token = await storage.read(key: 'token');
 
       if (token == null) {
-        throw 'No token found, user is not logged in.';
+        throw Exception('No token found, user is not logged in.');
       }
 
-      // Jika hanya username yang ingin diubah
+      final Uri endpoint;
+      final Map<String, String> headers = {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      };
+      final Map<String, dynamic> body = {};
+
       if (username != null && password == null) {
-        final response = await http.put(
-          Uri.parse(
-              '$baseUrl/update-username'), // Endpoint untuk update username
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer $token',
-          },
-          body: jsonEncode({'username': username}),
-        );
-
-        if (response.statusCode == 200) {
-          final responseData = jsonDecode(response.body);
-          UserModel updatedUser = UserModel.fromJson(responseData['user']);
-          await storeCredentialToLocal(updatedUser);
-          return updatedUser;
-        } else {
-          throw jsonDecode(response.body)['message'] ??
-              'Failed to update username';
-        }
+        endpoint = Uri.parse('$baseUrl/update-username');
+        body['username'] = username;
+      } else if (password != null && username == null) {
+        endpoint = Uri.parse('$baseUrl/update-password');
+        body['password'] = password;
+      } else if (username != null && password != null) {
+        endpoint = Uri.parse('$baseUrl/update-profile');
+        body['username'] = username;
+        body['password'] = password;
+      } else {
+        throw Exception('No changes were made to the profile.');
       }
 
-      // Jika hanya password yang ingin diubah
-      if (password != null && username == null) {
-        final response = await http.put(
-          Uri.parse(
-              '$baseUrl/update-password'), // Endpoint untuk update password
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer $token',
-          },
-          body: jsonEncode({'password': password}),
-        );
+      final response = await http.put(
+        endpoint,
+        headers: headers,
+        body: jsonEncode(body),
+      );
 
-        if (response.statusCode == 200) {
-          final responseData = jsonDecode(response.body);
-          UserModel updatedUser = UserModel.fromJson(responseData['user']);
-          await storeCredentialToLocal(updatedUser);
-          return updatedUser;
-        } else {
-          throw jsonDecode(response.body)['message'] ??
-              'Failed to update password';
-        }
+      if (response.statusCode == 200) {
+        final responseData = jsonDecode(response.body);
+        final UserModel updatedUser = UserModel.fromJson(responseData['user']);
+        await storeCredentialToLocal(updatedUser);
+        return updatedUser;
+      } else {
+        final error =
+            jsonDecode(response.body)['message'] ?? 'Failed to update profile';
+        throw Exception(error);
       }
-
-      // Jika username dan password keduanya ingin diubah
-      if (username != null && password != null) {
-        final response = await http.put(
-          Uri.parse(
-              '$baseUrl/update-profile'), // Endpoint untuk update profile lengkap
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer $token',
-          },
-          body: jsonEncode({
-            'username': username,
-            'password': password,
-          }),
-        );
-
-        if (response.statusCode == 200) {
-          final responseData = jsonDecode(response.body);
-          UserModel updatedUser = UserModel.fromJson(responseData['user']);
-          await storeCredentialToLocal(updatedUser);
-          return updatedUser;
-        } else {
-          throw jsonDecode(response.body)['message'] ??
-              'Failed to update profile';
-        }
-      }
-
-      throw 'No changes were made to the profile.';
     } catch (e) {
       rethrow;
     }

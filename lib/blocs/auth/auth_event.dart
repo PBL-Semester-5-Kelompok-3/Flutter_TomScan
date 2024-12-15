@@ -61,6 +61,7 @@ class AuthUpdateProfile extends AuthEvent {
   final String? password;
 
   const AuthUpdateProfile({this.username, this.password});
+  
 
   @override
   List<Object> get props => [

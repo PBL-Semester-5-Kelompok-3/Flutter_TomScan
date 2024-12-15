@@ -5,12 +5,18 @@ class DetailAnalysisPage extends StatelessWidget {
   final String title;
   final List<String> tags;
   final String imageUrl;
+  final List<dynamic> schedule;
+  final List<dynamic> solutions;
+  final List<dynamic> pests;
 
   const DetailAnalysisPage({
     super.key,
     required this.title,
     required this.tags,
     required this.imageUrl,
+    required this.schedule,
+    required this.solutions,
+    required this.pests,
   });
 
   // Show the save confirmation dialog
@@ -141,14 +147,7 @@ class DetailAnalysisPage extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    '$title a species of',
-                    style: const TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  Text(
-                    title,
+                    '$title Disease',
                     style: const TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
@@ -236,13 +235,23 @@ class DetailAnalysisPage extends StatelessWidget {
             fontWeight: FontWeight.bold,
           ),
         ),
-        const SizedBox(height: 12),
-        _buildScheduleItem('Jum\n5', 'Pemulihan Awal', '07.00 - 09.00'),
-        const SizedBox(height: 8),
-        _buildScheduleItem('Sab\n2', 'Pemulihan dan Nutrisi Tambahan', 'ddd'),
-        const SizedBox(height: 8),
-        _buildScheduleItem(
-            'Min\n3', 'Perawatan Rutin dan Pemantauan', '07.00 - 09.00'),
+        Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: Colors.grey[100],
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Text(schedule
+              .map((scheduleItem) => scheduleItem['description'].toString())
+              .join('\n')),
+        ),
+        // const SizedBox(height: 12),
+        // _buildScheduleItem('Jum\n5', 'Pemulihan Awal', '07.00 - 09.00'),
+        // const SizedBox(height: 8),
+        // _buildScheduleItem('Sab\n2', 'Pemulihan dan Nutrisi Tambahan', 'ddd'),
+        // const SizedBox(height: 8),
+        // _buildScheduleItem(
+        //     'Min\n3', 'Perawatan Rutin dan Pemantauan', '07.00 - 09.00'),
       ],
     );
   }
@@ -321,10 +330,10 @@ class DetailAnalysisPage extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _buildPestDiseaseSection(
-                  'Pests', ['Scale insects', 'Mealybugs', 'Spider mites']),
+              _buildPestDiseaseSection('Pests',
+                  pests.map((pest) => pest['name'].toString()).toList()),
               const SizedBox(height: 16),
-              _buildPestDiseaseSection('Diseases', ['Stem rot', 'Root rot']),
+              _buildPestDiseaseSection('Diseases', [title]),
             ],
           ),
         ),
@@ -377,22 +386,12 @@ class DetailAnalysisPage extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 16),
-        _buildSolutionItem(
-          'Remove Infected Leaves:',
-          'At the first sign of infection, remove and dispose of infected leaves to prevent the spread of rust spores. Do not compost these leaves, as the spores can survive and re-infect plants.',
-        ),
-        _buildSolutionItem(
-          'Improve Air Circulation:',
-          'Ensure proper spacing between plants to promote good airflow, reducing moisture levels around the plants. Prune any overcrowded areas to maintain air circulation.',
-        ),
-        _buildSolutionItem(
-          'Watering Practices:',
-          'Water the plants at the base, keeping the leaves dry. Watering in the early morning helps the plant dry out during the day, reducing the chances of fungal growth.',
-        ),
-        _buildSolutionItem(
-          'Sanitize Garden Tools:',
-          'Regularly clean and disinfect gardening tools, especially after handling infected plants, to prevent the spread of rust spores to healthy plants.',
-        ),
+        ...solutions.map((solution) {
+          return _buildSolutionItem(
+            solution['title'],
+            solution['description'],
+          );
+        }).toList(),
       ],
     );
   }
@@ -403,8 +402,8 @@ class DetailAnalysisPage extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Image.asset('assets/leaf_icon.png', width: 100, height: 100),
-          const SizedBox(width: 12),
+          Image.asset('assets/leaf_icon.png', width: 50, height: 100),
+          const SizedBox(width: 1),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,

@@ -235,6 +235,16 @@ class _ProfilePageState extends State<ProfilePage> {
             Navigator.pushNamedAndRemoveUntil(
                 context, '/sign-in', (route) => false);
           }
+
+          if (state is AuthEditProfileSuccess) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Profile updated successfully!')),
+            );
+          } else if (state is AuthEditProfileFailed) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text(state.error)),
+            );
+          }
         },
         builder: (context, state) {
           if (state is AuthLoading) {
@@ -242,7 +252,7 @@ class _ProfilePageState extends State<ProfilePage> {
               child: CircularProgressIndicator(color: Colors.blue),
             );
           }
-          if (state is AuthSuccess || state is AuthProfileSuccess) {
+          if (state is AuthSuccess || state is AuthEditProfileSuccess) {
             return SingleChildScrollView(
               child: Padding(
                 padding: const EdgeInsets.all(20.0),
@@ -312,6 +322,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       icon: Icons.person_outline,
                       label: "Username",
                       controller: _usernameController,
+                      isPassword: false,
                       isEditing: isEditingUsername,
                       onEditToggle: () {
                         setState(() {
@@ -322,11 +333,6 @@ class _ProfilePageState extends State<ProfilePage> {
                         setState(() {
                           isEditingUsername = false;
                         });
-                        // Trigger update username
-                        context.read<AuthBloc>().add(AuthUpdateProfile(
-                            username: _usernameController.text,
-                            password: _passwordController
-                                .text)); // Add password update logic here
                       },
                     ),
                     _buildEditableItem(
@@ -344,11 +350,6 @@ class _ProfilePageState extends State<ProfilePage> {
                         setState(() {
                           isEditingPassword = false;
                         });
-                        // Trigger password update
-                        context.read<AuthBloc>().add(AuthUpdateProfile(
-                            username: _usernameController.text,
-                            password: _passwordController
-                                .text)); // Trigger password update
                       },
                     ),
                     Center(
@@ -357,8 +358,30 @@ class _ProfilePageState extends State<ProfilePage> {
                         height: 40,
                         child: ElevatedButton(
                           onPressed: () {
-                            _showSaveSuccessDialog(
-                                context); // Tampilkan alert sukses
+                            // Validasi apakah username atau password telah diubah
+                            if (_usernameController.text.isNotEmpty ||
+                                _passwordController.text.isNotEmpty) {
+                              // Trigger event AuthUpdateProfile dengan data yang valid
+                              context.read<AuthBloc>().add(
+                                    AuthUpdateProfile(
+                                      username: _usernameController.text,
+                                      password: _passwordController.text,
+                                    ),
+                                  );
+
+                              // Reset state editing
+                              setState(() {
+                                isEditingUsername = false;
+                                isEditingPassword = false;
+                              });
+                            } else {
+                              // Tampilkan pesan error jika tidak ada perubahan
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text('No changes were made.'),
+                                ),
+                              );
+                            }
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: const Color(0xFF00BF63),

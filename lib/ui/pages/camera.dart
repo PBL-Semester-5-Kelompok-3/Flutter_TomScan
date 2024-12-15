@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:toma_scan/ui/pages/analysis_page.dart';
 import 'package:http/http.dart' as http;
@@ -29,6 +30,7 @@ class _CameraAppState extends State<CameraApp>
   final GlobalKey _cameraPreviewKey = GlobalKey();
   bool _isFlashOn = false;
 // Added state variable for dialog
+  final storage = const FlutterSecureStorage();
 
   late AnimationController _animationController;
   late Animation<double> _animation;
@@ -60,6 +62,83 @@ class _CameraAppState extends State<CameraApp>
     super.dispose();
   }
 
+  void handleGallerySelection() async {
+    try {
+      // Pilih gambar dari galeri
+      final picker = ImagePicker();
+      final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+
+      if (pickedFile != null) {
+        final imagePath = pickedFile.path;
+
+        // Tampilkan dialog loading
+        showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (BuildContext context) {
+            return const Center(child: CircularProgressIndicator());
+          },
+        );
+
+        // Kirim gambar ke API pertama
+        final response = await _sendImageToAPI(imagePath);
+
+        // Tutup dialog loading
+        if (mounted) Navigator.of(context).pop();
+
+        // Ambil token dari secure storage
+        String? token = await storage.read(key: 'token');
+
+        if (response != null) {
+          final predictedClass = response['predicted_class'];
+          final confidence = response['confidence'];
+
+          // Kirim hasil prediksi ke API kedua untuk mendapatkan data tambahan
+          final additionalData =
+              await _sendPredictResultToAPI(predictedClass, token ?? '');
+
+          if (additionalData != null) {
+            // Navigasikan ke DetailAnalysisPage dengan data tambahan
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => DetailAnalysisPage(
+                  title: predictedClass,
+                  tags: [
+                    'Confidence: ${(confidence * 100).toStringAsFixed(2)}%'
+                  ],
+                  imageUrl: imagePath,
+                  schedule: additionalData['schedule'],
+                  solutions: additionalData['solutions'],
+                  pests: additionalData['pest'],
+                ),
+              ),
+            );
+          } else {
+            // Tampilkan pesan error jika API kedua gagal
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content:
+                    Text('Failed to fetch additional data. Please try again.'),
+                backgroundColor: Colors.red,
+              ),
+            );
+          }
+        } else {
+          // Tampilkan pesan error jika API pertama gagal
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Failed to process the image. Please try again.'),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+      }
+    } catch (e) {
+      debugPrint('Error selecting image from gallery: $e');
+    }
+  }
+
   Future<Map<String, dynamic>?> _sendImageToAPI(String imagePath) async {
     try {
       final uri =
@@ -88,6 +167,37 @@ class _CameraAppState extends State<CameraApp>
     }
   }
 
+  Future<Map<String, dynamic>?> _sendPredictResultToAPI(
+      String disease, String token) async {
+    final uri =
+        Uri.parse('https://tomascan.nurulmustofa.my.id/api/getAfterScan');
+    try {
+      final response = await http.post(
+        uri,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+        body: json.encode({'disease': disease}),
+      );
+
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> jsonResponse = json.decode(response.body);
+        debugPrint(
+            'Success fetching additional data: ${jsonResponse.toString()}');
+        return jsonResponse;
+      } else {
+        debugPrint(
+            'Failed to fetch additional data 1. Status code: ${response.statusCode}');
+        debugPrint('Response: ${response.body}');
+        return null;
+      }
+    } catch (e) {
+      debugPrint('Error fetching additional data: $e');
+      return null;
+    }
+  }
+
   void handleCapture() async {
     try {
       final pickedFile = await _controller.takePicture();
@@ -95,7 +205,6 @@ class _CameraAppState extends State<CameraApp>
 
       // Tampilkan dialog loading
       showDialog(
-        // ignore: use_build_context_synchronously
         context: context,
         barrierDismissible: false,
         builder: (BuildContext context) {
@@ -103,32 +212,47 @@ class _CameraAppState extends State<CameraApp>
         },
       );
 
-      // Kirim gambar ke API
+      // Kirim gambar ke API pertama
       final response = await _sendImageToAPI(imagePath);
-      debugPrint(response.toString());
 
       // Tutup dialog loading
       if (mounted) Navigator.of(context).pop();
 
+      String? token = await storage.read(key: 'token');
       if (response != null) {
         final predictedClass = response['predicted_class'];
         final confidence = response['confidence'];
+        // Kirim hasil prediksi ke API kedua untuk mendapatkan data tambahan
+        final additionalData =
+            await _sendPredictResultToAPI(predictedClass, token ?? '');
 
-        // Navigasikan ke DetailAnalysisPage dengan data dari API
-        Navigator.push(
-          // ignore: use_build_context_synchronously
-          context,
-          MaterialPageRoute(
-            builder: (context) => DetailAnalysisPage(
-              title: predictedClass,
-              tags: ['Confidence: ${(confidence * 100).toStringAsFixed(2)}%'],
-              imageUrl: imagePath,
+        if (additionalData != null) {
+          // Navigasikan ke DetailAnalysisPage dengan data tambahan
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => DetailAnalysisPage(
+                title: predictedClass,
+                tags: ['Confidence: ${(confidence * 100).toStringAsFixed(2)}%'],
+                imageUrl: imagePath,
+                schedule: additionalData['schedule'],
+                solutions: additionalData['solutions'],
+                pests: additionalData['pest'],
+              ),
             ),
-          ),
-        );
+          );
+        } else {
+          // Tampilkan pesan error jika API kedua gagal
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content:
+                  Text('Failed to fetch additional data. Please try again.'),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
       } else {
-        // Tampilkan pesan error
-        // ignore: use_build_context_synchronously
+        // Tampilkan pesan error jika API pertama gagal
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('Failed to process the image. Please try again.'),
@@ -277,7 +401,7 @@ class _CameraAppState extends State<CameraApp>
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
                   GestureDetector(
-                    onTap: _openGallery,
+                    onTap: handleGallerySelection,
                     child: Container(
                       padding: const EdgeInsets.all(12),
                       decoration: BoxDecoration(
