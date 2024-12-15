@@ -7,6 +7,7 @@ import 'package:toma_scan/blocs/scan/scan_event.dart';
 import 'package:toma_scan/blocs/scan/scan_state.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:toma_scan/ui/pages/home_page.dart';
 
 class DetailAnalysisPage extends StatelessWidget {
   final String title;
@@ -168,25 +169,23 @@ class DetailAnalysisPage extends StatelessWidget {
 
       // Header untuk autentikasi atau kebutuhan tambahan
       request.headers.addAll({
-        'ngrok-skip-browser-warning': 'true', // Jika menggunakan ngrok
-        'Authorization': 'Bearer $token', // Jika ada autentikasi
+        'ngrok-skip-browser-warning': 'true',
+        'Authorization': 'Bearer $token',
       });
 
-      // Tambahkan field data sesuai skema
+      // Menambahkan data form (field)
       request.fields['id_user'] = id.toString();
       request.fields['id_disease'] = idDisease.toString();
 
-      // Tambahkan file gambar
-      request.files.add(await http.MultipartFile.fromPath(
-        'image_path',
-        imagePath,
-      ));
+      // Menambahkan file gambar
+      request.files
+          .add(await http.MultipartFile.fromPath('image_path', imagePath));
 
-      // Kirim request
+      // Mengirim request
       final streamedResponse = await request.send();
       final response = await http.Response.fromStream(streamedResponse);
 
-      // Handle respons
+      // Menghandle respons
       if (response.statusCode == 201) {
         final Map<String, dynamic> jsonResponse = json.decode(response.body);
         print('Success: ${jsonResponse.toString()}');
@@ -260,7 +259,14 @@ class DetailAnalysisPage extends StatelessWidget {
                   _buildSolutions(),
                   const SizedBox(height: 24),
                   ElevatedButton(
-                    onPressed: () => {sendDataWithImage(diseaseid, imageUrl)},
+                    onPressed: () async {
+                      // await sendDataWithImage(diseaseid, imageUrl);
+                    //   Navigator.push(
+                    //     context,
+                    //     MaterialPageRoute(builder: (context) => HomePage()),
+                    //   );
+                    //   // _showSuccessNotification(context);
+                    // },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.green,
                       minimumSize: const Size(double.infinity, 50),
@@ -516,3 +522,82 @@ class DetailAnalysisPage extends StatelessWidget {
     );
   }
 }
+
+Future<bool?> _showSaveConfirmation(BuildContext context) {
+  return showDialog<bool>(
+    context: context,
+    barrierColor: Colors.black.withOpacity(0.5),
+    builder: (BuildContext context) {
+      return Dialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+        ),
+        child: Container(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Text(
+                'Save this Change?',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 12),
+              const Text(
+                'This cannot be undone.\nAll your plants and care reminders will be lost.',
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 20),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  TextButton(
+                    onPressed: () => Navigator.of(context).pop(false),
+                    child: const Text(
+                      'Cancel',
+                      style: TextStyle(color: Colors.red),
+                    ),
+                  ),
+                  TextButton(
+                    onPressed: () => Navigator.of(context).pop(true),
+                    child: const Text(
+                      'Save',
+                      style: TextStyle(color: Colors.green),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      );
+    },
+  );
+}
+
+// void _showSuccessNotification(BuildContext context) {
+//   ScaffoldMessenger.of(context).showSnackBar(
+//     SnackBar(
+//       content: const Row(
+//         children: [
+//           Icon(Icons.check_circle, color: Colors.white),
+//           SizedBox(width: 8),
+//           Text('Analysis has been saved'),
+//         ],
+//       ),
+//       backgroundColor: Colors.green,
+//       duration: const Duration(seconds: 3),
+//       behavior: SnackBarBehavior.floating,
+//       margin: EdgeInsets.only(
+//         bottom: MediaQuery.of(context).size.height - 100,
+//         left: 20,
+//         right: 20,
+//       ),
+//       shape: RoundedRectangleBorder(
+//         borderRadius: BorderRadius.circular(8),
+//       ),
+//     ),
+//   );
+// }
