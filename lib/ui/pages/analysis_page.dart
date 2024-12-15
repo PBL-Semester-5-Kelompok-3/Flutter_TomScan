@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'dart:io';
+import 'dart:convert';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:toma_scan/blocs/scan/scan_bloc.dart';
 import 'package:toma_scan/blocs/scan/scan_event.dart';
 import 'package:toma_scan/blocs/scan/scan_state.dart';
+import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class DetailAnalysisPage extends StatelessWidget {
@@ -155,6 +157,50 @@ class DetailAnalysisPage extends StatelessWidget {
   //     });
   //   }
   // }
+  Future<Map<String, dynamic>?> sendDataWithImage(
+      int idDisease, String imagePath) async {
+    try {
+      String? token = await storage.read(key: 'token');
+      String? id = await storage.read(key: 'id');
+      final uri =
+          Uri.parse('https://tomascan.nurulmustofa.my.id/api/histories');
+      final request = http.MultipartRequest('POST', uri);
+
+      // Header untuk autentikasi atau kebutuhan tambahan
+      request.headers.addAll({
+        'ngrok-skip-browser-warning': 'true', // Jika menggunakan ngrok
+        'Authorization': 'Bearer $token', // Jika ada autentikasi
+      });
+
+      // Tambahkan field data sesuai skema
+      request.fields['id_user'] = id.toString();
+      request.fields['id_disease'] = idDisease.toString();
+
+      // Tambahkan file gambar
+      request.files.add(await http.MultipartFile.fromPath(
+        'image_path',
+        imagePath,
+      ));
+
+      // Kirim request
+      final streamedResponse = await request.send();
+      final response = await http.Response.fromStream(streamedResponse);
+
+      // Handle respons
+      if (response.statusCode == 201) {
+        final Map<String, dynamic> jsonResponse = json.decode(response.body);
+        print('Success: ${jsonResponse.toString()}');
+        return jsonResponse;
+      } else {
+        print('Error: HTTP ${response.statusCode}');
+        print('Response Body: ${response.body}');
+        return null;
+      }
+    } catch (e) {
+      print('Error sending data: $e');
+      return null;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -213,7 +259,7 @@ class DetailAnalysisPage extends StatelessWidget {
                   _buildSolutions(),
                   const SizedBox(height: 24),
                   ElevatedButton(
-                    onPressed: () => {},
+                    onPressed: () => {sendDataWithImage(diseaseid, imageUrl)},
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.green,
                       minimumSize: const Size(double.infinity, 50),
