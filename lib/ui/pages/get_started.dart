@@ -138,16 +138,16 @@ class GetStarted extends StatelessWidget {
                   ),
                 ),
                 const Spacer(),
-                SocialLoginButton(
-                  text: 'Continue with Google',
-                  iconPath: 'assets/icons/google.png',
-                  onPressed: () {},
-                ),
-                SocialLoginButton(
-                  text: 'Continue with Facebook',
-                  iconPath: 'assets/icons/facebook.png',
-                  onPressed: () {},
-                ),
+                // SocialLoginButton(
+                //   text: 'Continue with Google',
+                //   iconPath: 'assets/icons/google.png',
+                //   onPressed: () {},
+                // ),
+                // SocialLoginButton(
+                //   text: 'Continue with Facebook',
+                //   iconPath: 'assets/icons/facebook.png',
+                //   onPressed: () {},
+                // ),
                 const Spacer(),
                 CustomButton(
                   backgroundColor: const Color(0xff00A86B),

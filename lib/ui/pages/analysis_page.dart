@@ -1,10 +1,16 @@
 import 'package:flutter/material.dart';
 import 'dart:io';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:toma_scan/blocs/scan/scan_bloc.dart';
+import 'package:toma_scan/blocs/scan/scan_event.dart';
+import 'package:toma_scan/blocs/scan/scan_state.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class DetailAnalysisPage extends StatelessWidget {
   final String title;
   final List<String> tags;
   final String imageUrl;
+  final int diseaseid;
   final List<dynamic> schedule;
   final List<dynamic> solutions;
   final List<dynamic> pests;
@@ -13,12 +19,13 @@ class DetailAnalysisPage extends StatelessWidget {
     super.key,
     required this.title,
     required this.tags,
+    required this.diseaseid,
     required this.imageUrl,
     required this.schedule,
     required this.solutions,
     required this.pests,
   });
-
+  final storage = const FlutterSecureStorage();
   // Show the save confirmation dialog
   Future<bool?> _showSaveConfirmation(BuildContext context) {
     return showDialog<bool>(
@@ -100,13 +107,54 @@ class DetailAnalysisPage extends StatelessWidget {
     );
   }
 
-  void _handleSave(BuildContext context) async {
-    final result = await _showSaveConfirmation(context);
+  // void _handleSave(BuildContext context) async {
+  //   String? id_user = await storage.read(key: 'id');
+  //   final userId = id_user; // Ganti sesuai ID user
+  //   final diseaseId = diseaseid; // Ganti sesuai ID disease
+  //   final label = title; // Gunakan judul penyakit sebagai label
+  //   final imagePath = imageUrl; // Path gambar yang di-upload
 
-    if (result == true) {
-      Navigator.pushNamed(context, '/home');
-    }
-  }
+  //   final bloc = BlocProvider.of<ScanBloc>(context);
+
+  //   final result = await _showSaveConfirmation(context);
+
+  //   if (result == true) {
+  //     bloc.add(SaveHistoryEvent(
+  //       userId: int.parse(userId ?? ''),
+  //       diseaseId: diseaseId,
+  //       label: label,
+  //       imagePath: imagePath,
+  //     ));
+
+  //     bloc.stream.listen((state) {
+  //       if (state is HistorySaving) {
+  //         // Tampilkan loading
+  //         showDialog(
+  //           context: context,
+  //           barrierDismissible: false,
+  //           builder: (_) => const Center(child: CircularProgressIndicator()),
+  //         );
+  //       } else if (state is HistorySaved) {
+  //         Navigator.of(context).pop(); // Tutup loading
+  //         Navigator.pushNamed(context, '/home');
+  //         ScaffoldMessenger.of(context).showSnackBar(
+  //           const SnackBar(
+  //             content: Text('History saved successfully!'),
+  //             backgroundColor: Colors.green,
+  //           ),
+  //         );
+  //       } else if (state is HistorySaveError) {
+  //         Navigator.of(context).pop(); // Tutup loading
+  //         ScaffoldMessenger.of(context).showSnackBar(
+  //           SnackBar(
+  //             content: Text(state.message),
+  //             backgroundColor: Colors.red,
+  //           ),
+  //         );
+  //       }
+  //     });
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -165,7 +213,7 @@ class DetailAnalysisPage extends StatelessWidget {
                   _buildSolutions(),
                   const SizedBox(height: 24),
                   ElevatedButton(
-                    onPressed: () => _handleSave(context),
+                    onPressed: () => {},
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.green,
                       minimumSize: const Size(double.infinity, 50),

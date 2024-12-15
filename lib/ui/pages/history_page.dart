@@ -14,7 +14,6 @@ class HistoryPage extends StatelessWidget {
           imageUrl:
               'https://i5.walmartimages.com/asr/9f8b7456-81d0-4dc2-b422-97cf63077762.0ddba51bbf14a5029ce82f5fce878dee.jpeg',
           title: 'Abiotic',
-          tags: ['Nutrisi', 'Penyiraman', 'Penyakit'],
           description:
               'Abiotic diseases are caused by non-living factors, such as adverse environmental condit..',
         ),
@@ -24,7 +23,6 @@ class HistoryPage extends StatelessWidget {
           imageUrl:
               'https://i5.walmartimages.com/asr/9f8b7456-81d0-4dc2-b422-97cf63077762.0ddba51bbf14a5029ce82f5fce878dee.jpeg',
           title: 'Healthy Plant',
-          tags: ['Penyiraman'],
           description: 'No health problems or diseases were detected',
         ),
         _buildHistoryItem(
@@ -33,7 +31,6 @@ class HistoryPage extends StatelessWidget {
           imageUrl:
               'https://i5.walmartimages.com/asr/9f8b7456-81d0-4dc2-b422-97cf63077762.0ddba51bbf14a5029ce82f5fce878dee.jpeg',
           title: 'Ascomycetes',
-          tags: ['Nutrisi', 'Penyakit'],
           description:
               'Ascomycetes are a diverse group of fungi that includes plant pathogens causing vari..',
         ),
@@ -46,7 +43,6 @@ class HistoryPage extends StatelessWidget {
     required String date,
     required String imageUrl,
     required String title,
-    required List<String> tags,
     required String description,
   }) {
     return GestureDetector(
@@ -56,7 +52,6 @@ class HistoryPage extends StatelessWidget {
           MaterialPageRoute(
             builder: (context) => DetailHistoryPage(
               title: title,
-              tags: tags,
               imageUrl: imageUrl,
             ),
           ),
@@ -93,8 +88,8 @@ class HistoryPage extends StatelessWidget {
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                        const SizedBox(width: 8),
-                        ...tags.map((tag) => _buildTag(tag)),
+                        // const SizedBox(width: 8),
+                        // ...tags.map((tag) => _buildTag(tag)),
                       ],
                     ),
                     const SizedBox(height: 4),
@@ -154,13 +149,11 @@ class HistoryPage extends StatelessWidget {
 // Detail History Page class
 class DetailHistoryPage extends StatelessWidget {
   final String title;
-  final List<String> tags;
   final String imageUrl;
 
   const DetailHistoryPage({
     super.key,
     required this.title,
-    required this.tags,
     required this.imageUrl,
   });
 
@@ -217,8 +210,8 @@ class DetailHistoryPage extends StatelessWidget {
                   ),
                   const SizedBox(height: 16),
                   Row(
-                    children: tags.map((tag) => _buildDetailTag(tag)).toList(),
-                  ),
+                      // children: tags.map((tag) => _buildDetailTag(tag)).toList(),
+                      ),
                   const SizedBox(height: 24),
                   _buildScheduleSection(),
                   const SizedBox(height: 24),

@@ -274,568 +274,317 @@ class EducationCard extends StatelessWidget {
     );
   }
 }
+// import 'package:flutter/material.dart';
+// import 'package:flutter_bloc/flutter_bloc.dart';
+// import 'package:toma_scan/blocs/informative/informative_bloc.dart';
+// import 'package:toma_scan/models/informatifs_model.dart';
+// import 'package:toma_scan/services/informatif_service.dart';
+// import 'package:toma_scan/ui/pages/popular_article_page.dart';
+// import 'package:toma_scan/ui/pages/view_article.dart';
+// import 'history_page.dart';
+// import 'profile_page.dart';
+// import 'informative_page.dart';
+// import 'package:flutter_svg/flutter_svg.dart';
 
+// class HomePage extends StatefulWidget {
+//   const HomePage({super.key});
+
+//   @override
+//   HomePageState createState() => HomePageState();
+// }
+
+// class HomePageState extends State<HomePage> {
+//   int _selectedIndex = 0;
+
+//   // Daftar halaman yang sudah dibuat
+//   final List<Widget> _pages = [
+//     const HomeContent(), // Home content
+//     const InformativePage(), // Halaman Informative
+//     const HistoryPage(), // Halaman History
+//     const HistoryPage(), // Halaman History
+//     const ProfilePage(), // Halaman Profile
+//   ];
+
+//   void _onItemTapped(int index) {
+//     if (index == 2) {
+//       // Navigasi ke halaman kamera dengan layar penuh
+//       Navigator.pushNamed(context, '/camera');
+//     } else {
+//       // Mengubah indeks yang dipilih jika bukan tombol kamera
+//       setState(() {
+//         _selectedIndex = index;
+//       });
+//     }
+//   }
+
+//   @override
 //   Widget build(BuildContext context) {
-//     return Scaffold(
-//       appBar: AppBar(
-//         title: const Text('Informatifs'),
-//       ),
-//       body: BlocProvider(
-//         create: (context) =>
-//             InformativeBloc(InformatifsService())..add(FetchInformatives()),
-//         child: BlocBuilder<InformativeBloc, InformativeState>(
-//           builder: (context, state) {
-//             if (state is InformativeError &&
-//                 state.message.contains('Failed to load informatifs data')) {
-//               debugPrint('1');
-//               debugPrint(state.message);
-//               Navigator.pushNamedAndRemoveUntil(
-//                   context, '/sign-in', (route) => false);
-//             }
-//             if (state is InformativeLoading) {
-//               debugPrint('2');
-//               return const Center(child: CircularProgressIndicator());
-//             } else if (state is InformativeSuccess) {
-//               debugPrint('3');
-//               final informatifs = state.informatives;
-
-//               return ListView(
-//                 padding: const EdgeInsets.all(16),
-//                 children: [
-//                   SectionHeader(
-//                     title: 'Artikel',
-//                     onViewAll: () {
-//                       Navigator.push(
-//                         context,
-//                         MaterialPageRoute(
-//                             builder: (context) => const PestsDeseasePage()),
-//                       );
-//                     },
-//                   ),
-//                   const SizedBox(height: 8),
-//                   GridView.builder(
-//                     physics: const NeverScrollableScrollPhysics(),
-//                     shrinkWrap: true,
-//                     gridDelegate:
-//                         const SliverGridDelegateWithFixedCrossAxisCount(
-//                       crossAxisCount: 2,
-//                       mainAxisSpacing: 8,
-//                       crossAxisSpacing: 8,
-//                       childAspectRatio: 2,
-//                     ),
-//                     itemCount: informatifs.length,
-//                     itemBuilder: (context, index) => ArticleCard(
-//                       imageUrl: informatifs[index].image,
-//                       title: informatifs[index].title,
-//                       onTap: () => Navigator.push(
-//                         context,
-//                         MaterialPageRoute(
-//                           builder: (context) => ViewArticle(
-//                             title: informatifs[index].title,
-//                             tag: informatifs[index].type,
-//                             imageUrl: informatifs[index].image,
-//                             content: informatifs[index].content,
+//     return BlocProvider(
+//       create: (_) =>
+//           InformativeBloc(InformatifsService())..add(FetchInformatives()),
+//       child: Scaffold(
+//         backgroundColor: Colors.grey[50],
+//         appBar: AppBar(
+//           backgroundColor: Colors.white,
+//           elevation: 0,
+//           title: const Row(
+//             children: [
+//               Icon(Icons.eco, color: Colors.green),
+//               SizedBox(width: 8),
+//               Text(
+//                 'TomaScan',
+//                 style: TextStyle(color: Colors.black),
+//               ),
+//             ],
+//           ),
+//           actions: [
+//             IconButton(
+//               icon: const Icon(Icons.notifications, color: Colors.grey),
+//               onPressed: () {
+//                 Navigator.pushNamed(context, '/notification');
+//               },
+//             ),
+//           ],
+//         ),
+//         body: _pages[_selectedIndex],
+//         floatingActionButton: Container(
+//           padding: const EdgeInsets.only(bottom: 0.1),
+//           decoration: BoxDecoration(
+//             shape: BoxShape.circle,
+//             border: Border.all(
+//               color: const Color(0xFF00E526), // Stroke color
+//               width: 5.0, // Stroke width
+//             ),
+//           ),
+//           child: FloatingActionButton(
+//             onPressed: () => _onItemTapped(2),
+//             shape: const CircleBorder(),
+//             backgroundColor: const Color(0xff00A86B),
+//             elevation: 2, // Adjust elevation as needed
+//             child: SvgPicture.asset(
+//               'assets/Scan.svg',
+//               semanticsLabel: 'My SVG Image',
+//             ),
+//           ),
+//         ),
+//         floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+//         bottomNavigationBar: BottomAppBar(
+//           shape: const CircularNotchedRectangle(),
+//           notchMargin: 8,
+//           height: 70,
+//           child: SizedBox(
+//             child: Row(
+//               mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//               children: [
+//                 Row(
+//                   crossAxisAlignment: CrossAxisAlignment.center,
+//                   children: [
+//                     MaterialButton(
+//                       minWidth: 40,
+//                       onPressed: () => _onItemTapped(0),
+//                       child: Column(
+//                         mainAxisAlignment: MainAxisAlignment.center,
+//                         children: [
+//                           Icon(
+//                             Icons.home,
+//                             color: _selectedIndex == 0
+//                                 ? Colors.green
+//                                 : Colors.grey,
+//                             size: 20,
 //                           ),
-//                         ),
+//                           Text(
+//                             'Home',
+//                             style: TextStyle(
+//                               color: _selectedIndex == 0
+//                                   ? Colors.green
+//                                   : Colors.grey,
+//                             ),
+//                           ),
+//                         ],
 //                       ),
 //                     ),
-//                   ),
-//                 ],
-//               );
-//             } else if (state is InformativeError) {
-//               return Center(child: Text('Error: ${state.message}'));
-//             } else {
-//               return const Center(child: Text('No data found'));
-//             }
-//             // pest and desease start here
-//           },
-//                   create: (context) =>
-//             InformativeBloc(InformatifsService())..add(FetchInformatives()),
-//         child: BlocBuilder<InformativeBloc, InformativeState>(
-//           builder: (context, state) {
-//             if (state is InformativeError &&
-//                 state.message.contains('Failed to load informatifs data')) {
-//               debugPrint('1');
-//               debugPrint(state.message);
-//               Navigator.pushNamedAndRemoveUntil(
-//                   context, '/sign-in', (route) => false);
-//             }
-//             if (state is InformativeLoading) {
-//               debugPrint('2');
-//               return const Center(child: CircularProgressIndicator());
-//             } else if (state is InformativeSuccess) {
-//               debugPrint('3');
-//               final informatifs = state.informatives;
-
-//               return ListView(
-//                 padding: const EdgeInsets.all(16),
-//                 children: [
-//                   SectionHeader(
-//                     title: 'Artikel',
-//                     onViewAll: () {
-//                       Navigator.push(
-//                         context,
-//                         MaterialPageRoute(
-//                             builder: (context) => const PestsDeseasePage()),
-//                       );
-//                     },
-//                   ),
-//                   const SizedBox(height: 8),
-//                   GridView.builder(
-//                     physics: const NeverScrollableScrollPhysics(),
-//                     shrinkWrap: true,
-//                     gridDelegate:
-//                         const SliverGridDelegateWithFixedCrossAxisCount(
-//                       crossAxisCount: 2,
-//                       mainAxisSpacing: 8,
-//                       crossAxisSpacing: 8,
-//                       childAspectRatio: 2,
-//                     ),
-//                     itemCount: informatifs.length,
-//                     itemBuilder: (context, index) => ArticleCard(
-//                       imageUrl: informatifs[index].image,
-//                       title: informatifs[index].title,
-//                       onTap: () => Navigator.push(
-//                         context,
-//                         MaterialPageRoute(
-//                           builder: (context) => ViewArticle(
-//                             title: informatifs[index].title,
-//                             tag: informatifs[index].type,
-//                             imageUrl: informatifs[index].image,
-//                             content: informatifs[index].content,
+//                     MaterialButton(
+//                       minWidth: 40,
+//                       onPressed: () => _onItemTapped(1),
+//                       child: Column(
+//                         mainAxisAlignment: MainAxisAlignment.center,
+//                         children: [
+//                           Icon(
+//                             Icons.info,
+//                             color: _selectedIndex == 1
+//                                 ? Colors.green
+//                                 : Colors.grey,
+//                             size: 20,
 //                           ),
-//                         ),
+//                           Text(
+//                             'Informatif',
+//                             style: TextStyle(
+//                               color: _selectedIndex == 1
+//                                   ? Colors.green
+//                                   : Colors.grey,
+//                             ),
+//                           ),
+//                         ],
 //                       ),
 //                     ),
-//                   ),
-//                 ],
-//               );
-//             } else if (state is InformativeError) {
-//               return Center(child: Text('Error: ${state.message}'));
-//             } else {
-//               return const Center(child: Text('No data found'));
-//             }
+//                   ],
+//                 ),
+//                 Row(
+//                   crossAxisAlignment: CrossAxisAlignment.center,
+//                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//                   children: [
+//                     MaterialButton(
+//                       minWidth: 40,
+//                       onPressed: () => _onItemTapped(3),
+//                       child: Column(
+//                         mainAxisAlignment: MainAxisAlignment.center,
+//                         children: [
+//                           Icon(
+//                             Icons.history,
+//                             color: _selectedIndex == 3
+//                                 ? Colors.green
+//                                 : Colors.grey,
+//                             size: 20,
+//                           ),
+//                           Text(
+//                             'History',
+//                             style: TextStyle(
+//                               color: _selectedIndex == 3
+//                                   ? Colors.green
+//                                   : Colors.grey,
+//                             ),
+//                           ),
+//                         ],
+//                       ),
+//                     ),
+//                     MaterialButton(
+//                       minWidth: 40,
+//                       onPressed: () => _onItemTapped(4),
+//                       child: Column(
+//                         mainAxisAlignment: MainAxisAlignment.center,
+//                         children: [
+//                           Icon(
+//                             Icons.person,
+//                             color: _selectedIndex == 4
+//                                 ? Colors.green
+//                                 : Colors.grey,
+//                             size: 20,
+//                           ),
+//                           Text(
+//                             'Profile',
+//                             style: TextStyle(
+//                               color: _selectedIndex == 4
+//                                   ? Colors.green
+//                                   : Colors.grey,
+//                             ),
+//                           ),
+//                         ],
+//                       ),
+//                     ),
+//                   ],
+//                 ),
+//               ],
+//             ),
+//           ),
 //         ),
 //       ),
 //     );
 //   }
 // }
 
-
-// import 'package:flutter/material.dart';
-// import 'package:toma_scan/ui/pages/care_education_page.dart';
-// import 'package:toma_scan/ui/pages/pests_desease_page.dart';
-// import 'package:toma_scan/ui/pages/popular_article_page.dart';
-// import 'package:toma_scan/ui/pages/view_article.dart'; // Tambahkan import
-// import 'package:toma_scan/ui/pages/view_care.dart'; // Tambahkan import
-// import 'package:toma_scan/ui/pages/view_pests.dart'; // Tambahkan import
-
-// class InformativePage extends StatelessWidget {
-//   const InformativePage({super.key});
+// // Content for the Home tab as a placeholder
+// class HomeContent extends StatelessWidget {
+//   const HomeContent({super.key});
 
 //   @override
 //   Widget build(BuildContext context) {
-//     return Scaffold(
-//       body: ListView(
-//         padding: const EdgeInsets.all(16),
+//     return SingleChildScrollView(
+//       child: Column(
 //         children: [
-//           SectionHeader(
-//               title: 'Popular Article',
-//               onViewAll: () {
-//                 Navigator.push(
-//                   context,
-//                   MaterialPageRoute(
-//                       builder: (context) => const PopularArticlePage()),
-//                 );
-//               }),
-//           const SizedBox(height: 8),
-//           Row(
-//             children: [
-//               Expanded(
-//                 child: ArticleCard(
-//                   imageUrl:
-//                       'https://th.bing.com/th/id/OIP.HiwZb7pY_PaooR59RRIHBgHaGK?w=239&h=198&c=7&r=0&o=5&dpr=1.9&pid=1.7',
-//                   title: "Croatia doubles tomato production with Podravka's...",
-//                   onTap: () => Navigator.push(
-//                     context,
-//                     MaterialPageRoute(
-//                         builder: (context) => const ViewArticle()),
-//                   ),
-//                 ),
-//               ),
-//               const SizedBox(width: 8),
-//               Expanded(
-//                 child: ArticleCard(
-//                   imageUrl:
-//                       'https://th.bing.com/th/id/OIP.HiwZb7pY_PaooR59RRIHBgHaGK?w=239&h=198&c=7&r=0&o=5&dpr=1.9&pid=1.7',
-//                   title: "Croatia doubles tomato production with Podravka's...",
-//                   onTap: () => Navigator.push(
-//                     context,
-//                     MaterialPageRoute(
-//                         builder: (context) => const ViewArticle()),
-//                   ),
-//                 ),
-//               ),
-//             ],
-//           ),
-//           const SizedBox(height: 16),
-//           SectionHeader(
-//               title: 'Care Education',
-//               onViewAll: () {
-//                 Navigator.push(
-//                   context,
-//                   MaterialPageRoute(
-//                       builder: (context) => const CareEducationPage()),
-//                 );
-//               }),
-//           const SizedBox(height: 8),
-//           Wrap(
-//             spacing: 8,
-//             runSpacing: 8,
-//             children: [
-//               EducationCard(
-//                 icon: Icons.local_florist,
-//                 title: 'Planting',
-//                 onTap: () => Navigator.push(
-//                   context,
-//                   MaterialPageRoute(builder: (context) => const ViewCare()),
-//                 ),
-//               ),
-//               EducationCard(
-//                 icon: Icons.nature,
-//                 title: 'Planting Training',
-//                 onTap: () => Navigator.push(
-//                   context,
-//                   MaterialPageRoute(builder: (context) => const ViewCare()),
-//                 ),
-//               ),
-//               EducationCard(
-//                 icon: Icons.location_on,
-//                 title: 'Site Selection',
-//                 onTap: () => Navigator.push(
-//                   context,
-//                   MaterialPageRoute(builder: (context) => const ViewCare()),
-//                 ),
-//               ),
-//               EducationCard(
-//                 icon: Icons.agriculture,
-//                 title: 'Field Preparation',
-//                 onTap: () => Navigator.push(
-//                   context,
-//                   MaterialPageRoute(builder: (context) => const ViewCare()),
-//                 ),
-//               ),
-//               EducationCard(
-//                 icon: Icons.grass,
-//                 title: 'Weeding',
-//                 onTap: () => Navigator.push(
-//                   context,
-//                   MaterialPageRoute(builder: (context) => const ViewCare()),
-//                 ),
-//               ),
-//               EducationCard(
-//                 icon: Icons.water,
-//                 title: 'Irrigation',
-//                 onTap: () => Navigator.push(
-//                   context,
-//                   MaterialPageRoute(builder: (context) => const ViewCare()),
-//                 ),
-//               ),
-//             ],
-//           ),
-//           const SizedBox(height: 16),
-//           SectionHeader(
-//               title: 'Pests & Diseases',
-//               onViewAll: () {
-//                 Navigator.push(
-//                   context,
-//                   MaterialPageRoute(
-//                       builder: (context) => const PestsDeseasePage()),
-//                 );
-//               }),
-//           const SizedBox(height: 8),
-//           GridView.builder(
-//             physics: const NeverScrollableScrollPhysics(),
-//             shrinkWrap: true,
-//             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-//               crossAxisCount: 2,
-//               mainAxisSpacing: 8,
-//               crossAxisSpacing: 8,
-//               childAspectRatio: 2,
+//           Container(
+//             margin: const EdgeInsets.all(16),
+//             padding: const EdgeInsets.all(16),
+//             decoration: BoxDecoration(
+//               color: Colors.green[50],
+//               borderRadius: BorderRadius.circular(12),
 //             ),
-//             itemCount: 4,
-//             itemBuilder: (context, index) => ArticleCard(
-//               imageUrl:
-//                   'https://th.bing.com/th/id/OIP.HiwZb7pY_PaooR59RRIHBgHaGK?w=239&h=198&c=7&r=0&o=5&dpr=1.9&pid=1.7',
-//               title: "Croatia doubles tomato production with Podravka's...",
-//               onTap: () => Navigator.push(
-//                 context,
-//                 MaterialPageRoute(builder: (context) => const ViewPests()),
-//               ),
+//             child: Row(
+//               mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//               children: [
+//                 _buildStep(Icons.camera_alt, 'Take a picture'),
+//                 const Icon(Icons.arrow_forward, color: Colors.grey),
+//                 _buildStep(Icons.mobile_friendly, 'See Diagnosis'),
+//                 const Icon(Icons.arrow_forward, color: Colors.grey),
+//                 _buildStep(Icons.local_pharmacy, 'Get Medicine'),
+//               ],
 //             ),
+//           ),
+//           _buildSectionHeader('Popular Article', () {
+//             Navigator.push(
+//               context,
+//               MaterialPageRoute(
+//                 builder: (context) => const PopularArticlePage(),
+//               ),
+//             );
+//           }),
+//           BlocBuilder<InformativeBloc, InformativeState>(
+//             builder: (context, state) {
+//               if (state is InformativeLoading) {
+//                 return const Center(child: CircularProgressIndicator());
+//               } else if (state is InformativeSuccess) {
+//                 final informatifs = state.informatives;
+//                 return ListView.builder(
+//                   shrinkWrap: true,
+//                   physics: const NeverScrollableScrollPhysics(),
+//                   itemCount: informatifs.length,
+//                   itemBuilder: (context, index) {
+//                     final article = informatifs[index];
+//                     return ListTile(
+//                       title: Text(article.title ?? 'No Title'),
+//                       subtitle: Text(article.type ?? 'No Summary'),
+//                       onTap: () => Navigator.push(
+//                         context,
+//                         MaterialPageRoute(
+//                           builder: (context) => ViewArticle(
+//                             title: informatifs[index].title,
+//                             tag: informatifs[index].type,
+//                             imageUrl: informatifs[index].image,
+//                             content: informatifs[index].content,
+//                           ),
+//                         ),
+//                       ),
+//                     );
+//                   },
+//                 );
+//               } else if (state is InformativeError) {
+//                 return Center(child: Text(state.message));
+//               }
+//               return const SizedBox();
+//             },
 //           ),
 //         ],
 //       ),
 //     );
 //   }
-// }
 
-// import 'package:flutter/material.dart';
-// import 'package:flutter_bloc/flutter_bloc.dart';
-// import 'package:toma_scan/blocs/informatif/bloc/informatif_bloc.dart';
-// import 'package:toma_scan/models/informatif_model.dart';
-// import 'package:toma_scan/services/informatif_service.dart';
-// import 'package:toma_scan/ui/pages/care_education_page.dart';
-// import 'package:toma_scan/ui/pages/pests_desease_page.dart';
-// import 'package:toma_scan/ui/pages/popular_article_page.dart';
-// import 'package:toma_scan/ui/pages/view_article.dart';
-// import 'package:toma_scan/ui/pages/view_care.dart';
-// import 'package:toma_scan/ui/pages/view_pests.dart';
-
-// class InformativePage extends StatelessWidget {
-//   const InformativePage({super.key});
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return BlocProvider(
-//       create: (_) => InformatifsBloc(InformatifsService()),
-//       child: BlocBuilder<InformatifsBloc, InformatifsState>(
-//         builder: (context, state) {
-//           if (state is InformatifsLoadingState) {
-//             return const Center(child: CircularProgressIndicator());
-//           } else if (state is InformatifsSuccessState) {
-//             return Scaffold(
-//               body: ListView(
-//                 padding: const EdgeInsets.all(16),
-//                 children: [
-//                   SectionHeader(
-//                     title: 'Popular Articleeee',
-//                     onViewAll: () {
-//                       Navigator.push(
-//                         context,
-//                         MaterialPageRoute(
-//                             builder: (context) => const PopularArticlePage()),
-//                       );
-//                     },
-//                   ),
-//                   const SizedBox(height: 8),
-//                   Row(
-//                     children: state.informatifsData.map((informatif) {
-//                       if (informatif.type == 'article') {
-//                         return Expanded(
-//                           child: ArticleCard(
-//                             imageUrl: informatif.imageUrl,
-//                             title: informatif.title,
-//                             onTap: () => Navigator.push(
-//                               context,
-//                               MaterialPageRoute(
-//                                   builder: (context) => const ViewArticle()),
-//                             ),
-//                           ),
-//                         );
-//                       } else {
-//                         return const SizedBox.shrink();
-//                       }
-//                     }).toList(),
-//                   ),
-//                   const SizedBox(height: 16),
-//                   SectionHeader(
-//                     title: 'Care Education',
-//                     onViewAll: () {
-//                       Navigator.push(
-//                         context,
-//                         MaterialPageRoute(
-//                             builder: (context) => const CareEducationPage()),
-//                       );
-//                     },
-//                   ),
-//                   const SizedBox(height: 8),
-//                   Wrap(
-//                     spacing: 8,
-//                     runSpacing: 8,
-//                     children: state.informatifsData.map((informatif) {
-//                       if (informatif.type == 'education') {
-//                         return EducationCard(
-//                           icon: Icons.local_florist,
-//                           title: informatif.title,
-//                           onTap: () => Navigator.push(
-//                             context,
-//                             MaterialPageRoute(
-//                                 builder: (context) => const ViewCare()),
-//                           ),
-//                         );
-//                       } else {
-//                         return const SizedBox.shrink();
-//                       }
-//                     }).toList(),
-//                   ),
-//                   const SizedBox(height: 16),
-//                   SectionHeader(
-//                     title: 'Pests & Diseases',
-//                     onViewAll: () {
-//                       Navigator.push(
-//                         context,
-//                         MaterialPageRoute(
-//                             builder: (context) => const PestsDeseasePage()),
-//                       );
-//                     },
-//                   ),
-//                   const SizedBox(height: 8),
-//                   GridView.builder(
-//                     physics: const NeverScrollableScrollPhysics(),
-//                     shrinkWrap: true,
-//                     gridDelegate:
-//                         const SliverGridDelegateWithFixedCrossAxisCount(
-//                       crossAxisCount: 2,
-//                       mainAxisSpacing: 8,
-//                       crossAxisSpacing: 8,
-//                       childAspectRatio: 2,
-//                     ),
-//                     itemCount: state.informatifsData.length,
-//                     itemBuilder: (context, index) {
-//                       final informatif = state.informatifsData[index];
-//                       if (informatif.type == 'pests') {
-//                         return ArticleCard(
-//                           imageUrl: informatif.imageUrl,
-//                           title: informatif.title,
-//                           onTap: () => Navigator.push(
-//                             context,
-//                             MaterialPageRoute(
-//                                 builder: (context) => const ViewPests()),
-//                           ),
-//                         );
-//                       } else {
-//                         return const SizedBox.shrink();
-//                       }
-//                     },
-//                   ),
-//                 ],
-//               ),
-//             );
-//           } else if (state is InformatifsErrorState) {
-//             return Center(child: Text('Error: ${state.error}'));
-//           } else {
-//             return const SizedBox.shrink();
-//           }
-//         },
-//       ),
-//     );
-//   }
-// }
-
-// class SectionHeader extends StatelessWidget {
-//   final String title;
-//   final VoidCallback onViewAll;
-
-//   const SectionHeader({
-//     super.key,
-//     required this.title,
-//     required this.onViewAll,
-//   });
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Row(
-//       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//   Widget _buildStep(IconData icon, String text) {
+//     return Column(
 //       children: [
-//         Text(
-//           title,
-//           style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-//         ),
-//         GestureDetector(
-//           onTap: onViewAll,
-//           child: const Text(
-//             'View all',
-//             style: TextStyle(fontSize: 14, color: Colors.green),
-//           ),
-//         ),
+//         Icon(icon, color: Colors.green, size: 30),
+//         const SizedBox(height: 4),
+//         Text(text, style: const TextStyle(fontSize: 12)),
 //       ],
 //     );
 //   }
-// }
 
-// class ArticleCard extends StatelessWidget {
-//   final String imageUrl;
-//   final String title;
-//   final VoidCallback onTap;
-
-//   const ArticleCard({
-//     super.key,
-//     required this.imageUrl,
-//     required this.title,
-//     required this.onTap,
-//   });
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return GestureDetector(
-//       onTap: onTap,
-//       child: Container(
-//         height: 100,
-//         decoration: BoxDecoration(
-//           borderRadius: BorderRadius.circular(8),
-//           image: DecorationImage(
-//             image: NetworkImage(imageUrl),
-//             fit: BoxFit.cover,
-//           ),
-//         ),
-//         child: Align(
-//           alignment: Alignment.bottomCenter,
-//           child: Container(
-//             width: double.infinity,
-//             padding: const EdgeInsets.all(4),
-//             decoration: BoxDecoration(
-//               color: Colors.white.withOpacity(0.75),
-//               borderRadius: const BorderRadius.only(
-//                 bottomLeft: Radius.circular(8),
-//                 bottomRight: Radius.circular(8),
-//               ),
-//             ),
-//             child: Text(
-//               title,
-//               style: const TextStyle(fontSize: 12),
-//               overflow: TextOverflow.ellipsis,
-//             ),
-//           ),
-//         ),
-//       ),
-//     );
-//   }
-// }
-
-// class EducationCard extends StatelessWidget {
-//   final IconData icon;
-//   final String title;
-//   final VoidCallback onTap;
-
-//   const EducationCard({
-//     super.key,
-//     required this.icon,
-//     required this.title,
-//     required this.onTap,
-//   });
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return GestureDetector(
-//       onTap: onTap,
-//       child: Container(
-//         padding: const EdgeInsets.all(8),
-//         decoration: BoxDecoration(
-//           color: Colors.green[100],
-//           borderRadius: BorderRadius.circular(8),
-//         ),
-//         child: Row(
-//           mainAxisSize: MainAxisSize.min,
-//           children: [
-//             Icon(icon, color: Colors.green),
-//             const SizedBox(width: 4),
-//             Text(
-//               title,
-//               style: const TextStyle(color: Colors.green),
-//             ),
-//           ],
-//         ),
+//   Widget _buildSectionHeader(String title, VoidCallback onTap) {
+//     return Padding(
+//       padding: const EdgeInsets.symmetric(vertical: 16),
+//       child: ListTile(
+//         title: Text(title,
+//             style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+//         trailing: const Icon(Icons.arrow_forward),
+//         onTap: onTap,
 //       ),
 //     );
 //   }

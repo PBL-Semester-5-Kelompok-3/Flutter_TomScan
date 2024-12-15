@@ -111,6 +111,7 @@ class _CameraAppState extends State<CameraApp>
                   schedule: additionalData['schedule'],
                   solutions: additionalData['solutions'],
                   pests: additionalData['pest'],
+                  diseaseid: additionalData['disease_id'],
                 ),
               ),
             );
@@ -238,6 +239,7 @@ class _CameraAppState extends State<CameraApp>
                 schedule: additionalData['schedule'],
                 solutions: additionalData['solutions'],
                 pests: additionalData['pest'],
+                diseaseid: additionalData['disease_id'],
               ),
             ),
           );

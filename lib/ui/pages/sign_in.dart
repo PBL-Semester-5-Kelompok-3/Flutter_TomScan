@@ -349,17 +349,17 @@ class _SignInScreenState extends State<SignInScreen> {
                         ],
                       ),
                       const SizedBox(height: 14),
-                      SocialLoginButton(
-                        text: 'Continue with Google',
-                        iconPath: 'assets/icons/google.png',
-                        onPressed: () {},
-                      ),
-                      const SizedBox(height: 5),
-                      SocialLoginButton(
-                        text: 'Continue with Facebook',
-                        iconPath: 'assets/icons/facebook.png',
-                        onPressed: () {},
-                      ),
+                      // SocialLoginButton(
+                      //   text: 'Continue with Google',
+                      //   iconPath: 'assets/icons/google.png',
+                      //   onPressed: () {},
+                      // ),
+                      // const SizedBox(height: 5),
+                      // SocialLoginButton(
+                      //   text: 'Continue with Facebook',
+                      //   iconPath: 'assets/icons/facebook.png',
+                      //   onPressed: () {},
+                      // ),
                       const SizedBox(height: 24),
                       ElevatedButton(
                         onPressed: () {

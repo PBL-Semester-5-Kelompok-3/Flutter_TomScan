@@ -13,7 +13,8 @@ class HeaderWidget extends StatelessWidget implements PreferredSizeWidget {
           Image.asset(
             'assets/icon2.png', // Ganti dengan path logo TomaScan yang benar
             height: 24,
-            width: 24,  // Tambahkan width jika perlu agar logo tampil proporsional
+            width:
+                24, // Tambahkan width jika perlu agar logo tampil proporsional
             fit: BoxFit.contain, // Menjaga rasio logo agar tidak terdistorsi
           ),
           const SizedBox(width: 8),
@@ -27,15 +28,15 @@ class HeaderWidget extends StatelessWidget implements PreferredSizeWidget {
           ),
         ],
       ),
-      actions: [
-        // Ikon Notifikasi
-        IconButton(
-          icon: const Icon(Icons.notifications_none, color: Colors.black),
-          onPressed: () {
-            // Tambahkan aksi untuk notifikasi
-          },
-        ),
-      ],
+      // actions: [
+      //   // Ikon Notifikasi
+      //   IconButton(
+      //     icon: const Icon(Icons.notifications_none, color: Colors.black),
+      //     onPressed: () {
+      //       // Tambahkan aksi untuk notifikasi
+      //     },
+      //   ),
+      // ],
     );
   }
 
