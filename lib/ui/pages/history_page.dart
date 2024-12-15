@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:toma_scan/blocs/history/history_bloc.dart';
+import 'package:toma_scan/blocs/history/history_event.dart';
 import 'package:toma_scan/blocs/history/history_state.dart';
 import 'package:toma_scan/models/history_model.dart';
+import 'package:toma_scan/services/history_service.dart';
 
 class HistoryPage extends StatelessWidget {
   const HistoryPage({super.key});
@@ -16,10 +18,10 @@ class HistoryPage extends StatelessWidget {
         final history = histories[index];
         return _buildHistoryItem(
           context,
-          date: history.,
+          date: history.createdAt.toString(),
           imageUrl: history.imagePath,
-          title: history.title,
-          description: history.description,
+          title: history.disease.toString(),
+          description: history.schedule[0].description,
         );
       },
     );
@@ -27,18 +29,34 @@ class HistoryPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<HistoryBloc, HistoryState>(
-      builder: (context, state) {
-        if (state is HistoryLoadingState) {
-          return const Center(child: CircularProgressIndicator());
-        } else if (state is HistoryLoadedState) {
-          return _buildHistoryList(context, state.histories);
-        } else if (state is HistoryErrorState) {
-          return Center(child: Text('Error: ${state.message}'));
-        } else {
-          return const Center(child: Text('No history found'));
-        }
-      },
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider<HistoryBloc>(
+          create: (context) => HistoryBloc(
+              historyService: HistoryService(
+                  baseUrl: 'https://tomascan.nurulmustofa.my.id'))
+            ..add(LoadHistoriesEvent()),
+        ),
+        // Tambahkan provider lainnya jika diperlukan
+      ],
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text('History'),
+        ),
+        body: BlocBuilder<HistoryBloc, HistoryState>(
+          builder: (context, state) {
+            if (state is HistoryLoadingState) {
+              return const Center(child: CircularProgressIndicator());
+            } else if (state is HistoryLoadedState) {
+              return _buildHistoryList(context, state.histories);
+            } else if (state is HistoryErrorState) {
+              return Center(child: Text('Error: ${state.message}'));
+            } else {
+              return const Center(child: Text('No history found'));
+            }
+          },
+        ),
+      ),
     );
   }
   //   return ListView(

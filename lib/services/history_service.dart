@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:toma_scan/models/history_model.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class HistoryService {
   final String baseUrl;
@@ -8,18 +9,23 @@ class HistoryService {
   HistoryService({required this.baseUrl});
 
   Future<List<History>> getAllHistories() async {
-    final response = await http.get(Uri.parse('$baseUrl/api/histories'));
-
+    const storage = FlutterSecureStorage();
+    String? id_user = await storage.read(key: 'id');
+    String? token = await storage.read(key: 'token');
+    final response = await http.get(
+      Uri.parse('$baseUrl/api/histories/user/$id_user'),
+      headers: {
+        'Authorization':
+            'Bearer $token', // Include the token in the Authorization header
+        'Content-Type': 'application/json', // Optional: Set the content type
+      },
+    );
     if (response.statusCode == 200) {
       List<dynamic> data = json.decode(response.body);
-      return data.map((historyJson) => History.fromJson(historyJson)).toList();
-    } else if (response.statusCode == 401) {
-      throw Exception('Unauthorized access. Please check your credentials.');
-    } else if (response.statusCode == 500) {
-      throw Exception('Internal server error. Please try again later.');
+      return data.map((json) => History.fromJson(json)).toList();
     } else {
       throw Exception(
-          'Failed to load histories. Error: ${response.statusCode}');
+          'Failed to load histories: ${response.statusCode} ${response.reasonPhrase}');
     }
   }
 }
