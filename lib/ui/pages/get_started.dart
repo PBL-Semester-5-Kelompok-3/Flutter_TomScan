@@ -174,7 +174,7 @@ class GetStarted extends StatelessWidget {
                       onPressed: () {
                         Navigator.pushNamed(context, '/PrivacyPolicyPage');
                       },
-                      child: Text(
+                      child: const Text(
                         'Privacy Policy',
                         style: TextStyle(
                             color: Colors.grey), // Menambahkan warna abu-abu
@@ -189,7 +189,7 @@ class GetStarted extends StatelessWidget {
                       onPressed: () {
                         Navigator.pushNamed(context, '/TermsPage');
                       },
-                      child: Text(
+                      child: const Text(
                         'Terms of Service',
                         style: TextStyle(
                             color: Colors.grey), // Menambahkan warna abu-abu

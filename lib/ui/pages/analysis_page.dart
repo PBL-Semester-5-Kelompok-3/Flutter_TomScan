@@ -391,7 +391,7 @@ class DetailAnalysisPage extends StatelessWidget {
             solution['title'],
             solution['description'],
           );
-        }).toList(),
+        }),
       ],
     );
   }

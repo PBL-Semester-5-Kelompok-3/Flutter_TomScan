@@ -20,7 +20,7 @@ class _ProfilePageState extends State<ProfilePage> {
   bool isEditingPassword = false;
   bool _isPasswordVisible = false;
   String? profileImagePath;
-  final storage = FlutterSecureStorage();
+  final storage = const FlutterSecureStorage();
 
   final ImagePicker _picker = ImagePicker();
 
