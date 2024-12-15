@@ -1,42 +1,78 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:toma_scan/blocs/history/history_bloc.dart';
+import 'package:toma_scan/blocs/history/history_state.dart';
+import 'package:toma_scan/models/history_model.dart';
 
 class HistoryPage extends StatelessWidget {
   const HistoryPage({super.key});
 
-  @override
-  Widget build(BuildContext context) {
-    return ListView(
+  // Metode untuk membangun tampilan daftar history
+  Widget _buildHistoryList(BuildContext context, List<History> histories) {
+    return ListView.builder(
       padding: const EdgeInsets.all(16),
-      children: [
-        _buildHistoryItem(
+      itemCount: histories.length,
+      itemBuilder: (context, index) {
+        final history = histories[index];
+        return _buildHistoryItem(
           context,
-          date: 'Today, Dec 23, 2024',
-          imageUrl:
-              'https://i5.walmartimages.com/asr/9f8b7456-81d0-4dc2-b422-97cf63077762.0ddba51bbf14a5029ce82f5fce878dee.jpeg',
-          title: 'Abiotic',
-          description:
-              'Abiotic diseases are caused by non-living factors, such as adverse environmental condit..',
-        ),
-        _buildHistoryItem(
-          context,
-          date: 'Yesterday, Dec 22, 2024',
-          imageUrl:
-              'https://i5.walmartimages.com/asr/9f8b7456-81d0-4dc2-b422-97cf63077762.0ddba51bbf14a5029ce82f5fce878dee.jpeg',
-          title: 'Healthy Plant',
-          description: 'No health problems or diseases were detected',
-        ),
-        _buildHistoryItem(
-          context,
-          date: 'Dec 20, 2024',
-          imageUrl:
-              'https://i5.walmartimages.com/asr/9f8b7456-81d0-4dc2-b422-97cf63077762.0ddba51bbf14a5029ce82f5fce878dee.jpeg',
-          title: 'Ascomycetes',
-          description:
-              'Ascomycetes are a diverse group of fungi that includes plant pathogens causing vari..',
-        ),
-      ],
+          date: history.date,
+          imageUrl: history.imageUrl,
+          title: history.title,
+          description: history.description,
+        );
+      },
     );
   }
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<HistoryBloc, HistoryState>(
+      builder: (context, state) {
+        if (state is HistoryLoadingState) {
+          return const Center(child: CircularProgressIndicator());
+        } else if (state is HistoryLoadedState) {
+          return _buildHistoryList(context, state.histories);
+        } else if (state is HistoryErrorState) {
+          return Center(child: Text('Error: ${state.message}'));
+        } else {
+          return const Center(child: Text('No history found'));
+        }
+      },
+    );
+  }
+  //   return ListView(
+  //     padding: const EdgeInsets.all(16),
+  //     children: [
+  //       _buildHistoryItem(
+  //         context,
+  //         date: 'Today, Dec 23, 2024',
+  //         imageUrl:
+  //             'https://i5.walmartimages.com/asr/9f8b7456-81d0-4dc2-b422-97cf63077762.0ddba51bbf14a5029ce82f5fce878dee.jpeg',
+  //         title: 'Abiotic',
+  //         description:
+  //             'Abiotic diseases are caused by non-living factors, such as adverse environmental condit..',
+  //       ),
+  //       _buildHistoryItem(
+  //         context,
+  //         date: 'Yesterday, Dec 22, 2024',
+  //         imageUrl:
+  //             'https://i5.walmartimages.com/asr/9f8b7456-81d0-4dc2-b422-97cf63077762.0ddba51bbf14a5029ce82f5fce878dee.jpeg',
+  //         title: 'Healthy Plant',
+  //         description: 'No health problems or diseases were detected',
+  //       ),
+  //       _buildHistoryItem(
+  //         context,
+  //         date: 'Dec 20, 2024',
+  //         imageUrl:
+  //             'https://i5.walmartimages.com/asr/9f8b7456-81d0-4dc2-b422-97cf63077762.0ddba51bbf14a5029ce82f5fce878dee.jpeg',
+  //         title: 'Ascomycetes',
+  //         description:
+  //             'Ascomycetes are a diverse group of fungi that includes plant pathogens causing vari..',
+  //       ),
+  //     ],
+  //   );
+  // }
 
   Widget _buildHistoryItem(
     BuildContext context, {

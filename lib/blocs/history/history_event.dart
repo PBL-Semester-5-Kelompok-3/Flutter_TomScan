@@ -1,4 +1,4 @@
-part of 'history_bloc.dart';
+import 'package:equatable/equatable.dart';
 
 abstract class HistoryEvent extends Equatable {
   const HistoryEvent();
@@ -6,3 +6,5 @@ abstract class HistoryEvent extends Equatable {
   @override
   List<Object> get props => [];
 }
+
+class LoadHistoriesEvent extends HistoryEvent {}
