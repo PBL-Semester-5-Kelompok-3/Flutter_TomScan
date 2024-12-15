@@ -6,7 +6,7 @@ class History {
   final DateTime createdAt;
   final DateTime updatedAt;
   final User user;
-  final Disease disease;
+  final String disease;
   final List<Schedule> schedule;
   final List<Solution> solutions;
   final List<Pest> pest;
@@ -34,7 +34,7 @@ class History {
       createdAt: DateTime.parse(json['history']['created_at']),
       updatedAt: DateTime.parse(json['history']['updated_at']),
       user: User.fromJson(json['history']['user']),
-      disease: Disease.fromJson(json['history']['disease']['name']),
+      disease: json['history']['disease_name'] ?? 'Unknown Disease',
       schedule: (json['schedule'] as List)
           .map((scheduleJson) => Schedule.fromJson(scheduleJson))
           .toList(),
@@ -56,7 +56,7 @@ class History {
       'created_at': createdAt.toIso8601String(),
       'updated_at': updatedAt.toIso8601String(),
       'user': user.toJson(),
-      'disease': disease.toJson(),
+      'disease': disease,
       'schedule': schedule.map((e) => e.toJson()).toList(),
       'solutions': solutions.map((e) => e.toJson()).toList(),
       'pest': pest.map((e) => e.toJson()).toList(),
