@@ -155,33 +155,38 @@ class _OtpScreenState extends State<OtpScreen> {
                   ),
             const SizedBox(height: 24),
             ElevatedButton(
-              onPressed: _otpControllers
-                      .every((controller) => controller.text.isNotEmpty)
-                  ? () {
-                      final otp = _otpControllers
-                          .map((controller) => controller.text)
-                          .join();
-                      context
-                          .read<AuthBloc>()
-                          .add(AuthVerifyOTP(widget.email, otp));
-                    }
-                  : null,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.green[400],
-                padding: const EdgeInsets.symmetric(vertical: 16),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(50),
+                onPressed: _otpControllers
+                        .every((controller) => controller.text.isNotEmpty)
+                    ? () {
+                        final otp = _otpControllers
+                            .map((controller) => controller.text)
+                            .join();
+                        context
+                            .read<AuthBloc>()
+                            .add(AuthVerifyOTP(widget.email, otp));
+                      }
+                    : null,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.green[400],
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(50),
+                  ),
                 ),
-              ),
-              child: const Text(
-                'Submit OTP',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                ),
-              ),
-            ),
+                child: Padding(
+                  padding: const EdgeInsets.all(
+                      8.0), // Anda dapat menyesuaikan padding sesuai kebutuhan
+                  child: Center(
+                    child: const Text(
+                      'Submit OTP',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                )),
             BlocListener<AuthBloc, AuthState>(
               listener: (context, state) {
                 if (state is AuthVerifyOTPSuccess) {
