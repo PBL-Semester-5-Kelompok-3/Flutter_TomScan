@@ -1,3 +1,4 @@
+import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:toma_scan/blocs/history/history_bloc.dart';
@@ -6,6 +7,7 @@ import 'package:toma_scan/blocs/informative/informative_bloc.dart';
 import 'package:toma_scan/models/history_model.dart';
 import 'package:toma_scan/services/history_service.dart';
 import 'package:toma_scan/services/informatif_service.dart';
+import 'package:toma_scan/ui/pages/camera.dart';
 import 'package:toma_scan/ui/pages/popular_article_page.dart';
 import 'package:toma_scan/ui/pages/view_article.dart';
 import 'history_page.dart';
@@ -33,10 +35,16 @@ class HomePageState extends State<HomePage> {
     const ProfilePage(), // Halaman Profile
   ];
 
-  void _onItemTapped(int index) {
+  void _onItemTapped(int index) async {
+    final cameras = await availableCameras();
     if (index == 2) {
       // Navigasi ke halaman kamera dengan layar penuh
-      Navigator.pushNamed(context, '/camera');
+      await Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => CameraApp(cameras: cameras),
+        ),
+      );
     } else {
       // Mengubah indeks yang dipilih jika bukan tombol kamera
       setState(() {

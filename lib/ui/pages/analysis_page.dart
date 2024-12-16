@@ -1,3 +1,4 @@
+import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'dart:io';
 import 'dart:convert';
@@ -7,6 +8,7 @@ import 'package:toma_scan/blocs/scan/scan_event.dart';
 import 'package:toma_scan/blocs/scan/scan_state.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:toma_scan/ui/pages/camera.dart';
 import 'package:toma_scan/ui/pages/home_page.dart';
 
 class DetailAnalysisPage extends StatelessWidget {
@@ -221,13 +223,35 @@ class DetailAnalysisPage extends StatelessWidget {
                   top: 40,
                   left: 16,
                   child: GestureDetector(
-                    // onTap: () => Navigator.pop(context),
-                    onTap: () => Navigator.pushNamed(context, '/camera'),
+                    onTap: () async {
+                      try {
+                        // Fetch the available cameras
+                        final cameras = await availableCameras();
+
+                        // Navigate to the CameraApp page with the available cameras
+                        Navigator.pushReplacement(
+                          // ignore: use_build_context_synchronously
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => CameraApp(cameras: cameras),
+                          ),
+                        );
+                      } catch (e) {
+                        debugPrint('Error accessing cameras: $e');
+                      }
+                    },
                     child: Container(
-                      padding: const EdgeInsets.all(8),
+                      padding: const EdgeInsets.all(12),
                       decoration: BoxDecoration(
                         color: Colors.white,
-                        borderRadius: BorderRadius.circular(8),
+                        borderRadius: BorderRadius.circular(50),
+                        boxShadow: const [
+                          BoxShadow(
+                            color: Colors.black12,
+                            blurRadius: 6,
+                            offset: Offset(0, 2),
+                          ),
+                        ],
                       ),
                       child: const Icon(Icons.arrow_back),
                     ),
@@ -260,13 +284,16 @@ class DetailAnalysisPage extends StatelessWidget {
                   const SizedBox(height: 24),
                   ElevatedButton(
                     onPressed: () async {
-                      // await sendDataWithImage(diseaseid, imageUrl);
-                    //   Navigator.push(
-                    //     context,
-                    //     MaterialPageRoute(builder: (context) => HomePage()),
-                    //   );
-                    //   // _showSuccessNotification(context);
-                    // },
+                      await sendDataWithImage(diseaseid, imageUrl);
+                      Navigator.pushReplacement(
+                        // ignore: use_build_context_synchronously
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const HomePage(),
+                        ),
+                      );
+                      // _showSuccessNotification(context);
+                    },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.green,
                       minimumSize: const Size(double.infinity, 50),

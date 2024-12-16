@@ -6,6 +6,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:toma_scan/ui/pages/analysis_page.dart';
 import 'package:http/http.dart' as http;
+import 'package:toma_scan/ui/pages/home_page.dart';
 
 late List<CameraDescription> _cameras;
 
@@ -99,7 +100,8 @@ class _CameraAppState extends State<CameraApp>
 
           if (additionalData != null) {
             // Navigasikan ke DetailAnalysisPage dengan data tambahan
-            Navigator.push(
+            Navigator.pushReplacement(
+              // ignore: use_build_context_synchronously
               context,
               MaterialPageRoute(
                 builder: (context) => DetailAnalysisPage(
@@ -229,7 +231,8 @@ class _CameraAppState extends State<CameraApp>
 
         if (additionalData != null) {
           // Navigasikan ke DetailAnalysisPage dengan data tambahan
-          Navigator.push(
+          Navigator.pushReplacement(
+            // ignore: use_build_context_synchronously
             context,
             MaterialPageRoute(
               builder: (context) => DetailAnalysisPage(
@@ -316,7 +319,12 @@ class _CameraAppState extends State<CameraApp>
                     child: IconButton(
                       icon: const Icon(Icons.arrow_back, color: Colors.black),
                       onPressed: () {
-                        Navigator.pushNamed(context, '/home');
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const HomePage(),
+                          ),
+                        );
                       },
                     ),
                   ),
