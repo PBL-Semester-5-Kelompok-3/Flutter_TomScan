@@ -51,7 +51,8 @@ class HistoryPage extends StatelessWidget {
             } else if (state is HistoryLoadedState) {
               return _buildHistoryList(context, state.histories);
             } else if (state is HistoryErrorState) {
-              return Center(child: Text('Error: ${state.message}'));
+              // return Center(child: Text('Error: ${state.message}'));
+              return const Center(child: Text('No recent detections found.'));
             } else {
               return const Center(child: Text('No history found'));
             }
