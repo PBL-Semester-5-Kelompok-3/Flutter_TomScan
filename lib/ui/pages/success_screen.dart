@@ -110,10 +110,11 @@ class SuccessScreenHome extends StatelessWidget {
       body: SuccessScreen(
         title: "You're All Set!",
         subtitle: "Your Garden key has been updated",
-        buttonText: "Go to Homepage",
+        buttonText: "Your Account Ready",
         onButtonPressed: () {
           // Handle navigation
-          Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false);
+          Navigator.pushNamedAndRemoveUntil(
+              context, '/sign-in', (route) => false);
         },
       ),
     );

@@ -4,6 +4,7 @@ import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:toma_scan/shared/shared_values.dart';
 import 'package:toma_scan/ui/pages/analysis_page.dart';
 import 'package:http/http.dart' as http;
 import 'package:toma_scan/ui/pages/home_page.dart';
@@ -95,6 +96,8 @@ class _CameraAppState extends State<CameraApp>
           final confidence = response['confidence'];
 
           // Kirim hasil prediksi ke API kedua untuk mendapatkan data tambahan
+          print('gallery : $predictedClass');
+          print('token : $token');
           final additionalData =
               await _sendPredictResultToAPI(predictedClass, token ?? '');
 
@@ -144,8 +147,7 @@ class _CameraAppState extends State<CameraApp>
 
   Future<Map<String, dynamic>?> _sendImageToAPI(String imagePath) async {
     try {
-      final uri =
-          Uri.parse('https://deb5-180-248-25-27.ngrok-free.app/predict/');
+      final uri = Uri.parse('$baseUrlFastAPI/predict/');
       final request = http.MultipartRequest('POST', uri);
       request.headers.addAll({
         'Content-Type': 'multipart/form-data',
@@ -226,6 +228,8 @@ class _CameraAppState extends State<CameraApp>
         final predictedClass = response['predicted_class'];
         final confidence = response['confidence'];
         // Kirim hasil prediksi ke API kedua untuk mendapatkan data tambahan
+        print('capture : $predictedClass');
+        print('token : $token');
         final additionalData =
             await _sendPredictResultToAPI(predictedClass, token ?? '');
 

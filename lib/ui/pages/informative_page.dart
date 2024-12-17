@@ -37,6 +37,7 @@ class InformativePage extends StatelessWidget {
                     final informatifs = state.informatives;
 
                     return ListView(
+                      padding: const EdgeInsets.all(16.0),
                       physics: const NeverScrollableScrollPhysics(),
                       shrinkWrap: true,
                       children: [
@@ -94,6 +95,7 @@ class InformativePage extends StatelessWidget {
                   } else if (state is PestAndDiseaseSuccess) {
                     final pestsDeseases = state.pestAndDiseases;
                     return ListView(
+                      padding: const EdgeInsets.all(16.0),
                       physics: const NeverScrollableScrollPhysics(),
                       shrinkWrap: true,
                       children: [
