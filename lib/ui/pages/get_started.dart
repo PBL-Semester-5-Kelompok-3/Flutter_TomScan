@@ -167,33 +167,47 @@ class GetStarted extends StatelessWidget {
                   },
                 ),
                 const Spacer(),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    TextButton(
-                      onPressed: () {
-                        Navigator.pushNamed(context, '/PrivacyPolicyPage');
-                      },
-                      child: const Text(
-                        'Privacy Policy',
-                        style: TextStyle(
-                            color: Colors.grey), // Menambahkan warna abu-abu
-                      ),
-                    ),
                     const Text(
-                      '•',
-                      style: TextStyle(
-                          color: Colors.grey), // Menambahkan warna abu-abu
+                      'By continuing, you agree to our ',
+                      style: TextStyle(color: Colors.grey),
                     ),
-                    TextButton(
-                      onPressed: () {
-                        Navigator.pushNamed(context, '/TermsPage');
-                      },
-                      child: const Text(
-                        'Terms of Service',
-                        style: TextStyle(
-                            color: Colors.grey), // Menambahkan warna abu-abu
-                      ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.pushNamed(context, '/TermsPage');
+                          },
+                          child: const Text(
+                            'Terms',
+                            style: TextStyle(
+                              color: Color(0xFF00A86B),
+                              decoration: TextDecoration.underline,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                        const Text(
+                          ' and ',
+                          style: TextStyle(color: Colors.grey),
+                        ),
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.pushNamed(context, '/PrivacyPolicyPage');
+                          },
+                          child: const Text(
+                            'Privacy Policy',
+                            style: TextStyle(
+                              color: Color(0xFF00A86B),
+                              decoration: TextDecoration.underline,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),
